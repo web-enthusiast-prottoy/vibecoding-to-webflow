@@ -1,0 +1,45 @@
+{
+	"name": "Test Site",
+	"collections": [
+		{
+			"name": "Global Variables",
+			"modes": [{ "name": "Base mode" }],
+			"variables": [
+				{
+					"name": "padding-global",
+					"type": "Percentage",
+					"values": {
+						"Base mode": {
+							"value": 5,
+							"unit": "%",
+							"isCustom": false
+						}
+					}
+				}
+			]
+		}
+	],
+	"globalStyles": {
+		".padding-test": {
+			"main": {
+				"padding-left": "var(--padding-global)",
+				"padding-right": "var(--padding-global)",
+				"background-color": "#ff0000"
+			}
+		}
+	},
+	"pages": [
+		{
+			"name": "TestPage",
+			"slug": "testpage",
+			"nodes": [
+				{
+					"type": "Block",
+					"tag": "div",
+					"classes": ["padding-test"],
+					"children": []
+				}
+			]
+		}
+	]
+}

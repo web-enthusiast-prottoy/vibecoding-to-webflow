@@ -1,0 +1,525 @@
+{
+  "_mime": "section",
+  "__meta": {
+    "version": 2,
+    "normalized": true,
+    "complexSelectorsResolved": true
+  },
+  "name": "creatives",
+  "nodes": [
+    {
+      "type": "Block",
+      "tag": "section",
+      "classes": [
+        "creatives"
+      ],
+      "id": "creatives",
+      "children": [
+        {
+          "type": "Block",
+          "tag": "div",
+          "classes": [
+            "padding-global"
+          ],
+          "children": [
+            {
+              "type": "Block",
+              "tag": "div",
+              "classes": [
+                "container-large"
+              ],
+              "children": [
+                {
+                  "type": "Block",
+                  "tag": "div",
+                  "classes": [
+                    "creatives_component"
+                  ],
+                  "children": [
+                    {
+                      "type": "Block",
+                      "tag": "div",
+                      "classes": [
+                        "creatives_header"
+                      ],
+                      "children": [
+                        {
+                          "type": "Heading",
+                          "tag": "h2",
+                          "classes": [
+                            "section-title"
+                          ],
+                          "text": "Creatives",
+                          "children": []
+                        },
+                        {
+                          "type": "Paragraph",
+                          "classes": [
+                            "section-subtitle"
+                          ],
+                          "text": "Our ads don't just look good — they perform. High-production, UGC and design concepts that command attention, lower CAC, increase CTR and fuel profit",
+                          "children": []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "Block",
+          "tag": "div",
+          "classes": [
+            "creatives_sliders"
+          ],
+          "children": [
+            {
+              "type": "Block",
+              "tag": "div",
+              "classes": [
+                "splide",
+                "is-creatives-top"
+              ],
+              "attributes": {
+                "aria-label": "Creative Showcase Top"
+              },
+              "children": [
+                {
+                  "type": "Block",
+                  "tag": "div",
+                  "classes": [
+                    "splide__track"
+                  ],
+                  "children": [
+                    {
+                      "type": "List",
+                      "classes": [
+                        "splide__list"
+                      ],
+                      "children": [
+                        {
+                          "type": "ListItem",
+                          "classes": [
+                            "splide__slide"
+                          ],
+                          "children": [
+                            {
+                              "type": "Image",
+                              "classes": [],
+                              "attributes": {
+                                "src": "images/email-marketing/marketing-creative-1.png",
+                                "alt": "Creative 1"
+                              },
+                              "children": []
+                            }
+                          ]
+                        },
+                        {
+                          "type": "ListItem",
+                          "classes": [
+                            "splide__slide"
+                          ],
+                          "children": [
+                            {
+                              "type": "Image",
+                              "classes": [],
+                              "attributes": {
+                                "src": "images/email-marketing/marketing-creative-2.png",
+                                "alt": "Creative 2"
+                              },
+                              "children": []
+                            }
+                          ]
+                        },
+                        {
+                          "type": "ListItem",
+                          "classes": [
+                            "splide__slide"
+                          ],
+                          "children": [
+                            {
+                              "type": "Image",
+                              "classes": [],
+                              "attributes": {
+                                "src": "images/email-marketing/marketing-creative-3.png",
+                                "alt": "Creative 3"
+                              },
+                              "children": []
+                            }
+                          ]
+                        },
+                        {
+                          "type": "ListItem",
+                          "classes": [
+                            "splide__slide"
+                          ],
+                          "children": [
+                            {
+                              "type": "Image",
+                              "classes": [],
+                              "attributes": {
+                                "src": "images/email-marketing/marketing-creative-4.png",
+                                "alt": "Creative 4"
+                              },
+                              "children": []
+                            }
+                          ]
+                        },
+                        {
+                          "type": "ListItem",
+                          "classes": [
+                            "splide__slide"
+                          ],
+                          "children": [
+                            {
+                              "type": "Image",
+                              "classes": [],
+                              "attributes": {
+                                "src": "images/email-marketing/marketing-creative-5.png",
+                                "alt": "Creative 5"
+                              },
+                              "children": []
+                            }
+                          ]
+                        },
+                        {
+                          "type": "ListItem",
+                          "classes": [
+                            "splide__slide"
+                          ],
+                          "children": [
+                            {
+                              "type": "Image",
+                              "classes": [],
+                              "attributes": {
+                                "src": "images/email-marketing/marketing-creative-1.png",
+                                "alt": "Creative 1"
+                              },
+                              "children": []
+                            }
+                          ]
+                        },
+                        {
+                          "type": "ListItem",
+                          "classes": [
+                            "splide__slide"
+                          ],
+                          "children": [
+                            {
+                              "type": "Image",
+                              "classes": [],
+                              "attributes": {
+                                "src": "images/email-marketing/marketing-creative-2.png",
+                                "alt": "Creative 2"
+                              },
+                              "children": []
+                            }
+                          ]
+                        },
+                        {
+                          "type": "ListItem",
+                          "classes": [
+                            "splide__slide"
+                          ],
+                          "children": [
+                            {
+                              "type": "Image",
+                              "classes": [],
+                              "attributes": {
+                                "src": "images/email-marketing/marketing-creative-3.png",
+                                "alt": "Creative 3"
+                              },
+                              "children": []
+                            }
+                          ]
+                        },
+                        {
+                          "type": "ListItem",
+                          "classes": [
+                            "splide__slide"
+                          ],
+                          "children": [
+                            {
+                              "type": "Image",
+                              "classes": [],
+                              "attributes": {
+                                "src": "images/email-marketing/marketing-creative-4.png",
+                                "alt": "Creative 4"
+                              },
+                              "children": []
+                            }
+                          ]
+                        },
+                        {
+                          "type": "ListItem",
+                          "classes": [
+                            "splide__slide"
+                          ],
+                          "children": [
+                            {
+                              "type": "Image",
+                              "classes": [],
+                              "attributes": {
+                                "src": "images/email-marketing/marketing-creative-5.png",
+                                "alt": "Creative 5"
+                              },
+                              "children": []
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "Block",
+              "tag": "div",
+              "classes": [
+                "splide",
+                "is-creatives-bottom"
+              ],
+              "attributes": {
+                "aria-label": "Creative Showcase Bottom"
+              },
+              "children": [
+                {
+                  "type": "Block",
+                  "tag": "div",
+                  "classes": [
+                    "splide__track"
+                  ],
+                  "children": [
+                    {
+                      "type": "List",
+                      "classes": [
+                        "splide__list"
+                      ],
+                      "children": [
+                        {
+                          "type": "ListItem",
+                          "classes": [
+                            "splide__slide"
+                          ],
+                          "children": [
+                            {
+                              "type": "Image",
+                              "classes": [],
+                              "attributes": {
+                                "src": "images/email-marketing/marketing-creative-5.png",
+                                "alt": "Creative 5"
+                              },
+                              "children": []
+                            }
+                          ]
+                        },
+                        {
+                          "type": "ListItem",
+                          "classes": [
+                            "splide__slide"
+                          ],
+                          "children": [
+                            {
+                              "type": "Image",
+                              "classes": [],
+                              "attributes": {
+                                "src": "images/email-marketing/marketing-creative-4.png",
+                                "alt": "Creative 4"
+                              },
+                              "children": []
+                            }
+                          ]
+                        },
+                        {
+                          "type": "ListItem",
+                          "classes": [
+                            "splide__slide"
+                          ],
+                          "children": [
+                            {
+                              "type": "Image",
+                              "classes": [],
+                              "attributes": {
+                                "src": "images/email-marketing/marketing-creative-3.png",
+                                "alt": "Creative 3"
+                              },
+                              "children": []
+                            }
+                          ]
+                        },
+                        {
+                          "type": "ListItem",
+                          "classes": [
+                            "splide__slide"
+                          ],
+                          "children": [
+                            {
+                              "type": "Image",
+                              "classes": [],
+                              "attributes": {
+                                "src": "images/email-marketing/marketing-creative-2.png",
+                                "alt": "Creative 2"
+                              },
+                              "children": []
+                            }
+                          ]
+                        },
+                        {
+                          "type": "ListItem",
+                          "classes": [
+                            "splide__slide"
+                          ],
+                          "children": [
+                            {
+                              "type": "Image",
+                              "classes": [],
+                              "attributes": {
+                                "src": "images/email-marketing/marketing-creative-1.png",
+                                "alt": "Creative 1"
+                              },
+                              "children": []
+                            }
+                          ]
+                        },
+                        {
+                          "type": "ListItem",
+                          "classes": [
+                            "splide__slide"
+                          ],
+                          "children": [
+                            {
+                              "type": "Image",
+                              "classes": [],
+                              "attributes": {
+                                "src": "images/email-marketing/marketing-creative-5.png",
+                                "alt": "Creative 5"
+                              },
+                              "children": []
+                            }
+                          ]
+                        },
+                        {
+                          "type": "ListItem",
+                          "classes": [
+                            "splide__slide"
+                          ],
+                          "children": [
+                            {
+                              "type": "Image",
+                              "classes": [],
+                              "attributes": {
+                                "src": "images/email-marketing/marketing-creative-4.png",
+                                "alt": "Creative 4"
+                              },
+                              "children": []
+                            }
+                          ]
+                        },
+                        {
+                          "type": "ListItem",
+                          "classes": [
+                            "splide__slide"
+                          ],
+                          "children": [
+                            {
+                              "type": "Image",
+                              "classes": [],
+                              "attributes": {
+                                "src": "images/email-marketing/marketing-creative-3.png",
+                                "alt": "Creative 3"
+                              },
+                              "children": []
+                            }
+                          ]
+                        },
+                        {
+                          "type": "ListItem",
+                          "classes": [
+                            "splide__slide"
+                          ],
+                          "children": [
+                            {
+                              "type": "Image",
+                              "classes": [],
+                              "attributes": {
+                                "src": "images/email-marketing/marketing-creative-2.png",
+                                "alt": "Creative 2"
+                              },
+                              "children": []
+                            }
+                          ]
+                        },
+                        {
+                          "type": "ListItem",
+                          "classes": [
+                            "splide__slide"
+                          ],
+                          "children": [
+                            {
+                              "type": "Image",
+                              "classes": [],
+                              "attributes": {
+                                "src": "images/email-marketing/marketing-creative-1.png",
+                                "alt": "Creative 1"
+                              },
+                              "children": []
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "globalStyles": {
+    ".creatives": {
+      "main": {
+        "padding-top": "var(--section-pad)",
+        "padding-right": "0",
+        "padding-bottom": "var(--section-pad)",
+        "padding-left": "0",
+        "background-color": "var(--bg-primary)"
+      }
+    },
+    ".creatives_component": {
+      "main": {
+        "width": "100%"
+      }
+    },
+    ".creatives_header": {
+      "main": {
+        "margin-bottom": "var(--space-13)"
+      }
+    },
+    ".creatives_sliders": {
+      "main": {
+        "display": "flex",
+        "flex-direction": "column",
+        "grid-row-gap": "var(--space-2)",
+        "grid-column-gap": "var(--space-2)",
+        "width": "100%",
+        "overflow": "hidden",
+        "visibility": "hidden"
+      }
+    },
+    ".splide.is-creatives-top": {
+      "main": {
+        "cursor": "grab"
+      }
+    },
+    ".splide.is-creatives-bottom": {
+      "main": {
+        "cursor": "grab"
+      }
+    }
+  }
+}

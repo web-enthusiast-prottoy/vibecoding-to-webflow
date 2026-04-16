@@ -1,0 +1,379 @@
+{
+  "_mime": "section",
+  "__meta": {
+    "version": 2,
+    "normalized": true,
+    "complexSelectorsResolved": true
+  },
+  "name": "footer",
+  "nodes": [
+    {
+      "type": "Block",
+      "tag": "footer",
+      "classes": [
+        "footer"
+      ],
+      "children": [
+        {
+          "type": "Block",
+          "tag": "div",
+          "classes": [
+            "padding-global"
+          ],
+          "children": [
+            {
+              "type": "Block",
+              "tag": "div",
+              "classes": [
+                "container-large"
+              ],
+              "children": [
+                {
+                  "type": "Block",
+                  "tag": "div",
+                  "classes": [
+                    "footer_component"
+                  ],
+                  "children": [
+                    {
+                      "type": "Block",
+                      "tag": "div",
+                      "classes": [
+                        "footer_top"
+                      ],
+                      "children": [
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [
+                            "footer_brand"
+                          ],
+                          "children": [
+                            {
+                              "type": "Link",
+                              "classes": [
+                                "footer_logo"
+                              ],
+                              "attributes": {
+                                "href": "#"
+                              },
+                              "children": [
+                                {
+                                  "type": "Image",
+                                  "classes": [],
+                                  "styles": {
+                                    "max-height": "40px",
+                                    "width": "auto",
+                                    "display": "block"
+                                  },
+                                  "attributes": {
+                                    "src": "images/moda-digital-logo.png",
+                                    "alt": "Moda Digital Logo",
+                                    "width": "120"
+                                  },
+                                  "children": []
+                                }
+                              ]
+                            },
+                            {
+                              "type": "Paragraph",
+                              "classes": [
+                                "footer_tagline"
+                              ],
+                              "text": "We engineer high-performance digital ecosystems for brands ready to dominate their category.",
+                              "children": []
+                            },
+                            {
+                              "type": "Paragraph",
+                              "classes": [
+                                "footer_address"
+                              ],
+                              "text": "London, UK & Sydney, AUS",
+                              "children": []
+                            }
+                          ]
+                        },
+                        {
+                          "type": "Block",
+                          "tag": "nav",
+                          "classes": [
+                            "footer_nav"
+                          ],
+                          "attributes": {
+                            "aria-label": "Footer navigation"
+                          },
+                          "children": [
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "footer_nav-col"
+                              ],
+                              "children": [
+                                {
+                                  "type": "Heading",
+                                  "tag": "h4",
+                                  "classes": [
+                                    "footer_nav-title"
+                                  ],
+                                  "text": "MODA",
+                                  "children": []
+                                },
+                                {
+                                  "type": "Link",
+                                  "classes": [
+                                    "footer_nav-link"
+                                  ],
+                                  "attributes": {
+                                    "href": "#strategy"
+                                  },
+                                  "text": "Strategy",
+                                  "children": []
+                                },
+                                {
+                                  "type": "Link",
+                                  "classes": [
+                                    "footer_nav-link"
+                                  ],
+                                  "attributes": {
+                                    "href": "#capabilities"
+                                  },
+                                  "text": "Capabilities",
+                                  "children": []
+                                },
+                                {
+                                  "type": "Link",
+                                  "classes": [
+                                    "footer_nav-link"
+                                  ],
+                                  "attributes": {
+                                    "href": "#results"
+                                  },
+                                  "text": "Results",
+                                  "children": []
+                                },
+                                {
+                                  "type": "Link",
+                                  "classes": [
+                                    "footer_nav-link"
+                                  ],
+                                  "attributes": {
+                                    "href": "#process"
+                                  },
+                                  "text": "Process",
+                                  "children": []
+                                }
+                              ]
+                            },
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "footer_nav-col"
+                              ],
+                              "children": [
+                                {
+                                  "type": "Heading",
+                                  "tag": "h4",
+                                  "classes": [
+                                    "footer_nav-title"
+                                  ],
+                                  "text": "LEGAL",
+                                  "children": []
+                                },
+                                {
+                                  "type": "Link",
+                                  "classes": [
+                                    "footer_nav-link"
+                                  ],
+                                  "attributes": {
+                                    "href": "#"
+                                  },
+                                  "text": "Privacy Policy",
+                                  "children": []
+                                },
+                                {
+                                  "type": "Link",
+                                  "classes": [
+                                    "footer_nav-link"
+                                  ],
+                                  "attributes": {
+                                    "href": "#"
+                                  },
+                                  "text": "Terms of Service",
+                                  "children": []
+                                },
+                                {
+                                  "type": "Link",
+                                  "classes": [
+                                    "footer_nav-link"
+                                  ],
+                                  "attributes": {
+                                    "href": "#"
+                                  },
+                                  "text": "Cookie Policy",
+                                  "children": []
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Block",
+                      "tag": "div",
+                      "classes": [
+                        "footer_bottom"
+                      ],
+                      "children": [
+                        {
+                          "type": "Paragraph",
+                          "classes": [
+                            "footer_copy"
+                          ],
+                          "text": "© 2025 MODA DIGITAL. All rights reserved.",
+                          "children": []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "globalStyles": {
+    ".footer": {
+      "main": {
+        "background-color": "var(--bg-primary)",
+        "border-top": "1px solid var(--color-border)",
+        "padding-top": "var(--space-16)",
+        "padding-right": "0",
+        "padding-bottom": "var(--space-8)",
+        "padding-left": "0"
+      }
+    },
+    ".footer_component": {
+      "main": {
+        "width": "100%"
+      }
+    },
+    ".footer_top": {
+      "main": {
+        "display": "grid",
+        "grid-template-columns": "1fr auto",
+        "row-gap": "var(--space-20)",
+        "column-gap": "var(--space-20)",
+        "padding-bottom": "var(--space-12)",
+        "border-bottom": "1px solid var(--color-border)",
+        "margin-bottom": "var(--space-7)"
+      },
+      "small": {
+        "grid-template-columns": "1fr",
+        "row-gap": "var(--space-10)",
+        "column-gap": "var(--space-10)"
+      }
+    },
+    ".footer_logo": {
+      "main": {
+        "display": "flex",
+        "flex-direction": "column",
+        "row-gap": "var(--space-0-5)",
+        "column-gap": "var(--space-0-5)",
+        "margin-bottom": "var(--space-5)",
+        "align-items": "flex-start",
+        "width": "fit-content"
+      }
+    },
+    ".footer_tagline": {
+      "main": {
+        "font-size": "0.875rem",
+        "color": "var(--color-text-secondary)",
+        "line-height": "1.7",
+        "max-width": "35ch",
+        "margin-bottom": "var(--space-3-5)"
+      }
+    },
+    ".footer_address": {
+      "main": {
+        "font-size": "0.6875rem",
+        "color": "var(--color-text-muted)",
+        "letter-spacing": "0.1em",
+        "text-transform": "uppercase"
+      }
+    },
+    ".footer_nav": {
+      "main": {
+        "display": "flex",
+        "row-gap": "var(--space-16)",
+        "column-gap": "var(--space-16)"
+      },
+      "small": {
+        "row-gap": "var(--space-10)",
+        "column-gap": "var(--space-10)"
+      },
+      "tiny": {
+        "flex-direction": "column",
+        "row-gap": "var(--space-7)",
+        "column-gap": "var(--space-7)"
+      }
+    },
+    ".footer_nav-col": {
+      "main": {
+        "display": "flex",
+        "flex-direction": "column",
+        "row-gap": "var(--space-3)",
+        "column-gap": "var(--space-3)"
+      }
+    },
+    ".footer_nav-title": {
+      "main": {
+        "font-family": "var(--font-condensed)",
+        "font-weight": "700",
+        "font-size": "0.625rem",
+        "letter-spacing": "0.22em",
+        "text-transform": "uppercase",
+        "color": "var(--color-text-muted)",
+        "margin-bottom": "var(--space-4)"
+      }
+    },
+    ".footer_nav-link": {
+      "main": {
+        "font-size": "0.875rem",
+        "color": "var(--color-text-secondary)",
+        "transition": "color var(--t-base) var(--ease-base)",
+        "position": "relative",
+        "display": "inline-block",
+        "padding-top": "var(--space-0-5)",
+        "padding-right": "0",
+        "padding-bottom": "var(--space-0-5)",
+        "padding-left": "0",
+        "width": "fit-content"
+      }
+    },
+    ".footer_nav-link:hover": {
+      "main": {
+        "color": "var(--color-text-primary)"
+      }
+    },
+    ".footer_bottom": {
+      "main": {
+        "display": "flex",
+        "justify-content": "space-between",
+        "align-items": "center"
+      }
+    },
+    ".footer_copy": {
+      "main": {
+        "font-size": "0.6875rem",
+        "color": "var(--color-text-muted)",
+        "letter-spacing": "0.08em",
+        "text-transform": "uppercase"
+      }
+    }
+  }
+}

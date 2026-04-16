@@ -1,0 +1,701 @@
+{
+  "name": "sample-vibecoded-site",
+  "pages": [
+    {
+      "name": "HeroSection",
+      "slug": "herosection",
+      "nodes": [
+        {
+          "type": "Block",
+          "tag": "section",
+          "classes": [
+            "w-full",
+            "bg-white",
+            "px-4",
+            "py-16",
+            "md:py-24"
+          ],
+          "children": [
+            {
+              "type": "Block",
+              "tag": "div",
+              "classes": [
+                "mx-auto",
+                "max-w-7xl",
+                "flex",
+                "flex-col",
+                "items-center",
+                "justify-center",
+                "text-center"
+              ],
+              "children": [
+                {
+                  "type": "Heading",
+                  "classes": [
+                    "text-4xl",
+                    "font-bold",
+                    "tracking-tight",
+                    "text-gray-900",
+                    "sm:text-6xl",
+                    "mb-6"
+                  ],
+                  "text": "Convert Code to Webflow",
+                  "children": []
+                },
+                {
+                  "type": "Paragraph",
+                  "classes": [
+                    "max-w-2xl",
+                    "text-lg",
+                    "text-gray-600",
+                    "mb-8"
+                  ],
+                  "text": "The fastest way to take your generated React designs and turn them into \n          native Webflow projects using Client-First principles.",
+                  "children": []
+                },
+                {
+                  "type": "Block",
+                  "tag": "div",
+                  "classes": [
+                    "flex",
+                    "gap-4"
+                  ],
+                  "children": [
+                    {
+                      "type": "Link",
+                      "classes": [
+                        "rounded-md",
+                        "bg-blue-600",
+                        "px-6",
+                        "py-3",
+                        "text-sm",
+                        "font-semibold",
+                        "text-white",
+                        "shadow-sm",
+                        "hover:bg-blue-500"
+                      ],
+                      "attributes": {
+                        "href": "#"
+                      },
+                      "text": "Get Started",
+                      "children": []
+                    },
+                    {
+                      "type": "Link",
+                      "classes": [
+                        "rounded-md",
+                        "bg-gray-100",
+                        "px-6",
+                        "py-3",
+                        "text-sm",
+                        "font-semibold",
+                        "text-gray-900",
+                        "hover:bg-gray-200"
+                      ],
+                      "attributes": {
+                        "href": "#"
+                      },
+                      "text": "Learn More",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceFile": "HeroSection.tsx"
+    },
+    {
+      "name": "TvLauncher",
+      "slug": "tvlauncher",
+      "nodes": [
+        {
+          "type": "Block",
+          "tag": "main",
+          "classes": [
+            "container"
+          ],
+          "children": [
+            {
+              "type": "Block",
+              "tag": "nav",
+              "classes": [
+                "nav-menu"
+              ],
+              "children": [
+                {
+                  "type": "Link",
+                  "classes": [
+                    "navbar_link_new"
+                  ],
+                  "attributes": {
+                    "href": "#",
+                    "data-animate": "nav-reveal",
+                    "style": "--link-color: #0166FF;",
+                    "data-text": "ABOUT",
+                    "data-asset": "https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExc21yYXFva29uM3ZrcTc5Y2gyZGdlZXliNTBtbHczNzZ0OHZua3NzMSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/NEU34P7OlWe1a/giphy.gif"
+                  },
+                  "children": [
+                    {
+                      "type": "Block",
+                      "tag": "div",
+                      "classes": [
+                        "bg-block"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "type": "Block",
+                      "tag": "span",
+                      "classes": [
+                        "text"
+                      ],
+                      "text": "ABOUT",
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "type": "Link",
+                  "classes": [
+                    "navbar_link_new"
+                  ],
+                  "attributes": {
+                    "href": "#",
+                    "data-animate": "nav-reveal",
+                    "style": "--link-color: #F082D9;",
+                    "data-text": "LATEST WORK",
+                    "data-asset": "https://media.giphy.com/media/l41lFw057lAJQMwg0/giphy.gif"
+                  },
+                  "children": [
+                    {
+                      "type": "Block",
+                      "tag": "div",
+                      "classes": [
+                        "bg-block"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "type": "Block",
+                      "tag": "span",
+                      "classes": [
+                        "text"
+                      ],
+                      "text": "PORTFOLIO",
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "type": "Link",
+                  "classes": [
+                    "navbar_link_new"
+                  ],
+                  "attributes": {
+                    "href": "#",
+                    "data-animate": "nav-reveal",
+                    "style": "--link-color: #F65D34;",
+                    "data-text": "OUR SERVICES",
+                    "data-asset": "https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExcXNvMDM3cmQwd2QzaGQ1Z3R1NDVoaDlwdmY2cG1wdnA1NXZoMzVwYSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/dxgEz5tWSRMk1tsyrt/giphy.gif"
+                  },
+                  "children": [
+                    {
+                      "type": "Block",
+                      "tag": "div",
+                      "classes": [
+                        "bg-block"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "type": "Block",
+                      "tag": "span",
+                      "classes": [
+                        "text"
+                      ],
+                      "text": "SERVICES",
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "type": "Link",
+                  "classes": [
+                    "navbar_link_new"
+                  ],
+                  "attributes": {
+                    "href": "#",
+                    "data-animate": "nav-reveal",
+                    "style": "--link-color: #EDC43B;",
+                    "data-text": "PROCESS",
+                    "data-asset": "https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExZGN2ejhjMWFodzF6emxneG9wcmg4NDlvc2w3aW9hYWJnOHhqNGRzNiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Iyqv0kE4hUwYE/giphy.gif"
+                  },
+                  "children": [
+                    {
+                      "type": "Block",
+                      "tag": "div",
+                      "classes": [
+                        "bg-block"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "type": "Block",
+                      "tag": "span",
+                      "classes": [
+                        "text"
+                      ],
+                      "text": "PROCESS",
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "type": "Link",
+                  "classes": [
+                    "navbar_link_new"
+                  ],
+                  "attributes": {
+                    "href": "#",
+                    "data-animate": "nav-reveal",
+                    "style": "--link-color: #5CAC57;",
+                    "data-text": "CONTACT",
+                    "data-asset": "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExZ3p0aGh5ODBmY205OW9leWQ0MnBlMDkybmZvdXN1NXg2ajQ5ZGFjcCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/REI7TGEUOwdE4gEUvO/giphy.gif"
+                  },
+                  "children": [
+                    {
+                      "type": "Block",
+                      "tag": "div",
+                      "classes": [
+                        "bg-block"
+                      ],
+                      "children": []
+                    },
+                    {
+                      "type": "Block",
+                      "tag": "span",
+                      "classes": [
+                        "text"
+                      ],
+                      "text": "CONTACT",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "Block",
+              "tag": "div",
+              "classes": [
+                "tv-wrapper"
+              ],
+              "children": [
+                {
+                  "type": "Block",
+                  "tag": "div",
+                  "classes": [
+                    "tv-bloom"
+                  ],
+                  "children": []
+                },
+                {
+                  "type": "Block",
+                  "tag": "div",
+                  "classes": [
+                    "monitor-rig"
+                  ],
+                  "children": [
+                    {
+                      "type": "Block",
+                      "tag": "div",
+                      "classes": [
+                        "antenna-array"
+                      ],
+                      "children": [
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [
+                            "antenna"
+                          ],
+                          "children": [
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "antenna-rod"
+                              ],
+                              "children": []
+                            },
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "antenna-joint"
+                              ],
+                              "children": []
+                            }
+                          ]
+                        },
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [
+                            "antenna"
+                          ],
+                          "children": [
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "antenna-rod"
+                              ],
+                              "children": []
+                            },
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "antenna-joint"
+                              ],
+                              "children": []
+                            }
+                          ]
+                        },
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [
+                            "antenna"
+                          ],
+                          "children": [
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "antenna-rod"
+                              ],
+                              "children": []
+                            },
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "antenna-joint"
+                              ],
+                              "children": []
+                            }
+                          ]
+                        },
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [
+                            "antenna"
+                          ],
+                          "children": [
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "antenna-rod"
+                              ],
+                              "children": []
+                            },
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "antenna-joint"
+                              ],
+                              "children": []
+                            }
+                          ]
+                        },
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [
+                            "antenna"
+                          ],
+                          "children": [
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "antenna-rod"
+                              ],
+                              "children": []
+                            },
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "antenna-joint"
+                              ],
+                              "children": []
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Block",
+                      "tag": "div",
+                      "classes": [
+                        "rig-handle",
+                        "left-handle"
+                      ],
+                      "children": [
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [
+                            "handle-grip"
+                          ],
+                          "children": []
+                        },
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [
+                            "handle-arm"
+                          ],
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Block",
+                      "tag": "div",
+                      "classes": [
+                        "monitor-chassis"
+                      ],
+                      "children": [
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [
+                            "tv-screen"
+                          ],
+                          "id": "tv-link",
+                          "children": [
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "tv-viewfinder"
+                              ],
+                              "children": [
+                                {
+                                  "type": "Block",
+                                  "tag": "div",
+                                  "classes": [
+                                    "corner",
+                                    "tl"
+                                  ],
+                                  "children": []
+                                },
+                                {
+                                  "type": "Block",
+                                  "tag": "div",
+                                  "classes": [
+                                    "corner",
+                                    "tr"
+                                  ],
+                                  "children": []
+                                },
+                                {
+                                  "type": "Block",
+                                  "tag": "div",
+                                  "classes": [
+                                    "corner",
+                                    "bl"
+                                  ],
+                                  "children": []
+                                },
+                                {
+                                  "type": "Block",
+                                  "tag": "div",
+                                  "classes": [
+                                    "corner",
+                                    "br"
+                                  ],
+                                  "children": []
+                                },
+                                {
+                                  "type": "Block",
+                                  "tag": "div",
+                                  "classes": [
+                                    "rec-indicator"
+                                  ],
+                                  "children": []
+                                }
+                              ]
+                            },
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "tv-glare"
+                              ],
+                              "children": []
+                            },
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "tv-static"
+                              ],
+                              "children": []
+                            },
+                            {
+                              "type": "Image",
+                              "classes": [
+                                "tv-image"
+                              ],
+                              "attributes": {
+                                "src": "",
+                                "alt": "Work preview"
+                              },
+                              "children": []
+                            },
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "text-overlay"
+                              ],
+                              "children": [
+                                {
+                                  "type": "Paragraph",
+                                  "classes": [
+                                    "content-heading"
+                                  ],
+                                  "attributes": {
+                                    "data-outtakes": "https://media.giphy.com/media/3o6ozvv0zsJskzOCbu/giphy.gif"
+                                  },
+                                  "children": []
+                                }
+                              ]
+                            },
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "smpte-bars"
+                              ],
+                              "children": []
+                            },
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "easter-egg-osd"
+                              ],
+                              "children": [
+                                {
+                                  "type": "Paragraph",
+                                  "classes": [
+                                    "osd-title"
+                                  ],
+                                  "text": "DIAGNOSTIC MODE",
+                                  "children": []
+                                },
+                                {
+                                  "type": "Paragraph",
+                                  "classes": [
+                                    "osd-code"
+                                  ],
+                                  "text": "CODE:",
+                                  "children": [
+                                    {
+                                      "type": "Block",
+                                      "tag": "span",
+                                      "classes": [],
+                                      "text": "DIRECTOR5",
+                                      "children": []
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "Paragraph",
+                                  "classes": [
+                                    "osd-discount"
+                                  ],
+                                  "text": "5% OFF YOUR NEXT PROJECT",
+                                  "children": []
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [
+                            "control-panel"
+                          ],
+                          "children": [
+                            {
+                              "type": "Block",
+                              "tag": "button",
+                              "classes": [
+                                "silver-power-btn"
+                              ],
+                              "attributes": {
+                                "aria-label": "Interactive Hardware Button"
+                              },
+                              "children": []
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Block",
+                      "tag": "div",
+                      "classes": [
+                        "rig-handle",
+                        "right-handle"
+                      ],
+                      "children": [
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [
+                            "handle-arm"
+                          ],
+                          "children": []
+                        },
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [
+                            "handle-grip"
+                          ],
+                          "children": []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "sourceFile": "TvLauncher.tsx"
+    }
+  ],
+  "globalStyles": {},
+  "__meta": {
+    "version": 2,
+    "normalized": true,
+    "complexSelectorsResolved": false
+  }
+}

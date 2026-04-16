@@ -1,0 +1,516 @@
+{
+  "_mime": "section",
+  "__meta": {
+    "version": 2,
+    "normalized": true,
+    "complexSelectorsResolved": true
+  },
+  "name": "aether-performance",
+  "nodes": [
+    {
+      "type": "Block",
+      "tag": "section",
+      "classes": [
+        "aether-performance"
+      ],
+      "id": "performance",
+      "children": [
+        {
+          "type": "Block",
+          "tag": "div",
+          "classes": [
+            "aether-perf-bg"
+          ],
+          "children": [
+            {
+              "type": "Block",
+              "tag": "div",
+              "classes": [
+                "aether-speed-lines"
+              ],
+              "children": [
+                {
+                  "type": "Block",
+                  "tag": "div",
+                  "classes": [
+                    "aether-speed-line"
+                  ],
+                  "styles": {
+                    "animation-delay": "0s"
+                  },
+                  "children": []
+                },
+                {
+                  "type": "Block",
+                  "tag": "div",
+                  "classes": [
+                    "aether-speed-line"
+                  ],
+                  "styles": {
+                    "animation-delay": "0.15s"
+                  },
+                  "children": []
+                },
+                {
+                  "type": "Block",
+                  "tag": "div",
+                  "classes": [
+                    "aether-speed-line"
+                  ],
+                  "styles": {
+                    "animation-delay": "0.3s"
+                  },
+                  "children": []
+                },
+                {
+                  "type": "Block",
+                  "tag": "div",
+                  "classes": [
+                    "aether-speed-line"
+                  ],
+                  "styles": {
+                    "animation-delay": "0.44999999999999996s"
+                  },
+                  "children": []
+                },
+                {
+                  "type": "Block",
+                  "tag": "div",
+                  "classes": [
+                    "aether-speed-line"
+                  ],
+                  "styles": {
+                    "animation-delay": "0.6s"
+                  },
+                  "children": []
+                },
+                {
+                  "type": "Block",
+                  "tag": "div",
+                  "classes": [
+                    "aether-speed-line"
+                  ],
+                  "styles": {
+                    "animation-delay": "0.75s"
+                  },
+                  "children": []
+                },
+                {
+                  "type": "Block",
+                  "tag": "div",
+                  "classes": [
+                    "aether-speed-line"
+                  ],
+                  "styles": {
+                    "animation-delay": "0.8999999999999999s"
+                  },
+                  "children": []
+                },
+                {
+                  "type": "Block",
+                  "tag": "div",
+                  "classes": [
+                    "aether-speed-line"
+                  ],
+                  "styles": {
+                    "animation-delay": "1.05s"
+                  },
+                  "children": []
+                },
+                {
+                  "type": "Block",
+                  "tag": "div",
+                  "classes": [
+                    "aether-speed-line"
+                  ],
+                  "styles": {
+                    "animation-delay": "1.2s"
+                  },
+                  "children": []
+                },
+                {
+                  "type": "Block",
+                  "tag": "div",
+                  "classes": [
+                    "aether-speed-line"
+                  ],
+                  "styles": {
+                    "animation-delay": "1.3499999999999999s"
+                  },
+                  "children": []
+                },
+                {
+                  "type": "Block",
+                  "tag": "div",
+                  "classes": [
+                    "aether-speed-line"
+                  ],
+                  "styles": {
+                    "animation-delay": "1.5s"
+                  },
+                  "children": []
+                },
+                {
+                  "type": "Block",
+                  "tag": "div",
+                  "classes": [
+                    "aether-speed-line"
+                  ],
+                  "styles": {
+                    "animation-delay": "1.65s"
+                  },
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "Block",
+          "tag": "div",
+          "classes": [
+            "padding-global"
+          ],
+          "children": [
+            {
+              "type": "Block",
+              "tag": "div",
+              "classes": [
+                "container-large"
+              ],
+              "children": [
+                {
+                  "type": "Block",
+                  "tag": "div",
+                  "classes": [
+                    "padding-section-large"
+                  ],
+                  "children": [
+                    {
+                      "type": "Block",
+                      "tag": "div",
+                      "classes": [
+                        "aether-perf-component"
+                      ],
+                      "children": [
+                        {
+                          "type": "Heading",
+                          "tag": "h2",
+                          "classes": [
+                            "heading-style-h2",
+                            "aether-section-title",
+                            "aether-section-title--light"
+                          ],
+                          "children": [
+                            {
+                              "type": "Block",
+                              "tag": "span",
+                              "classes": [
+                                "display-block",
+                                "aether-perf-title-line"
+                              ],
+                              "text": "Nothing else,",
+                              "children": []
+                            },
+                            {
+                              "type": "Block",
+                              "tag": "span",
+                              "classes": [
+                                "display-block",
+                                "aether-perf-title-line"
+                              ],
+                              "text": "comes close.",
+                              "children": []
+                            }
+                          ]
+                        },
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [
+                            "aether-stats-grid"
+                          ],
+                          "children": [
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "aether-stat"
+                              ],
+                              "children": [
+                                {
+                                  "type": "Block",
+                                  "tag": "span",
+                                  "classes": [
+                                    "aether-stat-number"
+                                  ],
+                                  "text": "s",
+                                  "children": [
+                                    {
+                                      "type": "Block",
+                                      "tag": "span",
+                                      "classes": [
+                                        "aether-stat-value"
+                                      ],
+                                      "text": "2.1",
+                                      "children": []
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "Block",
+                                  "tag": "span",
+                                  "classes": [
+                                    "aether-stat-label"
+                                  ],
+                                  "text": "0–100 km/h",
+                                  "children": []
+                                }
+                              ]
+                            },
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "aether-stat"
+                              ],
+                              "children": [
+                                {
+                                  "type": "Block",
+                                  "tag": "span",
+                                  "classes": [
+                                    "aether-stat-number"
+                                  ],
+                                  "text": "km",
+                                  "children": [
+                                    {
+                                      "type": "Block",
+                                      "tag": "span",
+                                      "classes": [
+                                        "aether-stat-value"
+                                      ],
+                                      "text": "720",
+                                      "children": []
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "Block",
+                                  "tag": "span",
+                                  "classes": [
+                                    "aether-stat-label"
+                                  ],
+                                  "text": "Estimated Range",
+                                  "children": []
+                                }
+                              ]
+                            },
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "aether-stat"
+                              ],
+                              "children": [
+                                {
+                                  "type": "Block",
+                                  "tag": "span",
+                                  "classes": [
+                                    "aether-stat-number"
+                                  ],
+                                  "text": "hp",
+                                  "children": [
+                                    {
+                                      "type": "Block",
+                                      "tag": "span",
+                                      "classes": [
+                                        "aether-stat-value"
+                                      ],
+                                      "text": "900",
+                                      "children": []
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "Block",
+                                  "tag": "span",
+                                  "classes": [
+                                    "aether-stat-label"
+                                  ],
+                                  "text": "Peak Power",
+                                  "children": []
+                                }
+                              ]
+                            },
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "aether-stat"
+                              ],
+                              "children": [
+                                {
+                                  "type": "Block",
+                                  "tag": "span",
+                                  "classes": [
+                                    "aether-stat-number"
+                                  ],
+                                  "text": "min",
+                                  "children": [
+                                    {
+                                      "type": "Block",
+                                      "tag": "span",
+                                      "classes": [
+                                        "aether-stat-value"
+                                      ],
+                                      "text": "15",
+                                      "children": []
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "Block",
+                                  "tag": "span",
+                                  "classes": [
+                                    "aether-stat-label"
+                                  ],
+                                  "text": "0–80% Charge",
+                                  "children": []
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "globalStyles": {
+    ".aether-performance": {
+      "main": {
+        "background-color": "var(--aether-black,#000)",
+        "position": "relative",
+        "overflow": "hidden",
+        "color": "#fff"
+      }
+    },
+    ".aether-perf-bg": {
+      "main": {
+        "pointer-events": "none",
+        "position": "absolute",
+        "top": "0",
+        "right": "0",
+        "bottom": "0",
+        "left": "0",
+        "overflow": "hidden"
+      }
+    },
+    ".aether-speed-lines": {
+      "main": {
+        "opacity": ".07",
+        "flex-direction": "column",
+        "justify-content": "center",
+        "gap": "40px",
+        "display": "flex",
+        "position": "absolute",
+        "top": "0",
+        "right": "0",
+        "bottom": "0",
+        "left": "0"
+      }
+    },
+    ".aether-speed-line": {
+      "main": {
+        "transform-origin": "0",
+        "background-image": "linear-gradient(90deg,rgba(0, 0, 0, 0),#fff,rgba(0, 0, 0, 0))",
+        "width": "100%",
+        "height": "1px",
+        "animation": "2.5s ease-in-out infinite speedLine"
+      }
+    },
+    ".aether-perf-component": {
+      "main": {
+        "z-index": "1",
+        "position": "relative"
+      }
+    },
+    ".aether-perf-title-line": {
+      "main": {
+        "will-change": "transform,opacity",
+        "display": "block"
+      }
+    },
+    ".aether-stats-grid": {
+      "main": {
+        "grid-template-columns": "repeat(4,1fr)",
+        "gap": "40px",
+        "margin-top": "64px",
+        "display": "grid"
+      },
+      "medium": {
+        "gap": "24px",
+        "grid-template-columns": "repeat(2,1fr)"
+      },
+      "small": {
+        "grid-template-columns": "repeat(2,1fr)"
+      },
+      "tiny": {
+        "grid-template-columns": "repeat(2,1fr)",
+        "gap": "16px"
+      }
+    },
+    ".aether-stat": {
+      "main": {
+        "will-change": "transform,opacity",
+        "border-top": "1px solid rgba(255, 255, 255, 0.102)",
+        "flex-direction": "column",
+        "gap": "8px",
+        "padding-top": "40px",
+        "padding-right": "0",
+        "padding-bottom": "40px",
+        "padding-left": "0",
+        "display": "flex"
+      },
+      "medium": {
+        "padding-top": "24px",
+        "padding-right": "0",
+        "padding-bottom": "24px",
+        "padding-left": "0"
+      }
+    },
+    ".aether-stat-number": {
+      "main": {
+        "color": "#fff",
+        "letter-spacing": "-.02em",
+        "font-variant-numeric": "tabular-nums",
+        "min-width": "4ch",
+        "font-size": "clamp(40px,5vw,72px)",
+        "font-weight": "300",
+        "line-height": "1"
+      },
+      "tiny": {
+        "font-size": "40px"
+      }
+    },
+    ".aether-stat-label": {
+      "main": {
+        "color": "rgba(255, 255, 255, 0.749)",
+        "letter-spacing": ".04em",
+        "text-transform": "uppercase",
+        "font-size": "13px"
+      }
+    },
+    ".display-block": {
+      "main": {
+        "display": "block"
+      }
+    }
+  }
+}

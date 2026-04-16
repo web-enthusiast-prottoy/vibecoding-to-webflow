@@ -1,0 +1,812 @@
+{
+  "_mime": "section",
+  "__meta": {
+    "version": 2,
+    "normalized": true,
+    "complexSelectorsResolved": true
+  },
+  "name": "ahl-section",
+  "nodes": [
+    {
+      "type": "Block",
+      "tag": "section",
+      "classes": [
+        "ahl-section"
+      ],
+      "attributes": {
+        "aria-label": "Apple Aether Highlights"
+      },
+      "children": [
+        {
+          "type": "Block",
+          "tag": "div",
+          "classes": [
+            "padding-global"
+          ],
+          "children": [
+            {
+              "type": "Block",
+              "tag": "div",
+              "classes": [
+                "container-large"
+              ],
+              "children": [
+                {
+                  "type": "Block",
+                  "tag": "div",
+                  "classes": [
+                    "heading-wrapper"
+                  ],
+                  "children": [
+                    {
+                      "type": "Heading",
+                      "tag": "h2",
+                      "classes": [],
+                      "styles": {
+                        "font-family": "var(--font-sans)",
+                        "letter-spacing": "-.02em",
+                        "color": "#1d1d1f",
+                        "margin-top": "0",
+                        "margin-right": "0",
+                        "margin-bottom": "0",
+                        "margin-left": "0",
+                        "font-size": "clamp(32px,5vw,52px)",
+                        "font-weight": "600",
+                        "line-height": "1.05"
+                      },
+                      "text": "Get the highlights.",
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "type": "Block",
+                  "tag": "div",
+                  "classes": [
+                    "ahl-track-wrap"
+                  ],
+                  "children": [
+                    {
+                      "type": "Block",
+                      "tag": "div",
+                      "classes": [
+                        "ahl-track"
+                      ],
+                      "children": [
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [
+                            "ahl-card"
+                          ],
+                          "styles": {
+                            "margin-right": "16px"
+                          },
+                          "attributes": {
+                            "role": "group",
+                            "aria-label": "Highlight 1 of 4"
+                          },
+                          "children": [
+                            {
+                              "type": "Image",
+                              "classes": [
+                                "ahl-card__image"
+                              ],
+                              "attributes": {
+                                "src": "https://raw.githubusercontent.com/web-enthusiast-prottoy/apple-aether/main/aether-webflow-sync/dist/aether-highlights/aether-slide-1.webp",
+                                "alt": "Designed to move everything forward.",
+                                "loading": "eager"
+                              },
+                              "children": []
+                            },
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "ahl-card__overlay"
+                              ],
+                              "attributes": {
+                                "aria-hidden": "true"
+                              },
+                              "children": []
+                            },
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "ahl-card__content"
+                              ],
+                              "children": [
+                                {
+                                  "type": "Heading",
+                                  "tag": "h3",
+                                  "classes": [
+                                    "ahl-card__headline"
+                                  ],
+                                  "text": "Designed to move everything forward.",
+                                  "children": []
+                                },
+                                {
+                                  "type": "Paragraph",
+                                  "classes": [
+                                    "ahl-card__body"
+                                  ],
+                                  "text": "Apple Aether brings electric\n                                            performance, intelligent control,\n                                            and a new sense of calm to the road.",
+                                  "children": []
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [
+                            "ahl-card"
+                          ],
+                          "styles": {
+                            "margin-right": "16px"
+                          },
+                          "attributes": {
+                            "role": "group",
+                            "aria-label": "Highlight 2 of 4"
+                          },
+                          "children": [
+                            {
+                              "type": "Image",
+                              "classes": [
+                                "ahl-card__image"
+                              ],
+                              "attributes": {
+                                "src": "https://raw.githubusercontent.com/web-enthusiast-prottoy/apple-aether/main/aether-webflow-sync/dist/aether-highlights/aether-slide-2.webp",
+                                "alt": "Go farther between moments.",
+                                "loading": "lazy"
+                              },
+                              "children": []
+                            },
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "ahl-card__overlay"
+                              ],
+                              "attributes": {
+                                "aria-hidden": "true"
+                              },
+                              "children": []
+                            },
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "ahl-card__content"
+                              ],
+                              "children": [
+                                {
+                                  "type": "Heading",
+                                  "tag": "h3",
+                                  "classes": [
+                                    "ahl-card__headline"
+                                  ],
+                                  "text": "Go farther between moments.",
+                                  "children": []
+                                },
+                                {
+                                  "type": "Paragraph",
+                                  "classes": [
+                                    "ahl-card__body"
+                                  ],
+                                  "text": "Up to 720 km of all-electric\n                                            driving, so the day keeps going.",
+                                  "children": []
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [
+                            "ahl-card"
+                          ],
+                          "styles": {
+                            "margin-right": "16px"
+                          },
+                          "attributes": {
+                            "role": "group",
+                            "aria-label": "Highlight 3 of 4"
+                          },
+                          "children": [
+                            {
+                              "type": "Image",
+                              "classes": [
+                                "ahl-card__image"
+                              ],
+                              "attributes": {
+                                "src": "https://raw.githubusercontent.com/web-enthusiast-prottoy/apple-aether/main/aether-webflow-sync/dist/aether-highlights/aether-slide-3.webp",
+                                "alt": "A cabin that clears the noise.",
+                                "loading": "lazy"
+                              },
+                              "children": []
+                            },
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "ahl-card__overlay"
+                              ],
+                              "attributes": {
+                                "aria-hidden": "true"
+                              },
+                              "children": []
+                            },
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "ahl-card__content"
+                              ],
+                              "children": [
+                                {
+                                  "type": "Heading",
+                                  "tag": "h3",
+                                  "classes": [
+                                    "ahl-card__headline"
+                                  ],
+                                  "text": "A cabin that clears the noise.",
+                                  "children": []
+                                },
+                                {
+                                  "type": "Paragraph",
+                                  "classes": [
+                                    "ahl-card__body"
+                                  ],
+                                  "text": "Controls appear only when you need\n                                            them, creating a quieter, more\n                                            intuitive driving experience.",
+                                  "children": []
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [
+                            "ahl-card"
+                          ],
+                          "styles": {
+                            "margin-right": "0px"
+                          },
+                          "attributes": {
+                            "role": "group",
+                            "aria-label": "Highlight 4 of 4"
+                          },
+                          "children": [
+                            {
+                              "type": "Image",
+                              "classes": [
+                                "ahl-card__image"
+                              ],
+                              "attributes": {
+                                "src": "https://raw.githubusercontent.com/web-enthusiast-prottoy/apple-aether/main/aether-webflow-sync/dist/aether-highlights/aether-slide-4.webp",
+                                "alt": "Awareness, built in.",
+                                "loading": "lazy"
+                              },
+                              "children": []
+                            },
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "ahl-card__overlay"
+                              ],
+                              "attributes": {
+                                "aria-hidden": "true"
+                              },
+                              "children": []
+                            },
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "ahl-card__content"
+                              ],
+                              "children": [
+                                {
+                                  "type": "Heading",
+                                  "tag": "h3",
+                                  "classes": [
+                                    "ahl-card__headline"
+                                  ],
+                                  "text": "Awareness, built in.",
+                                  "children": []
+                                },
+                                {
+                                  "type": "Paragraph",
+                                  "classes": [
+                                    "ahl-card__body"
+                                  ],
+                                  "text": "Advanced sensing, intelligent\n                                            assistance, and seamless Apple\n                                            ecosystem integration help every\n                                            drive feel more effortless.",
+                                  "children": []
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "Block",
+                  "tag": "div",
+                  "classes": [
+                    "ahl-controls"
+                  ],
+                  "children": [
+                    {
+                      "type": "Block",
+                      "tag": "div",
+                      "classes": [
+                        "ahl-dots"
+                      ],
+                      "attributes": {
+                        "role": "tablist"
+                      },
+                      "children": [
+                        {
+                          "type": "Block",
+                          "tag": "button",
+                          "classes": [
+                            "ahl-dot",
+                            "ahl-dot--active"
+                          ],
+                          "attributes": {
+                            "role": "tab",
+                            "aria-selected": "true",
+                            "aria-label": "Slide 1"
+                          },
+                          "children": [
+                            {
+                              "type": "Block",
+                              "tag": "span",
+                              "classes": [
+                                "ahl-dot-progress"
+                              ],
+                              "attributes": {
+                                "aria-hidden": "true"
+                              },
+                              "children": []
+                            },
+                            {
+                              "type": "Block",
+                              "tag": "span",
+                              "classes": [
+                                "sr-only"
+                              ],
+                              "text": "Slide 1",
+                              "children": []
+                            }
+                          ]
+                        },
+                        {
+                          "type": "Block",
+                          "tag": "button",
+                          "classes": [
+                            "ahl-dot"
+                          ],
+                          "attributes": {
+                            "role": "tab",
+                            "aria-selected": "false",
+                            "aria-label": "Slide 2"
+                          },
+                          "children": [
+                            {
+                              "type": "Block",
+                              "tag": "span",
+                              "classes": [
+                                "ahl-dot-progress"
+                              ],
+                              "attributes": {
+                                "aria-hidden": "true"
+                              },
+                              "children": []
+                            },
+                            {
+                              "type": "Block",
+                              "tag": "span",
+                              "classes": [
+                                "sr-only"
+                              ],
+                              "text": "Slide 2",
+                              "children": []
+                            }
+                          ]
+                        },
+                        {
+                          "type": "Block",
+                          "tag": "button",
+                          "classes": [
+                            "ahl-dot"
+                          ],
+                          "attributes": {
+                            "role": "tab",
+                            "aria-selected": "false",
+                            "aria-label": "Slide 3"
+                          },
+                          "children": [
+                            {
+                              "type": "Block",
+                              "tag": "span",
+                              "classes": [
+                                "ahl-dot-progress"
+                              ],
+                              "attributes": {
+                                "aria-hidden": "true"
+                              },
+                              "children": []
+                            },
+                            {
+                              "type": "Block",
+                              "tag": "span",
+                              "classes": [
+                                "sr-only"
+                              ],
+                              "text": "Slide 3",
+                              "children": []
+                            }
+                          ]
+                        },
+                        {
+                          "type": "Block",
+                          "tag": "button",
+                          "classes": [
+                            "ahl-dot"
+                          ],
+                          "attributes": {
+                            "role": "tab",
+                            "aria-selected": "false",
+                            "aria-label": "Slide 4"
+                          },
+                          "children": [
+                            {
+                              "type": "Block",
+                              "tag": "span",
+                              "classes": [
+                                "ahl-dot-progress"
+                              ],
+                              "attributes": {
+                                "aria-hidden": "true"
+                              },
+                              "children": []
+                            },
+                            {
+                              "type": "Block",
+                              "tag": "span",
+                              "classes": [
+                                "sr-only"
+                              ],
+                              "text": "Slide 4",
+                              "children": []
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Block",
+                      "tag": "button",
+                      "classes": [
+                        "ahl-play-btn"
+                      ],
+                      "attributes": {
+                        "aria-label": "Pause highlights"
+                      },
+                      "children": [
+                        {
+                          "type": "Block",
+                          "tag": "svg",
+                          "classes": [],
+                          "styles": {
+                            "width": "14px",
+                            "height": "14px",
+                            "fill": "currentColor"
+                          },
+                          "attributes": {
+                            "viewBox": "0 0 14 14",
+                            "xmlns": "http://www.w3.org/2000/svg"
+                          },
+                          "children": [
+                            {
+                              "type": "Block",
+                              "tag": "path",
+                              "classes": [],
+                              "attributes": {
+                                "d": "M4 2v10m6-10v10",
+                                "stroke": "currentColor",
+                                "stroke-width": "2",
+                                "stroke-linecap": "round"
+                              },
+                              "children": []
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "globalStyles": {
+    ".ahl-section": {
+      "main": {
+        "background-color": "#fff",
+        "padding-top": "100px",
+        "padding-right": "0",
+        "padding-bottom": "60px",
+        "padding-left": "0",
+        "overflow": "hidden",
+        "position": "relative"
+      },
+      "small": {
+        "padding-top": "60px",
+        "padding-right": "0",
+        "padding-bottom": "40px",
+        "padding-left": "0"
+      }
+    },
+    ".ahl-track-wrap": {
+      "main": {
+        "position": "relative",
+        "width": "100%",
+        "padding-top": "0",
+        "padding-right": "0",
+        "padding-bottom": "0",
+        "padding-left": "0",
+        "perspective": "1000px"
+      }
+    },
+    ".ahl-track": {
+      "main": {
+        "display": "flex",
+        "gap": "0",
+        "will-change": "transform"
+      }
+    },
+    ".ahl-card": {
+      "main": {
+        "flex": "0 0 100%",
+        "position": "relative",
+        "border-top-left-radius": "18px",
+        "border-top-right-radius": "18px",
+        "border-bottom-right-radius": "18px",
+        "border-bottom-left-radius": "18px",
+        "overflow": "hidden",
+        "background-color": "#e8e8ed",
+        "aspect-ratio": "16 / 9",
+        "display": "flex",
+        "flex-direction": "column",
+        "align-items": "center",
+        "justify-content": "flex-end",
+        "cursor": "pointer",
+        "user-select": "none"
+      },
+      "small": {
+        "aspect-ratio": "4 / 3"
+      },
+      "tiny": {
+        "aspect-ratio": "1 / 1"
+      }
+    },
+    ".ahl-card__image": {
+      "main": {
+        "position": "absolute",
+        "top": "0",
+        "right": "0",
+        "bottom": "0",
+        "left": "0",
+        "width": "100%",
+        "height": "100%",
+        "object-fit": "cover",
+        "object-position": "center",
+        "display": "block",
+        "transition": "none",
+        "will-change": "transform"
+      }
+    },
+    ".ahl-card__overlay": {
+      "main": {
+        "position": "absolute",
+        "top": "0",
+        "right": "0",
+        "bottom": "0",
+        "left": "0",
+        "background-image": "linear-gradient(to top,rgba(0,0,0,.62) 0%,rgba(0,0,0,.22) 45%,transparent 75%)",
+        "z-index": "1"
+      }
+    },
+    ".ahl-card__content": {
+      "main": {
+        "position": "relative",
+        "z-index": "2",
+        "width": "100%",
+        "padding-top": "0",
+        "padding-right": "44px",
+        "padding-bottom": "44px",
+        "padding-left": "44px",
+        "display": "flex",
+        "flex-direction": "column",
+        "gap": "10px",
+        "will-change": "opacity,transform"
+      },
+      "small": {
+        "padding-top": "0",
+        "padding-right": "24px",
+        "padding-bottom": "32px",
+        "padding-left": "24px",
+        "gap": "12px"
+      },
+      "tiny": {
+        "padding-top": "0",
+        "padding-right": "20px",
+        "padding-bottom": "24px",
+        "padding-left": "20px"
+      }
+    },
+    ".ahl-card__headline": {
+      "main": {
+        "font-family": "var(--font-sans)",
+        "font-size": "clamp(22px,3vw,36px)",
+        "font-weight": "600",
+        "letter-spacing": "-.02em",
+        "line-height": "1.15",
+        "color": "#fff",
+        "margin-top": "0",
+        "margin-right": "0",
+        "margin-bottom": "0",
+        "margin-left": "0",
+        "max-width": "560px"
+      },
+      "small": {
+        "font-size": "clamp(20px,6vw,24px)"
+      }
+    },
+    ".ahl-card__body": {
+      "main": {
+        "font-family": "var(--font-sans)",
+        "font-size": "clamp(14px,1.5vw,17px)",
+        "font-weight": "400",
+        "line-height": "1.55",
+        "color": "rgba(255, 255, 255, 0.82)",
+        "margin-top": "0",
+        "margin-right": "0",
+        "margin-bottom": "0",
+        "margin-left": "0",
+        "max-width": "480px"
+      },
+      "small": {
+        "font-size": "14px",
+        "line-height": "1.45"
+      }
+    },
+    ".ahl-controls": {
+      "main": {
+        "width": "100%",
+        "margin-top": "32px",
+        "margin-right": "0",
+        "margin-bottom": "0",
+        "margin-left": "0",
+        "padding-top": "0",
+        "padding-right": "0",
+        "padding-bottom": "0",
+        "padding-left": "0",
+        "display": "flex",
+        "justify-content": "center",
+        "align-items": "center",
+        "gap": "20px",
+        "will-change": "transform"
+      },
+      "small": {
+        "gap": "12px",
+        "margin-top": "24px"
+      }
+    },
+    ".ahl-dots": {
+      "main": {
+        "display": "flex",
+        "align-items": "center",
+        "gap": "8px"
+      }
+    },
+    ".ahl-dot": {
+      "main": {
+        "position": "relative",
+        "overflow": "hidden",
+        "width": "8px",
+        "height": "8px",
+        "border-top-left-radius": "4px",
+        "border-top-right-radius": "4px",
+        "border-bottom-right-radius": "4px",
+        "border-bottom-left-radius": "4px",
+        "border-top-style": "none",
+        "border-right-style": "none",
+        "border-bottom-style": "none",
+        "border-left-style": "none",
+        "background-color": "rgba(0, 0, 0, 0.122)",
+        "cursor": "pointer",
+        "padding-top": "0",
+        "padding-right": "0",
+        "padding-bottom": "0",
+        "padding-left": "0",
+        "transition": "width .4s cubic-bezier(.25,.46,.45,.94)",
+        "flex-shrink": "0"
+      }
+    },
+    ".ahl-dot--active": {
+      "main": {
+        "width": "48px"
+      },
+      "tiny": {
+        "width": "32px"
+      }
+    },
+    ".ahl-dot-progress": {
+      "main": {
+        "position": "absolute",
+        "top": "0",
+        "left": "0",
+        "height": "100%",
+        "width": "0%",
+        "background-color": "#1d1d1f",
+        "border-top-left-radius": "4px",
+        "border-top-right-radius": "4px",
+        "border-bottom-right-radius": "4px",
+        "border-bottom-left-radius": "4px"
+      }
+    },
+    ".ahl-play-btn": {
+      "main": {
+        "width": "40px",
+        "height": "40px",
+        "border-top-left-radius": "50%",
+        "border-top-right-radius": "50%",
+        "border-bottom-right-radius": "50%",
+        "border-bottom-left-radius": "50%",
+        "border-top-width": "1.5px",
+        "border-right-width": "1.5px",
+        "border-bottom-width": "1.5px",
+        "border-left-width": "1.5px",
+        "border-top-style": "solid",
+        "border-right-style": "solid",
+        "border-bottom-style": "solid",
+        "border-left-style": "solid",
+        "border-top-color": "rgba(0,0,0,.2)",
+        "border-right-color": "rgba(0,0,0,.2)",
+        "border-bottom-color": "rgba(0,0,0,.2)",
+        "border-left-color": "rgba(0,0,0,.2)",
+        "background-color": "transparent",
+        "cursor": "pointer",
+        "display": "flex",
+        "align-items": "center",
+        "justify-content": "center",
+        "transition": "border-color .2s,background .2s",
+        "flex-shrink": "0",
+        "color": "#1d1d1f"
+      }
+    },
+    ".ahl-play-btn:hover": {
+      "main": {
+        "border-top-color": "#1d1d1f",
+        "border-right-color": "#1d1d1f",
+        "border-bottom-color": "#1d1d1f",
+        "border-left-color": "#1d1d1f",
+        "background-color": "rgba(0, 0, 0, 0.051)"
+      }
+    }
+  }
+}

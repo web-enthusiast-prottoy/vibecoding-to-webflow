@@ -1,0 +1,479 @@
+{
+  "_mime": "section",
+  "__meta": {
+    "version": 2,
+    "normalized": true,
+    "complexSelectorsResolved": true
+  },
+  "name": "revenue",
+  "nodes": [
+    {
+      "type": "Block",
+      "tag": "section",
+      "classes": [
+        "revenue"
+      ],
+      "id": "about",
+      "children": [
+        {
+          "type": "Block",
+          "tag": "div",
+          "classes": [
+            "padding-global"
+          ],
+          "children": [
+            {
+              "type": "Block",
+              "tag": "div",
+              "classes": [
+                "container-large"
+              ],
+              "children": [
+                {
+                  "type": "Block",
+                  "tag": "div",
+                  "classes": [
+                    "revenue_component"
+                  ],
+                  "children": [
+                    {
+                      "type": "Block",
+                      "tag": "div",
+                      "classes": [
+                        "revenue_content"
+                      ],
+                      "children": [
+                        {
+                          "type": "Heading",
+                          "tag": "h2",
+                          "classes": [
+                            "revenue_title"
+                          ],
+                          "text": "WE BUILD REVENUE ENGINES, NOT JUST WEBSITES.",
+                          "children": []
+                        },
+                        {
+                          "type": "Paragraph",
+                          "classes": [
+                            "revenue_body"
+                          ],
+                          "text": "Most agencies focus on aesthetics. We focus on structural performance. Every pixel we place and every line of code we write is engineered to convert high-intent traffic into long-term brand equity.",
+                          "children": []
+                        },
+                        {
+                          "type": "List",
+                          "classes": [
+                            "revenue_list"
+                          ],
+                          "children": [
+                            {
+                              "type": "ListItem",
+                              "classes": [
+                                "revenue_item"
+                              ],
+                              "styles": {
+                                "visibility": "hidden"
+                              },
+                              "children": [
+                                {
+                                  "type": "custom",
+                                  "tag": "span",
+                                  "classes": [
+                                    "revenue_list-icon"
+                                  ],
+                                  "children": [
+                                    {
+                                      "type": "custom",
+                                      "tag": "svg",
+                                      "classes": [],
+                                      "attributes": {
+                                        "viewBox": "0 0 24 24",
+                                        "width": "12",
+                                        "height": "12",
+                                        "stroke": "currentColor",
+                                        "stroke-width": "4",
+                                        "fill": "none",
+                                        "aria-hidden": "true"
+                                      },
+                                      "children": [
+                                        {
+                                          "type": "custom",
+                                          "tag": "polyline",
+                                          "classes": [],
+                                          "attributes": {
+                                            "points": "20 6 9 17 4 12"
+                                          },
+                                          "children": []
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "TextBlock",
+                                  "tag": "div",
+                                  "text": "Data-backed UX frameworks",
+                                  "classes": [],
+                                  "children": []
+                                }
+                              ]
+                            },
+                            {
+                              "type": "ListItem",
+                              "classes": [
+                                "revenue_item"
+                              ],
+                              "styles": {
+                                "visibility": "hidden"
+                              },
+                              "children": [
+                                {
+                                  "type": "custom",
+                                  "tag": "span",
+                                  "classes": [
+                                    "revenue_list-icon"
+                                  ],
+                                  "children": [
+                                    {
+                                      "type": "custom",
+                                      "tag": "svg",
+                                      "classes": [],
+                                      "attributes": {
+                                        "viewBox": "0 0 24 24",
+                                        "width": "12",
+                                        "height": "12",
+                                        "stroke": "currentColor",
+                                        "stroke-width": "4",
+                                        "fill": "none",
+                                        "aria-hidden": "true"
+                                      },
+                                      "children": [
+                                        {
+                                          "type": "custom",
+                                          "tag": "polyline",
+                                          "classes": [],
+                                          "attributes": {
+                                            "points": "20 6 9 17 4 12"
+                                          },
+                                          "children": []
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "TextBlock",
+                                  "tag": "div",
+                                  "text": "Enterprise-grade engineering",
+                                  "classes": [],
+                                  "children": []
+                                }
+                              ]
+                            },
+                            {
+                              "type": "ListItem",
+                              "classes": [
+                                "revenue_item"
+                              ],
+                              "styles": {
+                                "visibility": "hidden"
+                              },
+                              "children": [
+                                {
+                                  "type": "custom",
+                                  "tag": "span",
+                                  "classes": [
+                                    "revenue_list-icon"
+                                  ],
+                                  "children": [
+                                    {
+                                      "type": "custom",
+                                      "tag": "svg",
+                                      "classes": [],
+                                      "attributes": {
+                                        "viewBox": "0 0 24 24",
+                                        "width": "12",
+                                        "height": "12",
+                                        "stroke": "currentColor",
+                                        "stroke-width": "4",
+                                        "fill": "none",
+                                        "aria-hidden": "true"
+                                      },
+                                      "children": [
+                                        {
+                                          "type": "custom",
+                                          "tag": "polyline",
+                                          "classes": [],
+                                          "attributes": {
+                                            "points": "20 6 9 17 4 12"
+                                          },
+                                          "children": []
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "TextBlock",
+                                  "tag": "div",
+                                  "text": "Conversion-first architecture",
+                                  "classes": [],
+                                  "children": []
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Block",
+                      "tag": "div",
+                      "classes": [
+                        "revenue_visual"
+                      ],
+                      "children": [
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [
+                            "revenue_image-wrap"
+                          ],
+                          "children": [
+                            {
+                              "type": "Image",
+                              "classes": [
+                                "revenue_portrait"
+                              ],
+                              "attributes": {
+                                "src": "images/moda-about.png",
+                                "alt": "CEO of Nexus Global"
+                              },
+                              "children": []
+                            },
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "revenue_testimonial-box"
+                              ],
+                              "children": [
+                                {
+                                  "type": "Paragraph",
+                                  "classes": [
+                                    "revenue_quote"
+                                  ],
+                                  "text": "'The infrastructure ARCHITECT built transformed our quarterly projections into reality within 6 months.'",
+                                  "children": []
+                                },
+                                {
+                                  "type": "Paragraph",
+                                  "classes": [
+                                    "revenue_author"
+                                  ],
+                                  "text": "— CEO, NEXUS GLOBAL",
+                                  "children": []
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "globalStyles": {
+    ".revenue": {
+      "main": {
+        "padding-top": "var(--padding-section-large)",
+        "padding-right": "0",
+        "padding-bottom": "var(--padding-section-large)",
+        "padding-left": "0",
+        "background-color": "var(--bg-primary)",
+        "border-top": "1px solid var(--color-border)"
+      }
+    },
+    ".revenue_component": {
+      "main": {
+        "display": "grid",
+        "grid-template-columns": "1fr 1fr",
+        "grid-row-gap": "var(--space-20)",
+        "grid-column-gap": "var(--space-20)",
+        "align-items": "center"
+      },
+      "medium": {
+        "grid-template-columns": "1fr",
+        "grid-row-gap": "var(--space-14)",
+        "grid-column-gap": "var(--space-14)"
+      }
+    },
+    ".revenue_content": {
+      "main": {
+        "max-width": "65ch"
+      }
+    },
+    ".revenue_title": {
+      "main": {
+        "font-family": "var(--font-condensed)",
+        "font-weight": "400",
+        "font-size": "clamp(2.5rem, 5vw, 3.5rem)",
+        "text-transform": "uppercase",
+        "line-height": "1.05",
+        "letter-spacing": "-0.01em",
+        "margin-bottom": "var(--space-8)",
+        "color": "var(--color-text-primary)",
+        "max-width": "none"
+      },
+      "medium": {
+        "font-size": "clamp(2rem, 5vw, 3rem)"
+      },
+      "small": {
+        "font-size": "clamp(1.75rem, 5vw, 2.5rem)"
+      }
+    },
+    ".revenue_body": {
+      "main": {
+        "font-size": "var(--text-size-medium)",
+        "color": "var(--color-text-secondary)",
+        "line-height": "1.6",
+        "margin-bottom": "var(--space-10)"
+      }
+    },
+    ".revenue_list": {
+      "main": {
+        "display": "flex",
+        "flex-direction": "column",
+        "grid-row-gap": "var(--space-5)",
+        "grid-column-gap": "var(--space-5)"
+      }
+    },
+    ".revenue_item": {
+      "main": {
+        "display": "flex",
+        "align-items": "center",
+        "grid-row-gap": "var(--space-4)",
+        "grid-column-gap": "var(--space-4)",
+        "font-size": "var(--text-size-regular)",
+        "font-weight": "500",
+        "color": "var(--color-text-secondary)"
+      }
+    },
+    ".revenue_list-icon": {
+      "main": {
+        "width": "24px",
+        "height": "24px",
+        "border-top-left-radius": "50%",
+        "border-top-right-radius": "50%",
+        "border-bottom-right-radius": "50%",
+        "border-bottom-left-radius": "50%",
+        "background-color": "#fff",
+        "color": "#000",
+        "display": "flex",
+        "align-items": "center",
+        "justify-content": "center",
+        "flex-shrink": "0"
+      }
+    },
+    ".revenue_visual": {
+      "main": {
+        "position": "relative",
+        "display": "flex",
+        "justify-content": "flex-end"
+      }
+    },
+    ".revenue_image-wrap": {
+      "main": {
+        "position": "relative",
+        "width": "100%",
+        "max-width": "32rem",
+        "background-image": "radial-gradient(circle at 50% 30%, rgba(233, 224, 211, 0.08) 0%, transparent 70%)",
+        "border-top-left-radius": "var(--radius-small)",
+        "border-top-right-radius": "var(--radius-small)",
+        "border-bottom-right-radius": "var(--radius-small)",
+        "border-bottom-left-radius": "var(--radius-small)"
+      }
+    },
+    ".revenue_portrait": {
+      "main": {
+        "width": "100%",
+        "height": "580px",
+        "border-top-left-radius": "var(--radius-small)",
+        "border-top-right-radius": "var(--radius-small)",
+        "border-bottom-right-radius": "var(--radius-small)",
+        "border-bottom-left-radius": "var(--radius-small)",
+        "aspect-ratio": "1 / 1",
+        "object-fit": "cover",
+        "object-position": "center top",
+        "filter": "brightness(0.6) contrast(1.1) saturate(0.8)",
+        "visibility": "hidden"
+      },
+      "medium": {
+        "height": "420px"
+      },
+      "small": {
+        "height": "360px"
+      }
+    },
+    ".revenue_testimonial-box": {
+      "main": {
+        "position": "absolute",
+        "bottom": "10%",
+        "left": "-15%",
+        "background-color": "#0b0b0b",
+        "border-top-width": "1px",
+        "border-right-width": "1px",
+        "border-bottom-width": "1px",
+        "border-left-width": "1px",
+        "border-top-style": "solid",
+        "border-right-style": "solid",
+        "border-bottom-style": "solid",
+        "border-left-style": "solid",
+        "border-top-color": "var(--color-border-strong)",
+        "border-right-color": "var(--color-border-strong)",
+        "border-bottom-color": "var(--color-border-strong)",
+        "border-left-color": "var(--color-border-strong)",
+        "padding-top": "var(--space-8)",
+        "padding-right": "var(--space-8)",
+        "padding-bottom": "var(--space-8)",
+        "padding-left": "var(--space-8)",
+        "max-width": "18rem",
+        "box-shadow": "20px 20px 40px rgba(0, 0, 0, 0.4)",
+        "z-index": "5",
+        "transition": "transform 0.1s ease-out",
+        "will-change": "transform"
+      },
+      "medium": {
+        "position": "static",
+        "margin-top": "var(--space-8)",
+        "left": "0",
+        "max-width": "none",
+        "transform": "none"
+      }
+    },
+    ".revenue_quote": {
+      "main": {
+        "font-size": "0.8125rem",
+        "line-height": "1.6",
+        "color": "var(--color-text-primary)",
+        "margin-bottom": "var(--space-6)",
+        "font-weight": "500"
+      }
+    },
+    ".revenue_author": {
+      "main": {
+        "font-size": "0.6875rem",
+        "color": "var(--color-text-muted)",
+        "text-transform": "uppercase",
+        "letter-spacing": "0.1em",
+        "font-weight": "600"
+      }
+    }
+  }
+}

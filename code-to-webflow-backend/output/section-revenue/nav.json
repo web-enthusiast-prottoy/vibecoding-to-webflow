@@ -1,0 +1,329 @@
+{
+  "_mime": "section",
+  "__meta": {
+    "version": 2,
+    "normalized": true,
+    "complexSelectorsResolved": true
+  },
+  "name": "nav",
+  "nodes": [
+    {
+      "type": "Block",
+      "tag": "nav",
+      "classes": [
+        "nav"
+      ],
+      "id": "nav",
+      "children": [
+        {
+          "type": "Block",
+          "tag": "div",
+          "classes": [
+            "padding-global"
+          ],
+          "styles": {
+            "height": "100%"
+          },
+          "children": [
+            {
+              "type": "Block",
+              "tag": "div",
+              "classes": [
+                "container-large"
+              ],
+              "styles": {
+                "height": "100%"
+              },
+              "children": [
+                {
+                  "type": "Block",
+                  "tag": "div",
+                  "classes": [
+                    "nav_component"
+                  ],
+                  "children": [
+                    {
+                      "type": "Link",
+                      "classes": [
+                        "nav_logo"
+                      ],
+                      "attributes": {
+                        "href": "#"
+                      },
+                      "children": [
+                        {
+                          "type": "Image",
+                          "classes": [],
+                          "styles": {
+                            "max-height": "40px",
+                            "width": "auto",
+                            "display": "block"
+                          },
+                          "attributes": {
+                            "src": "images/moda-digital-logo.png",
+                            "alt": "Moda Digital Logo",
+                            "width": "120"
+                          },
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "type": "List",
+                      "classes": [
+                        "nav_links"
+                      ],
+                      "id": "navLinks",
+                      "children": [
+                        {
+                          "type": "ListItem",
+                          "classes": [],
+                          "children": [
+                            {
+                              "type": "Link",
+                              "classes": [
+                                "nav_link"
+                              ],
+                              "attributes": {
+                                "href": "#strategy"
+                              },
+                              "text": "Strategy",
+                              "children": []
+                            }
+                          ]
+                        },
+                        {
+                          "type": "ListItem",
+                          "classes": [],
+                          "children": [
+                            {
+                              "type": "Link",
+                              "classes": [
+                                "nav_link"
+                              ],
+                              "attributes": {
+                                "href": "#capabilities"
+                              },
+                              "text": "Capabilities",
+                              "children": []
+                            }
+                          ]
+                        },
+                        {
+                          "type": "ListItem",
+                          "classes": [],
+                          "children": [
+                            {
+                              "type": "Link",
+                              "classes": [
+                                "nav_link"
+                              ],
+                              "attributes": {
+                                "href": "#results"
+                              },
+                              "text": "Results",
+                              "children": []
+                            }
+                          ]
+                        },
+                        {
+                          "type": "ListItem",
+                          "classes": [],
+                          "children": [
+                            {
+                              "type": "Link",
+                              "classes": [
+                                "nav_link"
+                              ],
+                              "attributes": {
+                                "href": "#process"
+                              },
+                              "text": "Process",
+                              "children": []
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Link",
+                      "classes": [
+                        "button",
+                        "nav_cta"
+                      ],
+                      "id": "navCta",
+                      "attributes": {
+                        "href": "#contact"
+                      },
+                      "text": "Book a Call",
+                      "children": []
+                    },
+                    {
+                      "type": "custom",
+                      "tag": "button",
+                      "classes": [
+                        "nav_burger"
+                      ],
+                      "id": "navBurger",
+                      "attributes": {
+                        "aria-label": "Open menu",
+                        "aria-expanded": "false"
+                      },
+                      "children": [
+                        {
+                          "type": "custom",
+                          "tag": "span",
+                          "classes": [],
+                          "styles": {
+                            "display": "block",
+                            "width": "24px",
+                            "height": "1.5px",
+                            "background-color": "var(--color-text-primary)",
+                            "transition": "transform var(--t-base) var(--ease-base), opacity var(--t-base)"
+                          },
+                          "children": []
+                        },
+                        {
+                          "type": "custom",
+                          "tag": "span",
+                          "classes": [],
+                          "styles": {
+                            "display": "block",
+                            "width": "24px",
+                            "height": "1.5px",
+                            "background-color": "var(--color-text-primary)",
+                            "transition": "transform var(--t-base) var(--ease-base), opacity var(--t-base)"
+                          },
+                          "children": []
+                        },
+                        {
+                          "type": "custom",
+                          "tag": "span",
+                          "classes": [],
+                          "styles": {
+                            "display": "block",
+                            "width": "24px",
+                            "height": "1.5px",
+                            "background-color": "var(--color-text-primary)",
+                            "transition": "transform var(--t-base) var(--ease-base), opacity var(--t-base)"
+                          },
+                          "children": []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "globalStyles": {
+    ".nav": {
+      "main": {
+        "position": "fixed",
+        "top": "0",
+        "left": "0",
+        "right": "0",
+        "z-index": "1000",
+        "height": "var(--nav-height)",
+        "background-color": "transparent",
+        "backdrop-filter": "blur(0px)",
+        "border-bottom": "1px solid transparent",
+        "transition": "background var(--t-base) var(--ease-base), backdrop-filter var(--t-base) var(--ease-base), border-color var(--t-base) var(--ease-base)"
+      }
+    },
+    ".nav_component": {
+      "main": {
+        "height": "100%",
+        "display": "grid",
+        "grid-template-columns": "1fr auto 1fr",
+        "align-items": "center"
+      },
+      "medium": {
+        "display": "flex",
+        "justify-content": "space-between"
+      }
+    },
+    ".nav_logo": {
+      "main": {
+        "display": "flex",
+        "flex-direction": "column",
+        "line-height": "1",
+        "flex-shrink": "0",
+        "grid-row-gap": "var(--space-0-5)",
+        "grid-column-gap": "var(--space-0-5)",
+        "justify-self": "start",
+        "align-items": "flex-start"
+      }
+    },
+    ".nav_links": {
+      "main": {
+        "display": "flex",
+        "align-items": "center",
+        "grid-row-gap": "var(--space-9)",
+        "grid-column-gap": "var(--space-9)",
+        "justify-self": "center"
+      },
+      "medium": {
+        "display": "none"
+      }
+    },
+    ".nav_link": {
+      "main": {
+        "font-size": "var(--text-size-regular)",
+        "font-weight": "500",
+        "color": "var(--color-text-secondary)",
+        "letter-spacing": "0.08em",
+        "text-transform": "uppercase",
+        "transition": "color var(--t-base) var(--ease-base)",
+        "position": "relative",
+        "display": "inline-block",
+        "padding-top": "var(--space-1)",
+        "padding-right": "0",
+        "padding-bottom": "var(--space-1)",
+        "padding-left": "0"
+      }
+    },
+    ".nav_link:hover": {
+      "main": {
+        "color": "var(--color-text-primary)"
+      }
+    },
+    ".nav_cta": {
+      "main": {
+        "justify-self": "end",
+        "padding-top": "var(--space-1-5)",
+        "padding-right": "var(--space-4-5)",
+        "padding-bottom": "var(--space-1-5)",
+        "padding-left": "var(--space-4-5)",
+        "font-size": "0.7rem",
+        "border-top-left-radius": "var(--radius-small)",
+        "border-top-right-radius": "var(--radius-small)",
+        "border-bottom-right-radius": "var(--radius-small)",
+        "border-bottom-left-radius": "var(--radius-small)"
+      },
+      "medium": {
+        "display": "none"
+      }
+    },
+    ".nav_burger": {
+      "main": {
+        "display": "none",
+        "flex-direction": "column",
+        "grid-row-gap": "var(--space-1-5)",
+        "grid-column-gap": "var(--space-1-5)",
+        "padding-top": "var(--space-1)",
+        "padding-right": "var(--space-1)",
+        "padding-bottom": "var(--space-1)",
+        "padding-left": "var(--space-1)",
+        "margin-left": "auto"
+      },
+      "medium": {
+        "display": "flex"
+      }
+    }
+  }
+}

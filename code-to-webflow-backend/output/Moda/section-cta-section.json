@@ -1,0 +1,178 @@
+{
+  "_mime": "section",
+  "__meta": {
+    "version": 2,
+    "normalized": true,
+    "complexSelectorsResolved": false
+  },
+  "name": "section_cta-section",
+  "nodes": [
+    {
+      "type": "Block",
+      "tag": "section",
+      "classes": [
+        "section_cta-section"
+      ],
+      "id": "contact",
+      "children": [
+        {
+          "type": "Block",
+          "tag": "div",
+          "classes": [
+            "padding-global"
+          ],
+          "children": [
+            {
+              "type": "Block",
+              "tag": "div",
+              "classes": [
+                "container-large"
+              ],
+              "children": [
+                {
+                  "type": "Block",
+                  "tag": "div",
+                  "classes": [
+                    "cta-section_bg-elements"
+                  ],
+                  "children": []
+                },
+                {
+                  "type": "Block",
+                  "tag": "div",
+                  "classes": [
+                    "cta-section_component"
+                  ],
+                  "children": [
+                    {
+                      "type": "custom",
+                      "tag": "h2",
+                      "classes": [
+                        "cta-section_title"
+                      ],
+                      "text": "Ready to",
+                      "children": [
+                        {
+                          "type": "custom",
+                          "tag": "span",
+                          "classes": [
+                            "cta-section_accent"
+                          ],
+                          "text": "scale?",
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Paragraph",
+                      "classes": [
+                        "cta-section_body"
+                      ],
+                      "text": "We only take on four new partners per quarter to ensure architectural excellence. Book your discovery session to see if we're the right fit.",
+                      "children": []
+                    },
+                    {
+                      "type": "Link",
+                      "classes": [
+                        "button",
+                        "cta-section_btn"
+                      ],
+                      "id": "ctaBtn",
+                      "attributes": {
+                        "href": "mailto:hello@modadigital.com"
+                      },
+                      "text": "Book Your Discovery Call",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "globalStyles": {
+    ".section_cta-section": {
+      "main": {
+        "position": "relative",
+        "padding-top": "calc(var(--padding-section-large) * 1.5)",
+        "padding-right": "0",
+        "padding-bottom": "calc(var(--padding-section-large) * 1.5)",
+        "padding-left": "0",
+        "background-color": "var(--bg-primary)",
+        "border-top-width": "1px",
+        "border-top-style": "solid",
+        "border-top-color": "var(--color-border)",
+        "text-align": "center",
+        "overflow": "hidden",
+        "z-index": "1"
+      },
+      "small": {
+        "padding-top": "var(--padding-section-medium)",
+        "padding-right": "0",
+        "padding-bottom": "0",
+        "padding-left": "0"
+      }
+    },
+    ".cta-section_bg-elements": {
+      "main": {
+        "position": "absolute",
+        "inset": "0",
+        "background-image": "radial-gradient( circle 600px at 50% 50%, rgba(233, 224, 211, 0.05) 0%, transparent 100% ), linear-gradient( to right, rgba(255, 255, 255, 0.015) 1px, transparent 1px ), linear-gradient( to bottom, rgba(255, 255, 255, 0.015) 1px, transparent 1px )",
+        "background-size": "100% 100%, 20px 20px, 20px 20px",
+        "pointer-events": "none",
+        "z-index": "-1"
+      }
+    },
+    ".cta-section_component": {
+      "main": {
+        "position": "relative",
+        "max-width": "80rem",
+        "margin-top": "0",
+        "margin-right": "auto",
+        "margin-bottom": "0",
+        "margin-left": "auto"
+      }
+    },
+    ".cta-section_title": {
+      "main": {
+        "font-family": "var(--font-condensed)",
+        "font-weight": "900",
+        "font-size": "clamp(1.5rem, 5vw + 1rem, 4.5rem)",
+        "text-transform": "uppercase",
+        "line-height": "1.1",
+        "letter-spacing": "-0.02em",
+        "margin-bottom": "var(--space-6)",
+        "color": "var(--color-text-primary)",
+        "text-align": "center",
+        "white-space": "nowrap"
+      },
+      "small": {
+        "font-size": "var(--font-size-h3)",
+        "white-space": "normal"
+      }
+    },
+    ".cta-section_accent": {
+      "main": {
+        "color": "var(--color-accent)"
+      }
+    },
+    ".cta-section_body": {
+      "main": {
+        "font-size": "var(--text-size-medium)",
+        "color": "var(--color-text-secondary)",
+        "line-height": "1.6",
+        "margin-bottom": "var(--space-12)",
+        "max-width": "55ch",
+        "margin-inline": "auto"
+      }
+    },
+    ".cta-section_btn": {
+      "main": {
+        "font-size": "0.8125rem"
+      }
+    }
+  }
+}

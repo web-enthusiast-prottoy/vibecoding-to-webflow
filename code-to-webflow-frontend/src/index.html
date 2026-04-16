@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Code to Webflow Extension</title>
+  <script>
+    // Create a permissive default Trusted Types policy so React's
+    // internal innerHTML assignments are allowed in strict TT environments.
+    if (window.trustedTypes && window.trustedTypes.createPolicy) {
+      try {
+        window.trustedTypes.createPolicy('default', {
+          createHTML: function(s) { return s; },
+          createScriptURL: function(s) { return s; },
+          createScript: function(s) { return s; }
+        });
+      } catch (e) {
+        // Policy already exists (e.g. HMR reload) — safe to ignore
+        console.warn('Trusted Types default policy already defined:', e.message);
+      }
+    }
+  </script>
+</head>
+<body>
+  <div id="root"></div>
+</body>
+</html>

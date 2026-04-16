@@ -1,0 +1,778 @@
+{
+  "_mime": "section",
+  "__meta": {
+    "version": 2,
+    "normalized": true,
+    "complexSelectorsResolved": true
+  },
+  "name": "aether-footer",
+  "nodes": [
+    {
+      "type": "Block",
+      "tag": "footer",
+      "classes": [
+        "aether-footer"
+      ],
+      "children": [
+        {
+          "type": "Block",
+          "tag": "div",
+          "classes": [
+            "padding-global"
+          ],
+          "children": [
+            {
+              "type": "Block",
+              "tag": "div",
+              "classes": [
+                "container-large"
+              ],
+              "children": [
+                {
+                  "type": "Block",
+                  "tag": "div",
+                  "classes": [
+                    "aether-footer-inner"
+                  ],
+                  "children": [
+                    {
+                      "type": "Block",
+                      "tag": "div",
+                      "classes": [
+                        "aether-footer-brand"
+                      ],
+                      "children": [
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [
+                            "aether-logo"
+                          ],
+                          "styles": {
+                            "color": "#fff"
+                          },
+                          "children": [
+                            {
+                              "type": "Block",
+                              "tag": "svg",
+                              "classes": [],
+                              "attributes": {
+                                "width": "16",
+                                "height": "16",
+                                "viewBox": "0 0 814 1000",
+                                "fill": "currentColor"
+                              },
+                              "children": [
+                                {
+                                  "type": "Block",
+                                  "tag": "path",
+                                  "classes": [],
+                                  "attributes": {
+                                    "d": "M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76 0-103.7 40.8-165.9 40.8s-105-57.8-155.5-127.4C46 790.7 0 663 0 541.8c0-207.5 135.4-317.3 268.7-317.3 70.6 0 129.5 45.1 173.3 45.1 41.8 0 112.9-48.3 190.1-48.3 30.5 0 108.2 2.6 168.3 80.2zm-234.3-126.3c27.8-30.5 48.3-69.4 48.3-108.2 0-5.8-.6-11.6-1.3-16.8-47.1 1.9-103 31.8-136.8 63.5-27.8 27.2-51.5 66.1-51.5 105.6 0 6.4.6 12.9 1.3 18 4.5.6 10.3.7 15.3.7 42.8 0 96.9-20.7 124.7-62.8z"
+                                  },
+                                  "children": []
+                                }
+                              ]
+                            },
+                            {
+                              "type": "Block",
+                              "tag": "span",
+                              "classes": [],
+                              "text": "Aether",
+                              "children": []
+                            }
+                          ]
+                        },
+                        {
+                          "type": "Paragraph",
+                          "classes": [
+                            "aether-footer-tagline"
+                          ],
+                          "text": "Pure electric. Pure intelligence.",
+                          "children": []
+                        },
+                        {
+                          "type": "Block",
+                          "tag": "form",
+                          "classes": [
+                            "aether-footer-subscribe"
+                          ],
+                          "attributes": {
+                            "onsubmit": "return false;"
+                          },
+                          "children": [
+                            {
+                              "type": "Block",
+                              "tag": "input",
+                              "classes": [
+                                "aether-footer-input"
+                              ],
+                              "attributes": {
+                                "type": "email",
+                                "placeholder": "your@email.com"
+                              },
+                              "children": []
+                            },
+                            {
+                              "type": "Block",
+                              "tag": "button",
+                              "classes": [
+                                "aether-btn",
+                                "aether-btn--sm"
+                              ],
+                              "attributes": {
+                                "type": "submit"
+                              },
+                              "text": "Notify me",
+                              "children": []
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Block",
+                      "tag": "div",
+                      "classes": [
+                        "aether-footer-links"
+                      ],
+                      "children": [
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [],
+                          "children": [
+                            {
+                              "type": "Heading",
+                              "tag": "h4",
+                              "classes": [],
+                              "styles": {
+                                "color": "#fff",
+                                "letter-spacing": ".02em",
+                                "font-size": "13px",
+                                "font-weight": "500"
+                              },
+                              "text": "Vehicle",
+                              "children": []
+                            },
+                            {
+                              "type": "List",
+                              "classes": [],
+                              "styles": {
+                                "flex-direction": "column",
+                                "gap": "10px",
+                                "list-style": "none",
+                                "display": "flex"
+                              },
+                              "children": [
+                                {
+                                  "type": "ListItem",
+                                  "classes": [],
+                                  "children": [
+                                    {
+                                      "type": "Link",
+                                      "classes": [],
+                                      "styles": {
+                                        "color": "rgba(255, 255, 255, 0.502)",
+                                        "font-size": "13px",
+                                        "text-decoration": "none",
+                                        "transition": "color .2s"
+                                      },
+                                      "attributes": {
+                                        "href": "#"
+                                      },
+                                      "text": "Overview",
+                                      "children": [],
+                                      "inlinePseudoStyles": {
+                                        "hover": {
+                                          "color": "#fff"
+                                        }
+                                      }
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "ListItem",
+                                  "classes": [],
+                                  "children": [
+                                    {
+                                      "type": "Link",
+                                      "classes": [],
+                                      "styles": {
+                                        "color": "rgba(255, 255, 255, 0.502)",
+                                        "font-size": "13px",
+                                        "text-decoration": "none",
+                                        "transition": "color .2s"
+                                      },
+                                      "attributes": {
+                                        "href": "#"
+                                      },
+                                      "text": "Design",
+                                      "children": [],
+                                      "inlinePseudoStyles": {
+                                        "hover": {
+                                          "color": "#fff"
+                                        }
+                                      }
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "ListItem",
+                                  "classes": [],
+                                  "children": [
+                                    {
+                                      "type": "Link",
+                                      "classes": [],
+                                      "styles": {
+                                        "color": "rgba(255, 255, 255, 0.502)",
+                                        "font-size": "13px",
+                                        "text-decoration": "none",
+                                        "transition": "color .2s"
+                                      },
+                                      "attributes": {
+                                        "href": "#"
+                                      },
+                                      "text": "Performance",
+                                      "children": [],
+                                      "inlinePseudoStyles": {
+                                        "hover": {
+                                          "color": "#fff"
+                                        }
+                                      }
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "ListItem",
+                                  "classes": [],
+                                  "children": [
+                                    {
+                                      "type": "Link",
+                                      "classes": [],
+                                      "styles": {
+                                        "color": "rgba(255, 255, 255, 0.502)",
+                                        "font-size": "13px",
+                                        "text-decoration": "none",
+                                        "transition": "color .2s"
+                                      },
+                                      "attributes": {
+                                        "href": "#"
+                                      },
+                                      "text": "Interior",
+                                      "children": [],
+                                      "inlinePseudoStyles": {
+                                        "hover": {
+                                          "color": "#fff"
+                                        }
+                                      }
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [],
+                          "children": [
+                            {
+                              "type": "Heading",
+                              "tag": "h4",
+                              "classes": [],
+                              "styles": {
+                                "color": "#fff",
+                                "letter-spacing": ".02em",
+                                "font-size": "13px",
+                                "font-weight": "500"
+                              },
+                              "text": "Company",
+                              "children": []
+                            },
+                            {
+                              "type": "List",
+                              "classes": [],
+                              "styles": {
+                                "flex-direction": "column",
+                                "gap": "10px",
+                                "list-style": "none",
+                                "display": "flex"
+                              },
+                              "children": [
+                                {
+                                  "type": "ListItem",
+                                  "classes": [],
+                                  "children": [
+                                    {
+                                      "type": "Link",
+                                      "classes": [],
+                                      "styles": {
+                                        "color": "rgba(255, 255, 255, 0.502)",
+                                        "font-size": "13px",
+                                        "text-decoration": "none",
+                                        "transition": "color .2s"
+                                      },
+                                      "attributes": {
+                                        "href": "#"
+                                      },
+                                      "text": "About",
+                                      "children": [],
+                                      "inlinePseudoStyles": {
+                                        "hover": {
+                                          "color": "#fff"
+                                        }
+                                      }
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "ListItem",
+                                  "classes": [],
+                                  "children": [
+                                    {
+                                      "type": "Link",
+                                      "classes": [],
+                                      "styles": {
+                                        "color": "rgba(255, 255, 255, 0.502)",
+                                        "font-size": "13px",
+                                        "text-decoration": "none",
+                                        "transition": "color .2s"
+                                      },
+                                      "attributes": {
+                                        "href": "#"
+                                      },
+                                      "text": "Careers",
+                                      "children": [],
+                                      "inlinePseudoStyles": {
+                                        "hover": {
+                                          "color": "#fff"
+                                        }
+                                      }
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "ListItem",
+                                  "classes": [],
+                                  "children": [
+                                    {
+                                      "type": "Link",
+                                      "classes": [],
+                                      "styles": {
+                                        "color": "rgba(255, 255, 255, 0.502)",
+                                        "font-size": "13px",
+                                        "text-decoration": "none",
+                                        "transition": "color .2s"
+                                      },
+                                      "attributes": {
+                                        "href": "#"
+                                      },
+                                      "text": "Press",
+                                      "children": [],
+                                      "inlinePseudoStyles": {
+                                        "hover": {
+                                          "color": "#fff"
+                                        }
+                                      }
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "ListItem",
+                                  "classes": [],
+                                  "children": [
+                                    {
+                                      "type": "Link",
+                                      "classes": [],
+                                      "styles": {
+                                        "color": "rgba(255, 255, 255, 0.502)",
+                                        "font-size": "13px",
+                                        "text-decoration": "none",
+                                        "transition": "color .2s"
+                                      },
+                                      "attributes": {
+                                        "href": "#"
+                                      },
+                                      "text": "Investors",
+                                      "children": [],
+                                      "inlinePseudoStyles": {
+                                        "hover": {
+                                          "color": "#fff"
+                                        }
+                                      }
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [],
+                          "children": [
+                            {
+                              "type": "Heading",
+                              "tag": "h4",
+                              "classes": [],
+                              "styles": {
+                                "color": "#fff",
+                                "letter-spacing": ".02em",
+                                "font-size": "13px",
+                                "font-weight": "500"
+                              },
+                              "text": "Support",
+                              "children": []
+                            },
+                            {
+                              "type": "List",
+                              "classes": [],
+                              "styles": {
+                                "flex-direction": "column",
+                                "gap": "10px",
+                                "list-style": "none",
+                                "display": "flex"
+                              },
+                              "children": [
+                                {
+                                  "type": "ListItem",
+                                  "classes": [],
+                                  "children": [
+                                    {
+                                      "type": "Link",
+                                      "classes": [],
+                                      "styles": {
+                                        "color": "rgba(255, 255, 255, 0.502)",
+                                        "font-size": "13px",
+                                        "text-decoration": "none",
+                                        "transition": "color .2s"
+                                      },
+                                      "attributes": {
+                                        "href": "#"
+                                      },
+                                      "text": "Order Status",
+                                      "children": [],
+                                      "inlinePseudoStyles": {
+                                        "hover": {
+                                          "color": "#fff"
+                                        }
+                                      }
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "ListItem",
+                                  "classes": [],
+                                  "children": [
+                                    {
+                                      "type": "Link",
+                                      "classes": [],
+                                      "styles": {
+                                        "color": "rgba(255, 255, 255, 0.502)",
+                                        "font-size": "13px",
+                                        "text-decoration": "none",
+                                        "transition": "color .2s"
+                                      },
+                                      "attributes": {
+                                        "href": "#"
+                                      },
+                                      "text": "Delivery",
+                                      "children": [],
+                                      "inlinePseudoStyles": {
+                                        "hover": {
+                                          "color": "#fff"
+                                        }
+                                      }
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "ListItem",
+                                  "classes": [],
+                                  "children": [
+                                    {
+                                      "type": "Link",
+                                      "classes": [],
+                                      "styles": {
+                                        "color": "rgba(255, 255, 255, 0.502)",
+                                        "font-size": "13px",
+                                        "text-decoration": "none",
+                                        "transition": "color .2s"
+                                      },
+                                      "attributes": {
+                                        "href": "#"
+                                      },
+                                      "text": "Service",
+                                      "children": [],
+                                      "inlinePseudoStyles": {
+                                        "hover": {
+                                          "color": "#fff"
+                                        }
+                                      }
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "ListItem",
+                                  "classes": [],
+                                  "children": [
+                                    {
+                                      "type": "Link",
+                                      "classes": [],
+                                      "styles": {
+                                        "color": "rgba(255, 255, 255, 0.502)",
+                                        "font-size": "13px",
+                                        "text-decoration": "none",
+                                        "transition": "color .2s"
+                                      },
+                                      "attributes": {
+                                        "href": "#"
+                                      },
+                                      "text": "Contact",
+                                      "children": [],
+                                      "inlinePseudoStyles": {
+                                        "hover": {
+                                          "color": "#fff"
+                                        }
+                                      }
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "Block",
+                  "tag": "div",
+                  "classes": [
+                    "aether-footer-legal"
+                  ],
+                  "children": [
+                    {
+                      "type": "Paragraph",
+                      "classes": [],
+                      "text": "© 2025 Apple Inc. All rights reserved. Apple Aether\n                            is a concept product. Range estimates based on EPA\n                            testing methodology. Actual range varies.",
+                      "children": []
+                    },
+                    {
+                      "type": "Block",
+                      "tag": "div",
+                      "classes": [
+                        "aether-footer-legal-links"
+                      ],
+                      "children": [
+                        {
+                          "type": "Link",
+                          "classes": [],
+                          "styles": {
+                            "color": "rgba(255, 255, 255, 0.4)",
+                            "font-size": "11px",
+                            "text-decoration": "none",
+                            "transition": "color .2s"
+                          },
+                          "attributes": {
+                            "href": "#"
+                          },
+                          "text": "Privacy",
+                          "children": [],
+                          "inlinePseudoStyles": {
+                            "hover": {
+                              "color": "rgba(255, 255, 255, 0.702)"
+                            }
+                          }
+                        },
+                        {
+                          "type": "Link",
+                          "classes": [],
+                          "styles": {
+                            "color": "rgba(255, 255, 255, 0.4)",
+                            "font-size": "11px",
+                            "text-decoration": "none",
+                            "transition": "color .2s"
+                          },
+                          "attributes": {
+                            "href": "#"
+                          },
+                          "text": "Terms of Use",
+                          "children": [],
+                          "inlinePseudoStyles": {
+                            "hover": {
+                              "color": "rgba(255, 255, 255, 0.702)"
+                            }
+                          }
+                        },
+                        {
+                          "type": "Link",
+                          "classes": [],
+                          "styles": {
+                            "color": "rgba(255, 255, 255, 0.4)",
+                            "font-size": "11px",
+                            "text-decoration": "none",
+                            "transition": "color .2s"
+                          },
+                          "attributes": {
+                            "href": "#"
+                          },
+                          "text": "Cookie Policy",
+                          "children": [],
+                          "inlinePseudoStyles": {
+                            "hover": {
+                              "color": "rgba(255, 255, 255, 0.702)"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "globalStyles": {
+    ".aether-btn--sm": {
+      "main": {
+        "white-space": "nowrap",
+        "border-top-left-radius": "980px",
+        "border-top-right-radius": "980px",
+        "border-bottom-right-radius": "980px",
+        "border-bottom-left-radius": "980px",
+        "padding-top": "6px",
+        "padding-right": "14px",
+        "padding-bottom": "6px",
+        "padding-left": "14px",
+        "font-size": "12px"
+      }
+    },
+    ".aether-footer": {
+      "main": {
+        "background-color": "var(--aether-black)",
+        "color": "rgba(255, 255, 255, 0.6)",
+        "z-index": "50",
+        "position": "relative"
+      }
+    },
+    ".aether-footer-inner": {
+      "main": {
+        "border-bottom": "1px solid rgba(255, 255, 255, 0.078)",
+        "grid-template-columns": "1fr 1fr",
+        "gap": "48px",
+        "padding-top": "80px",
+        "padding-bottom": "64px",
+        "display": "grid"
+      },
+      "small": {
+        "grid-template-columns": "1fr",
+        "gap": "32px"
+      }
+    },
+    ".aether-footer-brand": {
+      "main": {
+        "flex-direction": "column",
+        "gap": "16px",
+        "display": "flex"
+      }
+    },
+    ".aether-footer-tagline": {
+      "main": {
+        "color": "rgba(255, 255, 255, 0.4)",
+        "font-size": "13px"
+      }
+    },
+    ".aether-footer-subscribe": {
+      "main": {
+        "gap": "8px",
+        "margin-top": "8px",
+        "display": "flex"
+      }
+    },
+    ".aether-footer-input": {
+      "main": {
+        "color": "#fff",
+        "background-color": "rgba(255, 255, 255, 0.078)",
+        "border-top-width": "1px",
+        "border-right-width": "1px",
+        "border-bottom-width": "1px",
+        "border-left-width": "1px",
+        "border-top-style": "solid",
+        "border-right-style": "solid",
+        "border-bottom-style": "solid",
+        "border-left-style": "solid",
+        "border-top-color": "rgba(255, 255, 255, 0.122)",
+        "border-right-color": "rgba(255, 255, 255, 0.122)",
+        "border-bottom-color": "rgba(255, 255, 255, 0.122)",
+        "border-left-color": "rgba(255, 255, 255, 0.122)",
+        "outline": "none",
+        "flex": "1",
+        "padding-top": "8px",
+        "padding-right": "12px",
+        "padding-bottom": "8px",
+        "padding-left": "12px",
+        "font-size": "13px",
+        "transition": "border-color .2s"
+      }
+    },
+    ".aether-footer-input::placeholder": {
+      "main": {
+        "color": "rgba(255, 255, 255, 0.302)"
+      }
+    },
+    ".aether-footer-input:focus": {
+      "main": {
+        "border-top-color": "var(--aether-accent)",
+        "border-right-color": "var(--aether-accent)",
+        "border-bottom-color": "var(--aether-accent)",
+        "border-left-color": "var(--aether-accent)",
+        "box-shadow": "0 0 0 3px rgba(0, 113, 227, 0.2)"
+      }
+    },
+    ".aether-footer-links": {
+      "main": {
+        "display": "contents"
+      },
+      "small": {
+        "grid-template-columns": "repeat(3,1fr)",
+        "gap": "32px",
+        "display": "grid"
+      },
+      "tiny": {
+        "grid-template-columns": "1fr",
+        "gap": "24px"
+      }
+    },
+    ".aether-footer-legal": {
+      "main": {
+        "flex-wrap": "wrap",
+        "justify-content": "space-between",
+        "align-items": "center",
+        "gap": "12px",
+        "padding-top": "24px",
+        "padding-right": "0",
+        "padding-bottom": "24px",
+        "padding-left": "0",
+        "display": "flex"
+      },
+      "small": {
+        "flex-direction": "column",
+        "align-items": "flex-start"
+      }
+    },
+    ".aether-footer-legal-links": {
+      "main": {
+        "gap": "16px",
+        "display": "flex"
+      }
+    }
+  }
+}

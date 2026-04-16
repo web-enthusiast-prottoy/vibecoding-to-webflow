@@ -1,0 +1,83 @@
+{
+	"_mime": "section",
+	"__meta": {
+		"version": 2,
+		"normalized": true,
+		"complexSelectorsResolved": true
+	},
+	"name": "aether-performance",
+	"nodes": [
+		{
+			"type": "Block",
+			"tag": "div",
+			"classes": ["aether-stat"],
+			"children": [
+				{
+					"type": "Block",
+					"tag": "span",
+					"classes": ["aether-stat-number"],
+					"text": "min",
+					"children": [
+						{
+							"type": "Block",
+							"tag": "span",
+							"classes": ["aether-stat-value"],
+							"text": "15",
+							"children": []
+						}
+					]
+				},
+				{
+					"type": "Block",
+					"tag": "span",
+					"classes": ["aether-stat-label"],
+					"text": "0–80% Charge",
+					"children": []
+				}
+			]
+		}
+	],
+	"globalStyles": {
+		".aether-stat": {
+			"main": {
+				"will-change": "transform,opacity",
+				"border-top": "1px solid rgba(255, 255, 255, 0.102)",
+				"flex-direction": "column",
+				"gap": "8px",
+				"padding-top": "40px",
+				"padding-right": "0",
+				"padding-bottom": "40px",
+				"padding-left": "0",
+				"display": "flex"
+			},
+			"medium": {
+				"padding-top": "24px",
+				"padding-right": "0",
+				"padding-bottom": "24px",
+				"padding-left": "0"
+			}
+		},
+		".aether-stat-number": {
+			"main": {
+				"color": "#fff",
+				"letter-spacing": "-.02em",
+				"font-variant-numeric": "tabular-nums",
+				"min-width": "4ch",
+				"font-size": "clamp(40px,5vw,72px)",
+				"font-weight": "300",
+				"line-height": "1"
+			},
+			"tiny": {
+				"font-size": "40px"
+			}
+		},
+		".aether-stat-label": {
+			"main": {
+				"color": "rgba(255, 255, 255, 0.749)",
+				"letter-spacing": ".04em",
+				"text-transform": "uppercase",
+				"font-size": "13px"
+			}
+		}
+	}
+}

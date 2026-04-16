@@ -1,0 +1,424 @@
+{
+  "_mime": "section",
+  "__meta": {
+    "version": 2,
+    "normalized": true,
+    "complexSelectorsResolved": true
+  },
+  "name": "config-section",
+  "nodes": [
+    {
+      "type": "Block",
+      "tag": "section",
+      "classes": [
+        "config-section"
+      ],
+      "id": "design",
+      "children": [
+        {
+          "type": "Block",
+          "tag": "div",
+          "classes": [
+            "config-bg-glow"
+          ],
+          "styles": {
+            "background-color": "#cccccc",
+            "opacity": "0.08"
+          },
+          "children": []
+        },
+        {
+          "type": "Block",
+          "tag": "div",
+          "classes": [
+            "config-ui-overlay"
+          ],
+          "children": [
+            {
+              "type": "Block",
+              "tag": "div",
+              "classes": [
+                "config-header"
+              ],
+              "children": [
+                {
+                  "type": "Heading",
+                  "tag": "h2",
+                  "classes": [
+                    "config-title"
+                  ],
+                  "text": "Design your Aether.",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "type": "Block",
+              "tag": "div",
+              "classes": [
+                "config-bottom-controls"
+              ],
+              "children": [
+                {
+                  "type": "Block",
+                  "tag": "div",
+                  "classes": [
+                    "config-label-group"
+                  ],
+                  "children": [
+                    {
+                      "type": "Block",
+                      "tag": "span",
+                      "classes": [
+                        "config-color-name"
+                      ],
+                      "text": "Titanium Silver",
+                      "children": []
+                    },
+                    {
+                      "type": "Block",
+                      "tag": "span",
+                      "classes": [
+                        "sr-only"
+                      ],
+                      "text": "—",
+                      "children": []
+                    },
+                    {
+                      "type": "Block",
+                      "tag": "span",
+                      "classes": [
+                        "config-drag-hint"
+                      ],
+                      "text": "Drag to rotate in 360°",
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "type": "Block",
+                  "tag": "div",
+                  "classes": [
+                    "config-swatches-wrap"
+                  ],
+                  "children": [
+                    {
+                      "type": "Block",
+                      "tag": "button",
+                      "classes": [
+                        "config-swatch"
+                      ],
+                      "styles": {
+                        "background-color": "#0a0a0a"
+                      },
+                      "attributes": {
+                        "title": "Obsidian Black",
+                        "aria-label": "Obsidian Black"
+                      },
+                      "children": []
+                    },
+                    {
+                      "type": "Block",
+                      "tag": "button",
+                      "classes": [
+                        "config-swatch",
+                        "config-swatch--active"
+                      ],
+                      "styles": {
+                        "background-color": "#a9acb1"
+                      },
+                      "attributes": {
+                        "title": "Titanium Silver",
+                        "aria-label": "Titanium Silver"
+                      },
+                      "children": []
+                    },
+                    {
+                      "type": "Block",
+                      "tag": "button",
+                      "classes": [
+                        "config-swatch"
+                      ],
+                      "styles": {
+                        "background-color": "#f5f5f7"
+                      },
+                      "attributes": {
+                        "title": "Ceramic White",
+                        "aria-label": "Ceramic White"
+                      },
+                      "children": []
+                    },
+                    {
+                      "type": "Block",
+                      "tag": "button",
+                      "classes": [
+                        "config-swatch"
+                      ],
+                      "styles": {
+                        "background-color": "#8a0303"
+                      },
+                      "attributes": {
+                        "title": "Crimson Red",
+                        "aria-label": "Crimson Red"
+                      },
+                      "children": []
+                    },
+                    {
+                      "type": "Block",
+                      "tag": "button",
+                      "classes": [
+                        "config-swatch"
+                      ],
+                      "styles": {
+                        "background-color": "#041c33"
+                      },
+                      "attributes": {
+                        "title": "Product Blue",
+                        "aria-label": "Product Blue"
+                      },
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "Block",
+          "tag": "div",
+          "classes": [
+            "config-canvas-container"
+          ],
+          "styles": {
+            "transform": "scale(0.99) translateY(-5%)"
+          },
+          "children": []
+        }
+      ]
+    }
+  ],
+  "globalStyles": {
+    ".config-section": {
+      "main": {
+        "position": "relative",
+        "width": "100%",
+        "aspect-ratio": "16 / 9",
+        "min-height": "550px",
+        "background-color": "#000",
+        "overflow": "hidden"
+      },
+      "small": {
+        "aspect-ratio": "1 / 1",
+        "min-height": "450px"
+      }
+    },
+    ".config-bg-glow": {
+      "main": {
+        "position": "absolute",
+        "top": "0",
+        "right": "0",
+        "bottom": "0",
+        "left": "0",
+        "z-index": "0",
+        "pointer-events": "none",
+        "transition": "background-color 1s ease,opacity 1s ease"
+      }
+    },
+    ".config-ui-overlay": {
+      "main": {
+        "position": "absolute",
+        "top": "0",
+        "left": "0",
+        "width": "100%",
+        "height": "100%",
+        "z-index": "10",
+        "pointer-events": "none",
+        "display": "flex",
+        "flex-direction": "column",
+        "justify-content": "space-between",
+        "padding-top": "48px",
+        "padding-right": "4vw",
+        "padding-bottom": "48px",
+        "padding-left": "4vw"
+      },
+      "small": {
+        "padding-top": "24px",
+        "padding-right": "6vw",
+        "padding-bottom": "24px",
+        "padding-left": "6vw"
+      }
+    },
+    ".config-header": {
+      "main": {
+        "display": "flex",
+        "flex-direction": "column",
+        "align-items": "center",
+        "text-align": "center"
+      }
+    },
+    ".config-title": {
+      "main": {
+        "font-size": "clamp(32px,5vw,52px)",
+        "font-weight": "500",
+        "letter-spacing": "-.02em",
+        "color": "#fff",
+        "margin-top": "0",
+        "margin-right": "0",
+        "margin-bottom": "0",
+        "margin-left": "0"
+      },
+      "small": {
+        "font-size": "clamp(28px,8vw,36px)"
+      }
+    },
+    ".config-bottom-controls": {
+      "main": {
+        "display": "flex",
+        "flex-direction": "column",
+        "align-items": "center",
+        "gap": "32px",
+        "pointer-events": "auto"
+      },
+      "small": {
+        "gap": "20px"
+      }
+    },
+    ".config-label-group": {
+      "main": {
+        "display": "flex",
+        "flex-direction": "column",
+        "align-items": "center",
+        "gap": "4px"
+      }
+    },
+    ".config-color-name": {
+      "main": {
+        "color": "#fff",
+        "font-size": "18px",
+        "font-weight": "500"
+      },
+      "tiny": {
+        "font-size": "16px"
+      }
+    },
+    ".config-drag-hint": {
+      "main": {
+        "color": "rgba(255, 255, 255, 0.4)",
+        "font-size": "14px"
+      },
+      "tiny": {
+        "font-size": "12px"
+      }
+    },
+    ".config-swatches-wrap": {
+      "main": {
+        "display": "flex",
+        "gap": "16px",
+        "padding-top": "12px",
+        "padding-right": "20px",
+        "padding-bottom": "12px",
+        "padding-left": "20px",
+        "background-color": "rgba(255, 255, 255, 0.051)",
+        "backdrop-filter": "blur(20px)",
+        "border-top-left-radius": "100px",
+        "border-top-right-radius": "100px",
+        "border-bottom-right-radius": "100px",
+        "border-bottom-left-radius": "100px",
+        "border-top-width": "1px",
+        "border-right-width": "1px",
+        "border-bottom-width": "1px",
+        "border-left-width": "1px",
+        "border-top-style": "solid",
+        "border-right-style": "solid",
+        "border-bottom-style": "solid",
+        "border-left-style": "solid",
+        "border-top-color": "rgba(255,255,255,.1)",
+        "border-right-color": "rgba(255,255,255,.1)",
+        "border-bottom-color": "rgba(255,255,255,.1)",
+        "border-left-color": "rgba(255,255,255,.1)"
+      },
+      "small": {
+        "gap": "12px",
+        "padding-top": "8px",
+        "padding-right": "16px",
+        "padding-bottom": "8px",
+        "padding-left": "16px"
+      },
+      "tiny": {
+        "gap": "10px",
+        "padding-top": "8px",
+        "padding-right": "12px",
+        "padding-bottom": "8px",
+        "padding-left": "12px"
+      }
+    },
+    ".config-swatch": {
+      "main": {
+        "width": "32px",
+        "height": "32px",
+        "border-top-left-radius": "50%",
+        "border-top-right-radius": "50%",
+        "border-bottom-right-radius": "50%",
+        "border-bottom-left-radius": "50%",
+        "border-top-style": "none",
+        "border-right-style": "none",
+        "border-bottom-style": "none",
+        "border-left-style": "none",
+        "cursor": "pointer",
+        "position": "relative",
+        "transition": "transform .3s cubic-bezier(.25,.46,.45,.94)",
+        "padding-top": "0",
+        "padding-right": "0",
+        "padding-bottom": "0",
+        "padding-left": "0"
+      },
+      "small": {
+        "width": "26px",
+        "height": "26px"
+      }
+    },
+    ".config-swatch:hover": {
+      "main": {
+        "transform": "scale(1.1)"
+      }
+    },
+    ".config-swatch--active:after": {
+      "main": {
+        "content": "\"\"",
+        "position": "absolute",
+        "top": "-5px",
+        "right": "-5px",
+        "bottom": "-5px",
+        "left": "-5px",
+        "border-top-width": "1.5px",
+        "border-right-width": "1.5px",
+        "border-bottom-width": "1.5px",
+        "border-left-width": "1.5px",
+        "border-top-style": "solid",
+        "border-right-style": "solid",
+        "border-bottom-style": "solid",
+        "border-left-style": "solid",
+        "border-top-color": "rgba(255,255,255,.4)",
+        "border-right-color": "rgba(255,255,255,.4)",
+        "border-bottom-color": "rgba(255,255,255,.4)",
+        "border-left-color": "rgba(255,255,255,.4)",
+        "border-top-left-radius": "50%",
+        "border-top-right-radius": "50%",
+        "border-bottom-right-radius": "50%",
+        "border-bottom-left-radius": "50%"
+      }
+    },
+    ".config-canvas-container": {
+      "main": {
+        "position": "absolute",
+        "top": "0",
+        "right": "0",
+        "bottom": "0",
+        "left": "0",
+        "z-index": "5",
+        "transition": "transform .3s ease"
+      }
+    }
+  }
+}

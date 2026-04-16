@@ -1,0 +1,188 @@
+{
+  "name": "sample-vibecoded-site",
+  "pages": [
+    {
+      "name": "HeroSection",
+      "slug": "herosection",
+      "nodes": [
+        {
+          "type": "Block",
+          "tag": "section",
+          "classes": [
+            "section_herosection0"
+          ],
+          "children": [
+            {
+              "type": "Block",
+              "tag": "div",
+              "classes": [
+                "padding-global"
+              ],
+              "children": [
+                {
+                  "type": "Block",
+                  "tag": "div",
+                  "classes": [
+                    "container-large"
+                  ],
+                  "children": [
+                    {
+                      "type": "Block",
+                      "tag": "div",
+                      "classes": [
+                        "padding-section-large"
+                      ],
+                      "children": [
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [
+                            "herosection0_component",
+                            "w-full",
+                            "bg-white",
+                            "px-4",
+                            "py-16",
+                            "md:py-24"
+                          ],
+                          "children": [
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "mx-auto",
+                                "max-w-7xl",
+                                "flex",
+                                "flex-col",
+                                "items-center",
+                                "justify-center",
+                                "text-center"
+                              ],
+                              "children": [
+                                {
+                                  "type": "Heading",
+                                  "classes": [
+                                    "text-4xl",
+                                    "font-bold",
+                                    "tracking-tight",
+                                    "text-gray-900",
+                                    "sm:text-6xl",
+                                    "mb-6",
+                                    "heading-style-h2"
+                                  ],
+                                  "text": "Convert Code to Webflow",
+                                  "children": [],
+                                  "styles": {
+                                    "color": "gray-900",
+                                    "font-weight": "bold"
+                                  }
+                                },
+                                {
+                                  "type": "Paragraph",
+                                  "classes": [
+                                    "max-w-2xl",
+                                    "text-lg",
+                                    "text-gray-600",
+                                    "mb-8"
+                                  ],
+                                  "text": "The fastest way to take your generated React designs and turn them into \n          native Webflow projects using Client-First principles.",
+                                  "children": [],
+                                  "styles": {
+                                    "font-size": "1.125rem",
+                                    "color": "gray-600"
+                                  }
+                                },
+                                {
+                                  "type": "Block",
+                                  "tag": "div",
+                                  "classes": [
+                                    "flex",
+                                    "gap-4"
+                                  ],
+                                  "children": [
+                                    {
+                                      "type": "Link",
+                                      "classes": [
+                                        "rounded-md",
+                                        "bg-blue-600",
+                                        "px-6",
+                                        "py-3",
+                                        "text-sm",
+                                        "font-semibold",
+                                        "text-white",
+                                        "shadow-sm",
+                                        "hover:bg-blue-500"
+                                      ],
+                                      "text": "Get Started",
+                                      "href": "#",
+                                      "children": [],
+                                      "styles": {
+                                        "background-color": "blue-600",
+                                        "padding-left": "1.5rem",
+                                        "padding-right": "1.5rem",
+                                        "padding-top": "0.75rem",
+                                        "padding-bottom": "0.75rem",
+                                        "font-size": "0.875rem",
+                                        "color": "#ffffff"
+                                      }
+                                    },
+                                    {
+                                      "type": "Link",
+                                      "classes": [
+                                        "rounded-md",
+                                        "bg-gray-100",
+                                        "px-6",
+                                        "py-3",
+                                        "text-sm",
+                                        "font-semibold",
+                                        "text-gray-900",
+                                        "hover:bg-gray-200"
+                                      ],
+                                      "text": "Learn More",
+                                      "href": "#",
+                                      "children": [],
+                                      "styles": {
+                                        "background-color": "gray-100",
+                                        "padding-left": "1.5rem",
+                                        "padding-right": "1.5rem",
+                                        "padding-top": "0.75rem",
+                                        "padding-bottom": "0.75rem",
+                                        "font-size": "0.875rem",
+                                        "color": "gray-900"
+                                      }
+                                    }
+                                  ],
+                                  "styles": {
+                                    "display": "flex",
+                                    "gap": "1rem"
+                                  }
+                                }
+                              ],
+                              "styles": {
+                                "display": "flex",
+                                "flex-direction": "column",
+                                "align-items": "center",
+                                "justify-content": "center",
+                                "color": "center"
+                              }
+                            }
+                          ],
+                          "styles": {
+                            "background-color": "#ffffff",
+                            "padding-left": "1rem",
+                            "padding-right": "1rem",
+                            "padding-top": "4rem",
+                            "padding-bottom": "4rem"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

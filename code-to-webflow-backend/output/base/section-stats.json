@@ -1,0 +1,296 @@
+{
+  "_mime": "section",
+  "__meta": {
+    "version": 2,
+    "normalized": true,
+    "complexSelectorsResolved": false
+  },
+  "name": "section_stats",
+  "nodes": [
+    {
+      "type": "Block",
+      "tag": "section",
+      "classes": [
+        "section_stats"
+      ],
+      "id": "results",
+      "children": [
+        {
+          "type": "Block",
+          "tag": "div",
+          "classes": [
+            "padding-global"
+          ],
+          "children": [
+            {
+              "type": "Block",
+              "tag": "div",
+              "classes": [
+                "container-large"
+              ],
+              "children": [
+                {
+                  "type": "Block",
+                  "tag": "div",
+                  "classes": [
+                    "stats_component"
+                  ],
+                  "children": [
+                    {
+                      "type": "Block",
+                      "tag": "div",
+                      "classes": [
+                        "stats_left"
+                      ],
+                      "children": [
+                        {
+                          "type": "Block",
+                          "tag": "span",
+                          "classes": [
+                            "stats_label"
+                          ],
+                          "text": "THE PROOF",
+                          "children": []
+                        },
+                        {
+                          "type": "Heading",
+                          "tag": "h2",
+                          "classes": [
+                            "stats_title"
+                          ],
+                          "text": "Numbers, not noise.",
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Block",
+                      "tag": "div",
+                      "classes": [
+                        "stats_metrics"
+                      ],
+                      "children": [
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [
+                            "stats_metric"
+                          ],
+                          "attributes": {
+                            "data-animate": "",
+                            "gsap-reveal": ""
+                          },
+                          "children": [
+                            {
+                              "type": "Block",
+                              "tag": "span",
+                              "classes": [
+                                "stats_metric-value"
+                              ],
+                              "text": "+340%",
+                              "children": []
+                            },
+                            {
+                              "type": "Block",
+                              "tag": "span",
+                              "classes": [
+                                "stats_metric-desc"
+                              ],
+                              "text": "Average LTV Increase",
+                              "children": []
+                            }
+                          ]
+                        },
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [
+                            "stats_metric"
+                          ],
+                          "attributes": {
+                            "data-animate": "",
+                            "gsap-reveal": ""
+                          },
+                          "children": [
+                            {
+                              "type": "Block",
+                              "tag": "span",
+                              "classes": [
+                                "stats_metric-value"
+                              ],
+                              "text": "$12M+",
+                              "children": []
+                            },
+                            {
+                              "type": "Block",
+                              "tag": "span",
+                              "classes": [
+                                "stats_metric-desc"
+                              ],
+                              "text": "Revenue Generated",
+                              "children": []
+                            }
+                          ]
+                        },
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [
+                            "stats_metric"
+                          ],
+                          "attributes": {
+                            "data-animate": ""
+                          },
+                          "children": [
+                            {
+                              "type": "Block",
+                              "tag": "span",
+                              "classes": [
+                                "stats_metric-value"
+                              ],
+                              "text": "8.4x",
+                              "children": []
+                            },
+                            {
+                              "type": "Block",
+                              "tag": "span",
+                              "classes": [
+                                "stats_metric-desc"
+                              ],
+                              "text": "Average ROAS",
+                              "children": []
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "globalStyles": {
+    ".section_stats": {
+      "main": {
+        "padding-top": "var(--padding-section-small)",
+        "padding-right": "0",
+        "padding-bottom": "var(--padding-section-small)",
+        "padding-left": "0",
+        "border-top": "1px solid var(--color-border)",
+        "border-bottom": "1px solid var(--color-border)",
+        "background-color": "var(--bg-primary)"
+      }
+    },
+    ".stats_component": {
+      "main": {
+        "display": "flex",
+        "align-items": "center",
+        "justify-content": "space-between",
+        "row-gap": "var(--space-12)",
+        "column-gap": "var(--space-12)"
+      },
+      "medium": {
+        "flex-direction": "column",
+        "align-items": "flex-start",
+        "row-gap": "var(--space-7)",
+        "column-gap": "var(--space-7)"
+      }
+    },
+    ".stats_left": {
+      "main": {
+        "display": "flex",
+        "flex-direction": "column",
+        "row-gap": "var(--space-2)",
+        "column-gap": "var(--space-2)",
+        "flex-shrink": "0"
+      },
+      "medium": {
+        "flex-direction": "column"
+      }
+    },
+    ".stats_label": {
+      "main": {
+        "font-family": "var(--font-body)",
+        "font-size": "0.6875rem",
+        "font-weight": "600",
+        "letter-spacing": "0.15em",
+        "text-transform": "uppercase",
+        "color": "var(--color-accent)"
+      }
+    },
+    ".stats_title": {
+      "main": {
+        "font-family": "var(--font-body)",
+        "font-weight": "400",
+        "font-size": "var(--font-size-h2)",
+        "line-height": "1.1",
+        "max-width": "10ch",
+        "color": "var(--color-text-primary)"
+      }
+    },
+    ".stats_metrics": {
+      "main": {
+        "display": "flex",
+        "align-items": "flex-start",
+        "justify-content": "flex-end",
+        "row-gap": "var(--space-12)",
+        "column-gap": "var(--space-12)"
+      },
+      "medium": {
+        "justify-content": "flex-start",
+        "row-gap": "var(--space-10)",
+        "column-gap": "var(--space-10)",
+        "flex-wrap": "wrap"
+      },
+      "small": {
+        "flex-direction": "column",
+        "align-items": "flex-start",
+        "row-gap": "var(--space-7)",
+        "column-gap": "var(--space-7)"
+      },
+      "tiny": {
+        "row-gap": "var(--space-5)",
+        "column-gap": "var(--space-5)"
+      }
+    },
+    ".stats_metric": {
+      "main": {
+        "display": "flex",
+        "flex-direction": "column",
+        "align-items": "flex-start",
+        "row-gap": "var(--space-1-5)",
+        "column-gap": "var(--space-1-5)",
+        "opacity": "0",
+        "transform": "translateY(24px)",
+        "transition": "opacity 0.65s cubic-bezier(0.4, 0, 0.2, 1), transform 0.65s cubic-bezier(0.4, 0, 0.2, 1)"
+      }
+    },
+    ".stats_metric-value": {
+      "main": {
+        "font-family": "var(--font-condensed)",
+        "font-weight": "900",
+        "font-size": "clamp(2.25rem, 4vw + 1rem, 3.25rem)",
+        "letter-spacing": "-0.01em",
+        "line-height": "1",
+        "color": "var(--color-text-primary)"
+      },
+      "tiny": {
+        "font-size": "var(--font-size-h3)"
+      }
+    },
+    ".stats_metric-desc": {
+      "main": {
+        "font-family": "var(--font-body)",
+        "font-size": "0.6875rem",
+        "font-weight": "500",
+        "color": "var(--color-text-muted)",
+        "text-transform": "uppercase",
+        "letter-spacing": "0.12em"
+      }
+    }
+  }
+}

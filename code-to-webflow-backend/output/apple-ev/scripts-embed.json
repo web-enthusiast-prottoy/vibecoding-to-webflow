@@ -1,0 +1,20 @@
+{
+  "_mime": "section",
+  "__meta": {
+    "version": 2,
+    "normalized": true,
+    "complexSelectorsResolved": true
+  },
+  "name": "Global Scripts Embed",
+  "nodes": [
+    {
+      "type": "HtmlEmbed",
+      "tag": "div",
+      "text": [
+        "<script>,,            // Scroll behavior,            window.addEventListener(,                \"scroll\",,                () => {,                    const nav = document.querySelector(\".aether-nav\");,                    if (window.scrollY > 50) {,                        nav.classList.add(\"aether-nav--scrolled\");,                    } else {,                        nav.classList.remove(\"aether-nav--scrolled\");,                    },                },,                { passive: true },,            );,,            // Menu Toggle behavior,            const menuToggle = document.getElementById(\"aether-menu-toggle\");,            const navLinks = document.querySelector(\".aether-nav-links\");,,            if (menuToggle && navLinks) {,                menuToggle.addEventListener(\"click\", () => {,                    navLinks.classList.toggle(\"aether-nav-links--open\");,                    menuToggle.classList.toggle(\"aether-hamburger--active\");,,                    // Prevent body scroll when menu is open,                    if (navLinks.classList.contains(\"aether-nav-links--open\")) {,                        document.body.style.overflow = \"hidden\";,                    } else {,                        document.body.style.overflow = \"\";,                    },                });,,                // Close menu when a link is clicked,                navLinks.querySelectorAll(\"a\").forEach((link) => {,                    link.addEventListener(\"click\", () => {,                        navLinks.classList.remove(\"aether-nav-links--open\");,                        menuToggle.classList.remove(\"aether-hamburger--active\");,                        document.body.style.overflow = \"\";,                    });,                });,            },        ,</script>"
+      ],
+      "classes": [],
+      "children": []
+    }
+  ]
+}

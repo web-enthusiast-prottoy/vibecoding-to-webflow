@@ -1,0 +1,13 @@
+{
+  "name": "code-to-webflow-frontend",
+  "publicDir": "public",
+  "size": "default",
+  "apiVersion": "2",
+  "telemetry": {
+    "global": {
+      "allowTelemetry": true,
+      "lastPrompted": 1776157205471,
+      "version": "1.13.1"
+    }
+  }
+}
