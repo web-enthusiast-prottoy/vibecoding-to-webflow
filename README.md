@@ -26,72 +26,53 @@ graph LR
 
 ## ✨ Key Features
 
-### 🛠️ Advanced Parsing & Extraction
-- **Multi-Format Support**: Directly parses `.html`, `.tsx` (React), and standalone `.css` files.
-- **Smart Section Splitting**: Automatically detects and separates Navbars, Heroes, Sections, and Footers into modular components.
-- **Component Detection**: Identifies repeatable structural patterns and marks them as components/variants for Webflow.
+![Core Components](.agent/assets/code_to_webflow_features.png)
 
-### 🎨 Design System Synchronization
-- **Tailwind Variable Support**: Full resolution of Tailwind CSS variable chains (`--tw-*`) into static properties.
-- **Variable Collections**: Automatically maps CSS variables to Webflow Variable Collections, preserving modes (Light/Dark).
-- **Style Normalization**: Clean, Webflow-compatible property mapping that handles complex CSS shorthands and offsets.
+### 🛠️ Smart Backend CLI
+- **Advanced AST Parsing**: Directly parses `.html`, `.tsx` (React), and standalone `.css` files into structured element trees.
+- **Structural Fingerprinting**: Automatically detects repeatable patterns to generate modular sections (Navbar, Hero, Footer, etc.).
+- **CSS Normalization**: Resolves Tailwind CSS variable chains (`--tw-*`), expands CSS shorthands (padding, border, etc.), and handles complex media queries.
+- **Client-First Optimized**: Structures all output following Finsweet’s Client-First methodology by default.
 
-### 🧩 Seamless Integration
-- **Complex Selector Handling**: Automatically inlines descendant and parent-child selectors that Webflow doesn't natively support in the Style Panel.
-- **Custom Code Embeds**: Extracts keyframes, unsupported media queries, and scripts into clean HTML Embeds.
-- **Client-First Compatible**: Optimized for use with Finsweet’s Client-First methodology.
+### 🎨 Intelligent Designer Extension
+- **Webflow API Sync**: Real-time communication with the Webflow Designer API to build complex DOM trees instantly.
+- **Native Variable Mapping**: Matches CSS variables to Webflow Variable Collections with folder-prefix support and fuzzy matching.
+- **IPC Safety & Performance**: Built-in retry logic, chunked style application, and timeouts to prevent Designer API bridge hangs.
+- **Complex Selector Inlining**: Handles descendant and parent-child selectors by automatically inlining them into matching Webflow elements.
 
 ---
 
-## 📦 Installation
+## 📦 Tech Stack
 
-### 1. Backend CLI
-The CLI processes your local files into Webflow-readable data.
-
-```bash
-cd code-to-webflow-backend
-npm install
-npm run build
-```
-
-### 2. Frontend Extension
-The extension lives inside Webflow to receive the data.
-
-```bash
-cd code-to-webflow-frontend
-npm install
-npm run dev
-```
+- **Backend**: [TypeScript](https://www.typescriptlang.org/), [PostCSS](https://postcss.org/), [Commander](https://github.com/tj/commander.js), [Parse5](https://github.com/inikulin/parse5)
+- **Frontend**: [Webflow Designer API](https://developers.webflow.com/), [TypeScript](https://www.typescriptlang.org/), [Webflow CLI](https://github.com/webflow/webflow-cli)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/) support, [CSS Variables](https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties) resolution
 
 ---
 
 ## 📖 Usage Guide
 
-### Step 1: Generate the Data
-Point the CLI to your project directory. It will scan for code and output a modular project folder.
+### Step 1: Install Dependencies
+```bash
+# Install CLI
+cd code-to-webflow-backend && npm install && npm run build
 
+# Install Extension
+cd ../code-to-webflow-frontend && npm install
+```
+
+### Step 2: Generate Webflow JSON
+Point the CLI to your project directory.
 ```bash
 # From the backend directory
 npm start <path-to-your-project>
 ```
+✨ **Output:** A modular project folder in `/output` containing `base.json` and section-specific JSON files.
 
-✨ **Output:** A folder in `/output` containing:
-- `base.json`: Global variables and shared styles.
-- `hero.json`, `nav.json`, etc.: Individual modular sections.
-- `styles-embed.json`: Complex CSS and animations.
-
-### Step 2: Sync to Webflow
-1. Open your Webflow project.
-2. Launch the **Code to Webflow Extension**.
-3. Select and upload your generated JSON files.
-4. Watch as the extension builds your site structure, styles, and variables in real-time.
-
----
-
-## 🏗️ Architecture
-
-- **`code-to-webflow-backend`**: A TypeScript CLI built with `Commander`, `PostCSS`, and `Parse5`. It performs structural fingerprinting to detect components and normalizes CSS for the Webflow API.
-- **`code-to-webflow-frontend`**: A Webflow Designer Extension built with the `@webflow/webflow-cli`. It acts as the bridge, communicating directly with the Webflow Designer API to create elements and styles.
+### Step 3: Sync to Webflow
+1. Start the local extension server: `npm run dev` (inside frontend folder).
+2. Open your Webflow project and launch the **Code to Webflow Extension**.
+3. Upload your generated JSON files and watch the magic happen!
 
 ---
 
