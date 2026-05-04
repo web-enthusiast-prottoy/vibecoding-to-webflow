@@ -25,7 +25,8 @@ interface WebflowReadyNode {
 		| "List"
 		| "ListItem"
 		| "TextBlock"
-		| "custom";
+		| "custom"
+		| "FormWrapper" | "FormForm" | "FormTextInput" | "FormTextarea" | "FormSelect" | "FormCheckboxInput" | "FormRadioInput" | "FormBlockLabel" | "FormButton" | "FormSuccessMessage" | "FormErrorMessage";
 	tag?: string;
 	classes: string[];
 	/** Pre-normalized styles from backend (kebab-case, no vendor prefixes, no --* vars). */
@@ -88,6 +89,7 @@ interface SitePayload {
 // v2 JSON from the backend is already fully normalized.
 // This shim handles any old (v1) files that may still be pasted manually.
 // ------------------------------------
+// ------------------------------------
 /**
  * Expands CSS shorthands into their constituent parts for the Webflow API.
  * This ensures properties like 'border-bottom' or 'padding' hit the native panels.
@@ -106,12 +108,14 @@ function expandProperties(
 		// or if the value has no spaces outside of parentheses.
 		if ((key === "padding" || key === "margin") && !key.includes("-")) {
 			// split spaces but not inside parentheses (e.g. var() or calc())
-			const parts = value.match(/(?:[^\s(]+|\((?:[^()]+|\([^()]*\))*\))+/g);
+			const parts = value.match(
+				/(?:[^\s(]+|\((?:[^()]+|\([^()]*\))*\))+/g,
+			);
 			if (!parts) {
 				expanded[key] = value;
 				continue;
 			}
-			
+
 			if (parts.length === 1) {
 				expanded[`${key}-top`] = parts[0];
 				expanded[`${key}-right`] = parts[0];
@@ -294,6 +298,33 @@ function normalizePropertiesLegacy(
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
+/**
+ * Wraps a promise with a timeout.
+ * Useful for Webflow Designer API calls that might hang the IPC bridge.
+ */
+async function withTimeout<T>(
+	promise: Promise<T>,
+	timeoutMs: number,
+	label: string,
+): Promise<T> {
+	let timeoutId: any;
+	const timeoutPromise = new Promise<never>((_, reject) => {
+		timeoutId = setTimeout(() => {
+			reject(
+				new Error(`Operation timed out after ${timeoutMs}ms: ${label}`),
+			);
+		}, timeoutMs);
+	});
+
+	try {
+		return await Promise.race([promise, timeoutPromise]);
+	} finally {
+		if (timeoutId) clearTimeout(timeoutId);
+	}
+}
+
+const DEFAULT_TIMEOUT = 6000; // Fail-fast: deadlocks don't resolve with more time
+
 function handleStyleError(err: any, property?: string) {
 	const causeTag = err?.cause?.tag;
 	const message = err?.message || "";
@@ -334,45 +365,88 @@ function handleStyleError(err: any, property?: string) {
 }
 
 // Cache for created/existing variables, bindings, and raw values
-// Stores: { variable: Variable, binding: string, rawValue: any, type: string }
+// Stores: { variable: Variable, binding: string, rawValue: any, type: string, cssName: string }
 const variableCache = new Map<string, any>();
 const allStylesMap = new Map<string, any>();
 
-/** 
- * SHIM: Webflow V2 API does not provide getStyleByName. 
+/**
+ * Robustly tries to find a variable in the cache by name or CSS var name.
+ * Handles variations like '--name', 'name', case sensitivity, and Webflow folder prefixes.
+ *
+ * Matching order:
+ * 1. Exact match
+ * 2. Case-insensitive match
+ * 3. Strip leading '--' and retry
+ * 4. Add leading '--' and retry
+ * 5. Word-based fuzzy match: every word in the JSON var name must be present
+ *    in the candidate's word list (handles Webflow folder prefixes like
+ *    font-family-font-styles-heading matching font-styles-heading).
+ *    Among multiple candidates, the one with the fewest extra words wins.
+ */
+function tryResolveVariable(rawName: string): any {
+	const name = rawName.trim();
+	// 1. Exact match
+	if (variableCache.has(name)) return variableCache.get(name);
+
+	const lower = name.toLowerCase();
+	// 2. Case-insensitive match
+	if (variableCache.has(lower)) return variableCache.get(lower);
+
+	// Strip leading '--'
+	const stripped = lower.replace(/^--/, "");
+	// 3. Without leading dashes
+	if (variableCache.has(stripped)) return variableCache.get(stripped);
+	// 4. With leading dashes
+	if (variableCache.has(`--${stripped}`))
+		return variableCache.get(`--${stripped}`);
+
+	// 5. Word-based fuzzy match
+	// Split the JSON var name into its constituent words (split on '-')
+	const queryWords = stripped.split("-").filter(Boolean);
+	if (queryWords.length === 0) return null;
+
+	let bestMatch: any = null;
+	let bestExtraWords = Infinity;
+
+	for (const [key, value] of variableCache) {
+		// Normalise the cache key: strip leading '--', lowercase
+		const keyNorm = key.toLowerCase().replace(/^--/, "");
+		const keyWords = keyNorm.split("-").filter(Boolean);
+
+		// All query words must be present in the key's word list (order-independent)
+		// We consume words one-by-one so duplicates are handled correctly.
+		const remaining = [...keyWords];
+		const allPresent = queryWords.every((qw) => {
+			const idx = remaining.indexOf(qw);
+			if (idx === -1) return false;
+			remaining.splice(idx, 1);
+			return true;
+		});
+
+		if (!allPresent) continue;
+
+		// Prefer candidate with fewest extra words (closest match)
+		const extraWords = keyWords.length - queryWords.length;
+		if (extraWords < bestExtraWords) {
+			bestExtraWords = extraWords;
+			bestMatch = value;
+		}
+	}
+
+	return bestMatch;
+}
+
+/**
+ * SHIM: Webflow V2 API does not provide getStyleByName.
  * We use a pre-fetched map of styles for efficient lookups.
  */
 async function getStyleByName(name: string): Promise<any> {
-    return allStylesMap.get(name.trim()) ?? null;
+	return allStylesMap.get(name.trim()) ?? null;
 }
-
 
 // (System Fluid collection logic removed)
 
-async function withTimeout<T>(
-	promise: Promise<T>,
-	timeoutMs: number,
-	name: string,
-): Promise<T> {
-	let timeoutHandle: any;
-	const timeoutPromise = new Promise<never>((_, reject) => {
-		timeoutHandle = setTimeout(
-			() =>
-				reject(
-					new Error(
-						`Timeout: ${name} took too long (> ${timeoutMs}ms)`,
-					),
-				),
-			timeoutMs,
-		);
-	});
-	try {
-		return await Promise.race([promise, timeoutPromise]);
-	} finally {
-		clearTimeout(timeoutHandle);
-	}
-}
-
+// ------------------------------------
 /**
  * Normalizes CSS pseudo-states to Webflow-supported ones.
  * Webflow only supports a specific list; unsupported ones (like nth-child(4n)) cause API errors.
@@ -407,15 +481,19 @@ function normalizePseudo(rawPseudo?: string): string {
 
 	const lower = rawPseudo.toLowerCase();
 
+	// If the pseudo contains spaces, it's a descendant selector (e.g. ":hover .child")
+	// Webflow doesn't support applying this natively.
+	if (rawPseudo.trim().includes(" ")) return "unsupported";
+
 	// 1. Hover/Focus variants
-	if (lower.includes("hover")) return "hover";
-	if (lower.includes("focus-visible")) return "focus-visible";
-	if (lower.includes("focus-within")) return "focus-within";
-	if (lower.includes("focus")) return "focus";
+	if (lower === "hover") return "hover";
+	if (lower === "focus-visible") return "focus-visible";
+	if (lower === "focus-within") return "focus-within";
+	if (lower === "focus") return "focus";
 
 	// 2. Child variants
-	if (lower.includes("first-child")) return "first-child";
-	if (lower.includes("last-child")) return "last-child";
+	if (lower === "first-child") return "first-child";
+	if (lower === "last-child") return "last-child";
 
 	// 3. Nth-child logic (Webflow only supports odd/even)
 	if (lower.includes("nth-child")) {
@@ -423,11 +501,13 @@ function normalizePseudo(rawPseudo?: string): string {
 			return "nth-child(even)";
 		if (lower.includes("odd")) return "nth-child(odd)";
 		if (lower.includes("(1)")) return "first-child";
-		// Default to last-child for other unsupported nth-child (like 4n) as requested
-		return "last-child";
+		// Unsupported nth-child expressions
+		return "unsupported";
 	}
 
-	return "noPseudo";
+	if (supported.includes(lower)) return lower;
+
+	return "unsupported";
 }
 
 async function applyStyleProperties(
@@ -435,30 +515,112 @@ async function applyStyleProperties(
 	properties: Record<string, string>,
 	options?: { breakpointId?: string; pseudo?: string },
 	isLegacy = false,
+	elementRef?: any,
 ): Promise<boolean> {
 	const styleName = await style.getName();
 	const pseudo = normalizePseudo(options?.pseudo);
-	const styleLabel = pseudo !== "noPseudo"
-		? `.${styleName}:${pseudo}`
-		: `.${styleName}`;
+	const hasPseudo = pseudo !== "noPseudo";
+	const styleLabel = hasPseudo ? `.${styleName}:${pseudo}` : `.${styleName}`;
 
-	// 1. Run normalization/expansion only if legacy or not already normalized
-	const isNormalized = !isLegacy && (window as any).__v2Normalized;
-	const props = (isLegacy || !isNormalized)
-		? (isLegacy ? normalizePropertiesLegacy(properties) : expandProperties(properties))
-		: properties;
+	// 3. Build Webflow API options — STRICT: only documented keys allowed.
+	// Using the actual Webflow typings: `{ breakpoint?: BreakpointId, pseudo?: PseudoStateKey }`.
+	const bp = options?.breakpointId || "main";
+
+	// Build options object with ONLY valid keys. Use undefined (no options) when possible
+	// so the no-options setProperty/setProperties path is exercised for the common case.
+	const wfOptions: Record<string, string> | undefined =
+		bp !== "main" || hasPseudo
+			? {
+					...(bp !== "main" ? { breakpoint: bp } : {}),
+					...(hasPseudo ? { pseudo: pseudo } : {}),
+			  }
+			: undefined;
+
+	// 1. Expand properties (padding, margin, transitions, etc).
+	// We run this unconditionally even on v2 normalized payloads because the backend parser currently
+	// fails to split shorthand transitions, which Webflow cannot insert as a block.
+	const props = isLegacy
+		? normalizePropertiesLegacy(properties)
+		: expandProperties(properties);
+
+	if (pseudo === "unsupported") {
+		const cssLines = Object.entries(props).map(([k, v]) => `  ${k}: ${v};`).join("\n");
+		const pseudoSuffix = options!.pseudo!.startsWith(":") ? options!.pseudo! : `:${options!.pseudo!}`;
+		const cssText = `.${styleName}${pseudoSuffix} {\n${cssLines}\n}`;
+		recordUnsupportedCss({
+			className: styleName,
+			pseudo: options!.pseudo!,
+			cssText
+		});
+		return false;
+	}
+
+	const CHUNK_SIZE = 5; // Reduced from 15 to 5 to avoid IPC bridge congestion
+	let success = true;
+
+	const paddingGroup: Record<string, any> = {};
+	const marginGroup: Record<string, any> = {};
+
+	const GRID_ISOLATED_PROPS = new Set([
+		"grid-template-columns",
+		"grid-template-rows",
+		"grid-row-gap",
+		"grid-column-gap",
+		"grid-gap",
+		"row-gap",
+		"column-gap",
+		"gap",
+	]);
 
 	// 2. Resolve var() references to Webflow native Variable objects (purple pills).
 	const resolvedProperties: Record<string, any> = {};
-	for (const [prop, val] of Object.entries(props)) {
+	for (let [prop, val] of Object.entries(props)) {
 		let valueToSet: any = val;
 		let isComplex = false;
-		
+
+		// Map modern gap shorthand/longhands to Webflow's older native API equivalent.
+		// Webflow API sometimes drops responsive breakpoints or ignores Purple Pills for 'row-gap'/'column-gap',
+		// but correctly respects 'grid-row-gap'/'grid-column-gap' with identical visual result.
+		if (prop === "row-gap") prop = "grid-row-gap";
+		if (prop === "column-gap") prop = "grid-column-gap";
+		if (prop === "gap") prop = "grid-gap";
+
 		const valStr = String(val);
-		if (valStr.includes("clamp(") || valStr.includes("calc(") || valStr.includes("min(") || valStr.includes("max(")) {
-			// Complex CSS functions (clamp, calc, etc.) must be applied individually via setProperty.
-			// Batching them in setProperties() causes Webflow's internal parser to reject them in the UI panel.
+		if (
+			valStr.includes("clamp(") ||
+			valStr.includes("calc(") ||
+			valStr.includes("min(") ||
+			valStr.includes("max(")
+		) {
+			// Complex CSS functions must be applied individually to force UI refresh.
 			isComplex = true;
+		}
+
+		// Webflow API Stability: white-space reliably deadlocks the IPC bridge on many elements.
+		// It is better handled via the Global Style Embed.
+		if (prop === "white-space") continue;
+
+		// Normalized units: '0' should be '0px' for spacing/layout to prevent parser stalls.
+		if (
+			val === "0" &&
+			[
+				"padding-top",
+				"padding-right",
+				"padding-bottom",
+				"padding-left",
+				"margin-top",
+				"margin-right",
+				"margin-bottom",
+				"margin-left",
+				"width",
+				"height",
+				"top",
+				"right",
+				"bottom",
+				"left",
+			].includes(prop)
+		) {
+			valueToSet = "0px";
 		}
 
 		if (typeof valueToSet === "string" && valueToSet.includes("var(")) {
@@ -470,20 +632,49 @@ async function applyStyleProperties(
 
 			// Match a value that is ONLY a single var() with optional fallback
 			// Allow for spaces and fallbacks: var( --name, fallback )
-			const varMatch = valueToSet.trim().match(/^var\(\s*(--[^,)\s]+)\s*(?:,\s*[^)]+)?\)$/);
+			const varMatch = valueToSet
+				.trim()
+				.match(/^var\(\s*(--[^,)\s]+)\s*(?:,\s*[^)]+)?\)$/);
 			// Extract pure variable name (without fallback or leading/trailing spaces)
 			const pureVarName = varMatch ? varMatch[1].trim() : null;
 
 			// Webflow strictly bans 'transition' from custom properties and cannot handle var() natively here.
 			// It's safer to completely inline the raw values so complex properties actually work without crashing the API.
 			// We only force this for properties that are complex shorthands or have known issues.
-			const isShorthandBorder = ["border", "border-top", "border-right", "border-bottom", "border-left", "border-image", "outline"].includes(prop);
-			if (prop.startsWith("transition") || prop.startsWith("transform") || isShorthandBorder) {
+			const isShorthandBorder = [
+				"border",
+				"border-top",
+				"border-right",
+				"border-bottom",
+				"border-left",
+				"border-image",
+				"outline",
+			].includes(prop);
+			// Grid gap properties were previously thought to deadlock when variable proxy is passed,
+			// but only columns/rows crash with Purple Pills. We now allow gap properties to be purple pills.
+			const isGridLayout = [
+				"grid-template-columns",
+				"grid-template-rows",
+			].includes(prop);
+
+			// Webflow API IPC Deadlocks:
+			// 1. Proxies bound to transition/transform/border shorthands → Designer UI crash.
+			// 2. Proxies bound to grid layout props → setProperties timeout (ALL breakpoints, not just pseudo).
+			// 3. var() strings with pseudoStateKey options also cause hangs (gotcha §3).
+			// SOLUTION: Inline raw numeric/color value for all these contexts.
+			const shouldInline =
+				prop.startsWith("transition") ||
+				prop.startsWith("transform") ||
+				isShorthandBorder ||
+				isGridLayout ||
+				hasPseudo;
+
+			if (shouldInline) {
 				valueToSet = valueToSet.replace(
 					/var\(\s*(--[^,)\s]+)\s*(?:,\s*[^)]+)?\)/g,
 					(match, varNameContent) => {
 						const varName = varNameContent.trim();
-						const cached = variableCache.get(varName);
+						const cached = tryResolveVariable(varName);
 						if (cached && cached.rawValue != null) {
 							const raw = cached.rawValue;
 							if (
@@ -496,21 +687,55 @@ async function applyStyleProperties(
 							if (raw.value !== undefined)
 								return String(raw.value);
 						}
+						// If we can't inline but it's a grid property/pseudo, we log a warning.
+						// We'll keep the var() string in the final value for now, but line 538 will catch it.
 						return match;
 					},
 				);
+
+				// Post-inline safety: if var() is still present after inlining (cache miss)
+				// AND we're in a danger zone (pseudo-state or grid layout), skip the property.
+				// Passing raw var() strings to the API with pseudoStateKey or on grid props
+				// causes an IPC deadlock — it's safer to omit them entirely.
+				if (
+					typeof valueToSet === "string" &&
+					valueToSet.includes("var(") &&
+					(hasPseudo || isGridLayout)
+				) {
+					log(
+						`    ⚠ Skipping ${prop} on ${styleLabel}: var() could not be inlined (cache miss for ${
+							valueToSet.match(/var\(\s*(--[^,)\s]+)\)/)?.[1] ||
+							"variable"
+						}) — passing raw var() here would deadlock the IPC bridge`,
+						"warn",
+					);
+					continue;
+				}
 			} else if (pureVarName && !isComplex) {
 				// Simple var() — resolve to native Webflow variable object (purple pill)
-				const cached = variableCache.get(pureVarName);
-				if (cached && cached.variable) {
+				const cached = tryResolveVariable(pureVarName);
+
+				// Defensive routing: Only use Variable PROXY objects (purple pills) for main-breakpoint, non-pseudo, non-grid props.
+				// For everything else, the proxy object is the #1 cause of serialization hangs or ignored variables.
+				// Wait: We actually DO need the proxy object for gap properties on responsive states to work correctly.
+				// Since we mapped them to grid-*-gap, Webflow should support the proxy object fully.
+				if (
+					cached &&
+					cached.variable &&
+					!hasPseudo &&
+					!isGridLayout
+				) {
 					valueToSet = cached.variable;
-				} else if (cached && cached.binding) {
-					valueToSet = cached.binding;
+				} else if (cached && (cached.binding || cached.cssName)) {
+					// Fallback to var() string
+					valueToSet = cached.binding || `var(${cached.cssName})`;
+					isComplex = true;
 				} else {
 					// Cache miss: variable not yet synced from Webflow.
-					// Route as __complex__ so the raw var() string is applied via setProperty()
-					// rather than silently injected as a plain CSS string through setProperties().
-					log(`    ⚠ Cache miss for ${pureVarName} — applying via setProperty as raw CSS`, "warn");
+					log(
+						`    ⚠ Cache miss for ${pureVarName} on ${prop} — applying via setProperty as raw CSS string`,
+						"warn",
+					);
 					isComplex = true;
 				}
 			} else {
@@ -519,7 +744,7 @@ async function applyStyleProperties(
 					/var\(\s*(--[^,)\s]+)\s*(?:,\s*[^)]+)?\)/g,
 					(match, varNameContent) => {
 						const varName = varNameContent.trim();
-						const cached = variableCache.get(varName);
+						const cached = tryResolveVariable(varName);
 						return cached && cached.cssName
 							? `var(${cached.cssName})`
 							: match;
@@ -528,28 +753,41 @@ async function applyStyleProperties(
 			}
 		}
 
-		// Always assign to the standard properties map so it's applied to the underlying CSS bulk payload
-		resolvedProperties[prop] = valueToSet;
+		// Spacing sync-lock: padding/margin ALWAYS go into their groups (including complex calc values).
+		// All 4 sides are sent together via setProperties() — matching the Webflow playground pattern.
+		// '0px' is used for zero-value sides to keep the parser stable (not bare '0').
+		if (prop.startsWith("padding-") || prop.startsWith("margin-")) {
+			// CRITICAL: Track complex spacing values (clamp/calc) in complexValueEmbeds
+			// before hitting the continue statement for grouping. 
+			if (isComplex) {
+				recordComplexValue({
+					className: styleName,
+					property: prop,
+					value: String(valueToSet),
+					breakpointId: bp,
+					element: elementRef,
+				});
+			}
+			
+			if (prop.startsWith("padding-")) paddingGroup[prop] = valueToSet;
+			else marginGroup[prop] = valueToSet;
+			continue;
+		}
+
+		if (GRID_ISOLATED_PROPS.has(prop)) {
+			resolvedProperties[`__grid__${prop}`] = valueToSet;
+			continue;
+		}
 
 		if (isComplex) {
-			// ALSO flag it for individual application to force a UI panel refresh in Webflow Designer
+			// Non-spacing complex functions (clamp, calc on other props) applied individually.
+			// __complex__ prefix is stripped before calling setProperty (see step 9).
 			resolvedProperties[`__complex__${prop}`] = valueToSet;
+		} else {
+			// Only safe, non-complex values are included in the batch for performance.
+			resolvedProperties[prop] = valueToSet;
 		}
 	}
-
-	// 3. Build Webflow API options — STRICT: only documented keys allowed.
-	// Invalid keys (breakpoint, pseudo) cause IPC bridge timeouts for the ENTIRE call (gotchas §3).
-	const bp = options?.breakpointId || "main";
-	const hasPseudo = pseudo && pseudo !== "noPseudo";
-
-	// Build options object with ONLY valid keys. Use undefined (no options) when possible
-	// so the no-options setProperty/setProperties path is exercised for the common case.
-	const wfOptions: Record<string, string> | undefined = (bp !== "main" || hasPseudo)
-		? {
-			breakpointId: bp,
-			...(hasPseudo ? { pseudoStateKey: pseudo } : {}),
-		}
-		: undefined;
 
 	// 4. Priority Sorting: Apply layout-defining properties first
 	// This ensures 'position' is set before 'left/right' and 'display' before 'row-gap'
@@ -574,24 +812,29 @@ async function applyStyleProperties(
 
 	const sortedEntries = [...priorityEntries, ...remainingEntries];
 
-	// 6. Split into three tracks:
-	//    - complexEntries: clamp/calc/min/max values — applied via getOrCreateFluidVariable → setProperty
+	// 6. Split into four tracks:
+	//    - gridEntries: grid-template-columns/rows — high-latency UI items (applied individually)
+	//    - complexEntries: clamp/calc/min/max values — flagged for individual UI pings
 	//    - plainEntries: safe to batch via setProperties() (unless it's a pseudo-state)
 	//    - varEntries: { variableId } objects — MUST be applied one-by-one via setProperty()
 	//      Batching { variableId } objects in setProperties() causes IPC serialization timeouts.
-	const complexEntries = sortedEntries.filter(([k]) => k.startsWith("__complex__"));
+	const gridEntries = sortedEntries.filter(([k]) => k.startsWith("__grid__"));
+	const complexEntries = sortedEntries.filter(([k]) =>
+		k.startsWith("__complex__"),
+	);
 	const plainEntries = sortedEntries.filter(
-		([k, v]) => !k.startsWith("__complex__") && (typeof v !== "object" || v === null),
+		([k, v]) =>
+			!k.startsWith("__complex__") &&
+			!k.startsWith("__grid__") &&
+			(typeof v !== "object" || v === null),
 	);
 	const varEntries = sortedEntries.filter(
-		([k, v]) => !k.startsWith("__complex__") && typeof v === "object" && v !== null,
+		([k, v]) =>
+			!k.startsWith("__complex__") &&
+			!k.startsWith("__grid__") &&
+			typeof v === "object" &&
+			v !== null,
 	);
-
-	// 6. Apply plain string properties
-	// CRITICAL: Pseudo-states (like :hover) often hang with batched setProperties().
-	// We use CHUNK_SIZE=1 (one-by-one) for pseudo-states to ensure stability.
-	const CHUNK_SIZE = options?.pseudo ? 1 : 15;
-	let success = true;
 
 	for (let i = 0; i < plainEntries.length; i += CHUNK_SIZE) {
 		const chunk: Record<string, any> = {};
@@ -611,8 +854,8 @@ async function applyStyleProperties(
 				: style.setProperties(chunk);
 			await withTimeout(
 				setPromise,
-				15000,
-				`setProperties Chunk ${Math.floor(i / CHUNK_SIZE) + 1}`,
+				DEFAULT_TIMEOUT,
+				`setProperties-${chunkProps}`,
 			);
 		} catch (err: any) {
 			log(
@@ -630,7 +873,10 @@ async function applyStyleProperties(
 					const p1 = wfOptions
 						? style.setProperty(prop as any, val, wfOptions)
 						: style.setProperty(prop as any, val);
-					await withTimeout(p1, 5000, `setProperty ${prop}`);
+					// Background images can be extremely slow to process in the Webflow Designer engine
+					const timeout =
+						prop === "background-image" ? 20000 : DEFAULT_TIMEOUT;
+					await withTimeout(p1, timeout, `setProperty-${prop}`);
 				} catch (e: any) {
 					log(
 						`      ⚠ Plain fallback failed for ${prop} on ${styleLabel} (value: ${JSON.stringify(
@@ -643,60 +889,141 @@ async function applyStyleProperties(
 		}
 	}
 
-	// 7. Apply variable bindings
+	// 7. Apply variable bindings (Purple Pills)
 	if (varEntries.length > 0) {
-		const VAR_BATCH = 5;
-		for (let i = 0; i < varEntries.length; i += VAR_BATCH) {
-			const batch = varEntries.slice(i, i + VAR_BATCH);
-			await Promise.all(
-				batch.map(async ([prop, val]) => {
-					try {
-						const p = wfOptions
-							? style.setProperty(prop as any, val, wfOptions)
-							: style.setProperty(prop as any, val);
-						await withTimeout(p, 5000, `setProperty ${prop}`);
-					} catch (e: any) {
-						// FALLBACK: If native binding fails (e.g. row-gap doesn't support variables), inline the raw value
-						const originalExpr = props[prop]; 
-						const varNameMatch = typeof originalExpr === "string" ? originalExpr.match(/var\((--[^)]+)\)/) : null;
-						const varName = varNameMatch ? varNameMatch[1] : "unknown";
-						const cached = variableCache.get(varName);
-
-						let rawToInline = cached?.rawValue;
-						if (rawToInline != null) {
-							if (typeof rawToInline === "object" && rawToInline.value !== undefined) {
-								rawToInline = `${rawToInline.value}${rawToInline.unit || ""}`;
-							}
-							try {
-								const fallbackP = wfOptions
-									? style.setProperty(prop as any, String(rawToInline), wfOptions)
-									: style.setProperty(prop as any, String(rawToInline));
-								await withTimeout(fallbackP, 5000, `setProperty-fallback ${prop}`);
-							} catch (e2: any) {
-								log(`      ✕ Failed to apply ${prop} on ${styleLabel}: ${e.message}`, "error");
-								success = false;
-							}
-						} else {
-							log(`      ✕ Failed to apply ${prop} on ${styleLabel}: ${e.message}`, "error");
-							success = false;
-						}
-					}
-				}),
-			);
-		}
-	}
-
-	// 8. Apply complex CSS function values (clamp/calc/min/max) directly.
-	// We apply them via individual setProperty calls specifically to force a UI panel refresh
-	// (they were already applied to the actual CSS block via the plainEntries setProperties chunk).
-	if (complexEntries.length > 0) {
-		for (const [rawKey, val] of complexEntries) {
-			const prop = rawKey.replace("__complex__", "");
+		for (const [prop, val] of varEntries) {
 			try {
 				const p = wfOptions
 					? style.setProperty(prop as any, val, wfOptions)
 					: style.setProperty(prop as any, val);
-				await withTimeout(p, 8000, `setProperty(direct) ${prop}`);
+				await withTimeout(
+					p,
+					DEFAULT_TIMEOUT,
+					`setProperty-var-${prop}`,
+				);
+			} catch (e: any) {
+				// FALLBACK: If native variable binding fails, inline the original raw CSS string.
+				// props[prop] holds the original string value (e.g., 'var(--font-size-h3)').
+				// CRITICAL: Must use wfOptions during fallback to retain breakpoint/pseudo state context
+				const rawFallback = String(props[prop] ?? "");
+				log(
+					`      ✕ Failed binding ${prop} on ${styleLabel}: ${e.message}. Inlining ${rawFallback}`,
+					"error",
+				);
+				try {
+					const pFallback = wfOptions
+						? style.setProperty(prop as any, rawFallback, wfOptions)
+						: style.setProperty(prop as any, rawFallback);
+					await withTimeout(
+						pFallback,
+						DEFAULT_TIMEOUT,
+						`setProperty-varFallback-${prop}`,
+					);
+				} catch (_) {}
+				success = false;
+			}
+		}
+	}
+
+	// 8. Apply Spacing Batches (sync-lock pattern)
+	// CRITICAL: All 4 sides are sent in one setProperties() call.
+	// Missing sides default to '0px' (not bare '0') to keep the Webflow parser stable.
+	// This matches the confirmed-working playground code and prevents the 0px rendering bug.
+	for (const [prefix, groupPayload] of [
+		["padding", paddingGroup],
+		["margin", marginGroup],
+	] as const) {
+		if (Object.keys(groupPayload).length > 0) {
+			// Ensure all 4 sides are always present — missing sides get '0px'
+			const sides = ["top", "right", "bottom", "left"] as const;
+			const fullGroup: Record<string, any> = {};
+			for (const side of sides) {
+				const key = `${prefix}-${side}`;
+				fullGroup[key] = groupPayload[key] ?? "0px";
+			}
+			try {
+				log(
+					`    → Applying ${prefix} group synchronously (all 4 sides)...`,
+				);
+				const p = wfOptions
+					? style.setProperties(fullGroup, wfOptions)
+					: style.setProperties(fullGroup);
+				await withTimeout(p, 10000, `setProperties-Spacing-${prefix}`);
+			} catch (e: any) {
+				log(
+					`    ✕ Failed to apply ${prefix} group: ${e.message}`,
+					"error",
+				);
+				success = false;
+			}
+		}
+	}
+
+	// 9. Apply Grid Layout Properties individually
+	// These are extremely high latency (45s timeout used).
+	if (gridEntries.length > 0) {
+		for (const [rawProp, val] of gridEntries) {
+			const prop = rawProp.replace(/^__grid__/, "");
+			try {
+				log(
+					`    → Applying high-latency grid property ${prop} individually...`,
+				);
+				const p = wfOptions
+					? style.setProperty(prop as any, val, wfOptions)
+					: style.setProperty(prop as any, val);
+				await withTimeout(p, 3000, `setProperty-grid-${prop}`);
+			} catch (e: any) {
+				// FALLBACK: If native grid binding fails (e.g. for proxies), try original string.
+				const rawFallback = String(props[prop] ?? "");
+				log(
+					`    ✕ Failed to apply grid property ${prop}: ${e.message}. Inlining ${rawFallback}`,
+					"warn",
+				);
+				if (rawFallback && typeof val === "object") {
+					try {
+						const pFallback = wfOptions
+							? style.setProperty(prop as any, rawFallback, wfOptions)
+							: style.setProperty(prop as any, rawFallback);
+						await withTimeout(
+							pFallback,
+							3000,
+							`setProperty-gridFallback-${prop}`,
+						);
+					} catch (_) {}
+				}
+				success = false;
+			}
+		}
+	}
+
+	// 10. Apply complex CSS function values (clamp/calc/min/max) directly per-property.
+	// CRITICAL: Strip the __complex__ prefix before passing to setProperty — Webflow
+	// does NOT know about this internal routing tag and will reject the property name.
+	// Also track them in complexValueEmbeds so the user can verify / copy-paste.
+	if (complexEntries.length > 0) {
+		for (const [rawProp, val] of complexEntries) {
+			const prop = rawProp.replace(/^__complex__/, "");
+			const valStr = String(val);
+
+			// Track for Webflow Musts UI — store element ref so user can Select on Canvas.
+			recordComplexValue({
+				className: styleName,
+				property: prop,
+				value: valStr,
+				breakpointId: bp,
+				element: elementRef,
+			});
+
+			try {
+				log(`    → Applying complex property ${prop} individually...`);
+				const p = wfOptions
+					? style.setProperty(prop as any, valStr, wfOptions)
+					: style.setProperty(prop as any, valStr);
+				await withTimeout(
+					p,
+					DEFAULT_TIMEOUT,
+					`setProperty-complex-${prop}`,
+				);
 			} catch (e: any) {
 				log(`    ✕ Failed to apply ${prop}: ${e.message}`, "error");
 				success = false;
@@ -715,7 +1042,7 @@ async function applyGlobalStyles(
 	// Tag-based selectors (body, html, a, img, etc.) and the universal selector (*) are
 	// explicitly moved to the Global Styles Embed by the backend for maximum reliability.
 	const validSelectors = Object.keys(globalStyles).filter(
-		(s) => !s.includes(" ") && s.startsWith(".")
+		(s) => !s.includes(" ") && s.startsWith("."),
 	);
 	const total = validSelectors.length;
 	log(`Applying ${total} global style${total !== 1 ? "s" : ""}...`);
@@ -734,7 +1061,10 @@ async function applyGlobalStyles(
 			const batch = allStyles.slice(i, i + STYLE_BATCH);
 			await Promise.all(
 				batch.map(async (s: any) => {
-					const [name, parent] = await Promise.all([s.getName(), s.getParent()]);
+					const [name, parent] = await Promise.all([
+						s.getName(),
+						s.getParent(),
+					]);
 					const cacheKey = parent ? `${parent.id}:${name}` : name;
 					styleCache.set(cacheKey, s);
 				}),
@@ -745,108 +1075,110 @@ async function applyGlobalStyles(
 		// getAllStyles not available — falls back to per-class lookup
 	}
 
-	const BATCH_SIZE = 15;
-	for (let i = 0; i < validSelectors.length; i += BATCH_SIZE) {
-		const batch = validSelectors.slice(i, i + BATCH_SIZE);
-		await Promise.all(
-			batch.map(async (selector) => {
-				const value = globalStyles[selector];
-				const [baseRef, rawPseudo] = selector.split(":");
-				const pseudo = normalizePseudo(rawPseudo);
-				
-				// Handle both Classes (.my-class) and Tags (h1, a, etc)
-				const isTag = !baseRef.startsWith(".");
-				const classChain = isTag 
-					? [baseRef] 
-					: [...new Set(baseRef.split(".").filter(Boolean))];
+	// CRITICAL: Process selectors SEQUENTIALLY — the Webflow IPC bridge is single-threaded.
+	// Firing 15 parallel setProperties streams saturates it, causing all breakpoint-specific
+	// and pseudo-state calls to timeout before they can be processed.
+	// Sequential iteration eliminates all bridge congestion.
+	for (const selector of validSelectors) {
+		const value = globalStyles[selector];
+		const [baseRef, rawPseudo] = selector.split(":");
+		const pseudo = normalizePseudo(rawPseudo);
 
-				if (classChain.length === 0) return;
+		// Handle both Classes (.my-class) and Tags (h1, a, etc)
+		const isTag = !baseRef.startsWith(".");
+		const classChain = isTag
+			? [baseRef]
+			: [...new Set(baseRef.split(".").filter(Boolean))];
 
-				let currentParent: any = null;
-				let leafStyle: any = null;
+		if (classChain.length === 0) continue;
 
-				for (const className of classChain) {
-					const cacheKey = currentParent
-						? `${currentParent.id}:${className}`
-						: className;
-					let style = styleCache.get(cacheKey);
+		let currentParent: any = null;
+		let leafStyle: any = null;
 
-					if (!style) {
+		for (const className of classChain) {
+			const cacheKey = currentParent
+				? `${currentParent.id}:${className}`
+				: className;
+			let style = styleCache.get(cacheKey);
+
+			if (!style) {
+				style = await getStyleByName(className);
+				if (style) {
+					const parent = await style.getParent();
+					if (parent?.id !== currentParent?.id) style = null;
+				}
+			}
+
+			if (!style) {
+				try {
+					style = await webflow.createStyle(
+						className,
+						currentParent ? { parent: currentParent } : {},
+					);
+					styleCache.set(cacheKey, style);
+				} catch (e: any) {
+					const msg = e.message.toLowerCase();
+					if (
+						msg.includes("conflict") ||
+						msg.includes("duplicate") ||
+						msg.includes("already exists")
+					) {
 						style = await getStyleByName(className);
-						if (style) {
-							const parent = await style.getParent();
-							if (parent?.id !== currentParent?.id) style = null;
-						}
-					}
-
-					if (!style) {
-						try {
-							style = await webflow.createStyle(
-								className,
-								currentParent ? { parent: currentParent } : {},
-							);
-							styleCache.set(cacheKey, style);
-						} catch (e: any) {
-							const msg = e.message.toLowerCase();
-							if (msg.includes("conflict") || msg.includes("duplicate") || msg.includes("already exists")) {
-								style = await getStyleByName(className);
-							}
-						}
-					}
-
-					if (style) {
-						leafStyle = style;
-						currentParent = style;
-						styleCache.set(cacheKey, style);
-					} else {
-						break;
 					}
 				}
+			}
 
-				if (leafStyle && value) {
-					const isBreakpointKeyed =
-						!isLegacy ||
-						(Object.keys(value).some((k) =>
-							[
-								"main",
-								"medium",
-								"small",
-								"tiny",
-								"large",
-								"xl",
-								"xxl",
-							].includes(k),
-						) &&
-							typeof Object.values(value)[0] === "object");
+			if (style) {
+				leafStyle = style;
+				currentParent = style;
+				styleCache.set(cacheKey, style);
+			} else {
+				break;
+			}
+		}
 
-					if (isBreakpointKeyed) {
-						for (const [bp, props] of Object.entries(value)) {
-							if (props && Object.keys(props as any).length > 0) {
-								await applyStyleProperties(
-									leafStyle,
-									props as any,
-									{ breakpointId: bp, pseudo },
-									isLegacy,
-								);
-							}
-						}
-					} else {
-						if (Object.keys(value).length > 0) {
-							await applyStyleProperties(
-								leafStyle,
-								value,
-								{ pseudo },
-								isLegacy,
-							);
-						}
+		if (leafStyle && value) {
+			const isBreakpointKeyed =
+				!isLegacy ||
+				(Object.keys(value).some((k) =>
+					[
+						"main",
+						"medium",
+						"small",
+						"tiny",
+						"large",
+						"xl",
+						"xxl",
+					].includes(k),
+				) &&
+					typeof Object.values(value)[0] === "object");
+
+			if (isBreakpointKeyed) {
+				for (const [bp, props] of Object.entries(value)) {
+					if (props && Object.keys(props as any).length > 0) {
+						await applyStyleProperties(
+							leafStyle,
+							props as any,
+							{ breakpointId: bp, pseudo },
+							isLegacy,
+						);
 					}
 				}
-				incrementProgress();
-			}),
-		);
+			} else {
+				if (Object.keys(value).length > 0) {
+					await applyStyleProperties(
+						leafStyle,
+						value,
+						{ pseudo },
+						isLegacy,
+					);
+				}
+			}
+		}
+		incrementProgress();
 
-		const done = Math.min(i + BATCH_SIZE, total);
-		if (done % 30 === 0 || done === total)
+		const done = Math.min(validSelectors.indexOf(selector) + 1, total);
+		if (done % 10 === 0 || done === total)
 			log(`Progress: ${done} / ${total} styles applied`);
 	}
 	log("✓ All styles applied", "success");
@@ -871,6 +1203,427 @@ let progressLog: HTMLElement;
 
 let uploadedPayload: SitePayload | null = null;
 
+function nodeToHtml(node: WebflowReadyNode): string {
+    const tag = node.tag || (node.type === "Heading" ? "h1" : node.type === "Paragraph" ? "p" : "div");
+    
+    // Collect attributes
+    const attrs = Object.entries(node.attributes || {})
+        .map(([k, v]) => ` ${k}="${v}"`)
+        .join("");
+
+    // Inline styles
+    let stylesStr = "";
+    if (node.styles && Object.keys(node.styles).length > 0) {
+        stylesStr = ` style="${Object.entries(node.styles)
+            .map(([k, v]) => `${k}:${v}`)
+            .join(";")}"`;
+    }
+
+    // Classes
+    let classStr = "";
+    if (node.classes && node.classes.length > 0) {
+        classStr = ` class="${node.classes.join(" ")}"`;
+    }
+
+    const startTag = `<${tag}${classStr}${attrs}${stylesStr}>`;
+    const endTag = `</${tag}>`;
+    
+    const text = typeof node.text === "string" ? node.text : Array.isArray(node.text) ? node.text.join("\n") : "";
+    const childrenHtml = (node.children || []).map(nodeToHtml).join("");
+
+    const selfClosing = ["path", "circle", "rect", "line", "polyline", "polygon", "ellipse", "img", "br", "hr"];
+    if (selfClosing.includes(tag.toLowerCase()) && !text && childrenHtml.length === 0) {
+        return `<${tag}${classStr}${attrs}${stylesStr} />`;
+    }
+
+    return `${startTag}${text}${childrenHtml}${endTag}`;
+}
+
+function countAllNodes(nodes: WebflowReadyNode[]): number {
+    let count = nodes.length;
+    for (const n of nodes) {
+        if (n.children) count += countAllNodes(n.children);
+    }
+    return count;
+}
+
+interface FallbackEmbed {
+	code: string;
+	classList: string[];
+	tag: string;
+	displayName?: string;
+	element?: any;
+	category?: "svg" | "complex-value";
+}
+
+interface ComplexValueEmbed {
+	/** Webflow class name (e.g. "nav-link") */
+	className: string;
+	/** CSS property that needs the value (e.g. "font-size", "padding-top") */
+	property: string;
+	/** Raw complex CSS value (e.g. "clamp(1rem, 4vw, 2rem)") */
+	value: string;
+	/** Breakpoint id if responsive (e.g. "small") */
+	breakpointId?: string;
+	/** Webflow element that this style is applied to (for canvas selection) */
+	element?: any;
+}
+
+interface UnsupportedCssEmbed {
+	className: string;
+	pseudo: string;
+	cssText: string;
+}
+
+let fallbackEmbeds: FallbackEmbed[] = [];
+let complexValueEmbeds: ComplexValueEmbed[] = [];
+let unsupportedCssEmbeds: UnsupportedCssEmbed[] = [];
+
+function recordUnsupportedCss(embed: UnsupportedCssEmbed) {
+	const duplicate = unsupportedCssEmbeds.find(existing =>
+		existing.className === embed.className &&
+		existing.pseudo === embed.pseudo &&
+		existing.cssText === embed.cssText
+	);
+	if (!duplicate) {
+		unsupportedCssEmbeds.push(embed);
+	}
+}
+
+/**
+ * Records an SVG embed that requires manual pasting.
+ * Prevents duplicates for the same code and location.
+ */
+function recordFallbackEmbed(embed: FallbackEmbed) {
+	const duplicate = fallbackEmbeds.find(existing =>
+		existing.code === embed.code &&
+		existing.tag === embed.tag &&
+		JSON.stringify(existing.classList) === JSON.stringify(embed.classList)
+	);
+
+	if (!duplicate) {
+		fallbackEmbeds.push(embed);
+	}
+}
+
+/**
+ * Records a complex CSS value (clamp/calc) that requires manual verification.
+ * Prevents duplicates for the same class, property, and breakpoint.
+ */
+function recordComplexValue(cv: ComplexValueEmbed) {
+	const duplicate = complexValueEmbeds.find(existing =>
+		existing.className === cv.className &&
+		existing.property === cv.property &&
+		existing.breakpointId === cv.breakpointId &&
+		existing.value === cv.value
+	);
+
+	if (!duplicate) {
+		complexValueEmbeds.push(cv);
+	}
+}
+
+function buildAccordionSection(id: string, title: string, badge: number, accentColor: string, bodyHtml: string): string {
+	return `
+		<div style="border: 1px solid #334155; border-radius: 8px; overflow: hidden; margin-bottom: 10px;">
+			<button
+				onclick="(function(btn){
+					var body = document.getElementById('${id}-body');
+					var icon = btn.querySelector('.acc-icon');
+					var open = body.style.display !== 'none';
+					body.style.display = open ? 'none' : 'block';
+					icon.style.transform = open ? 'rotate(0deg)' : 'rotate(90deg)';
+				})(this)"
+				style="width:100%; display:flex; align-items:center; gap:8px; padding:10px 12px; background:#1e293b; border:none; cursor:pointer; color:#e2e8f0; font-size:13px; font-weight:600; text-align:left; transition:background 0.15s;"
+				onmouseover="this.style.background='#253347'"
+				onmouseout="this.style.background='#1e293b'"
+			>
+				<span class="acc-icon" style="display:inline-block; font-size:10px; transition:transform 0.2s; color:${accentColor};">▶</span>
+				<span style="flex:1;">${title}</span>
+				<span style="background:${accentColor}22; color:${accentColor}; border:1px solid ${accentColor}44; border-radius:99px; padding:1px 8px; font-size:11px; font-weight:700;">${badge}</span>
+			</button>
+			<div id="${id}-body" style="display:none; padding:12px; background:#0f172a;">
+				${bodyHtml}
+			</div>
+		</div>
+	`;
+}
+
+function showFallbackEmbedsUI() {
+	const container = document.getElementById("fallback-embeds-container");
+	if (!container) return;
+
+	const hasSvg = fallbackEmbeds.length > 0;
+	const hasComplex = complexValueEmbeds.length > 0;
+	const hasUnsupportedCss = unsupportedCssEmbeds.length > 0;
+	if (!hasSvg && !hasComplex && !hasUnsupportedCss) return;
+
+	// Global selector helpers (only register once)
+	if (!(window as any).selectWebflowElement) {
+		(window as any).selectWebflowElement = async (index: number) => {
+			const embed = fallbackEmbeds[index];
+			if (embed && embed.element) {
+				try {
+					await webflow.setSelectedElement(embed.element);
+					log(`Selected: ${embed.displayName || 'Manual Embed'}`, "info");
+				} catch (e: any) {
+					log(`Failed to select element: ${e.message}`, "error");
+				}
+			}
+		};
+	}
+	if (!(window as any).selectComplexValueElement) {
+		(window as any).selectComplexValueElement = async (index: number) => {
+			const cv = complexValueEmbeds[index];
+			if (!cv) return;
+
+			if (cv.element) {
+				try {
+					await webflow.setSelectedElement(cv.element);
+					log(`Selected element for: .${cv.className} → ${cv.property}`, "info");
+					return;
+				} catch (e: any) {
+					log(`Failed to select specific element: ${e.message}`, "warn");
+					// Continue to fallback if original reference failed
+				}
+			}
+
+			// --- DISCOVERY FALLBACK ---
+			// If no direct reference (global style or unused class), search the entire canvas.
+			log(`Searching canvas for an element with class .${cv.className}...`, "info");
+			webflow.notify({ type: "Info", message: `Searching for .${cv.className} on canvas...` });
+			
+			try {
+				const allElements = await webflow.getAllElements();
+				// Use a batch processing to stay responsive while checking style names
+				for (const el of allElements) {
+					if (typeof (el as any).getStyles === "function") {
+						try {
+							const styles = await (el as any).getStyles();
+							for (const style of styles) {
+								const name = await style.getName();
+								if (name === cv.className) {
+									cv.element = el;
+									await webflow.setSelectedElement(el);
+									log(`    [DEBUG] Discovered element for .${cv.className} via project-wide scan`, "success");
+									return;
+								}
+							}
+						} catch { /* ignore elements that fail to report styles */ }
+					}
+				}
+
+				// If we reach here, the class truly isn't being used anywhere.
+				webflow.notify({
+					type: "Info",
+					message: `The class ".${cv.className}" is defined in Style Manager but not used by any element on the canvas.`,
+				});
+				log(`Global class style .${cv.className} exists but is unused on canvas.`, "info");
+			} catch (err: any) {
+				log(`Canvas discovery failed: ${err.message}`, "error");
+			}
+		};
+	}
+	if (!(window as any).copyAsWebflowJSON) {
+		(window as any).copyAsWebflowJSON = async (index: number, btnId: string) => {
+			const embed = fallbackEmbeds[index];
+			if (!embed) return;
+			const nodeId = crypto.randomUUID ? crypto.randomUUID() : "e" + Math.random().toString(36).substr(2, 9);
+			const payload = {
+				"type": "@webflow/XscpData",
+				"payload": {
+					"nodes": [{
+						"_id": nodeId,
+						"type": "HtmlEmbed",
+						"tag": "div",
+						"classes": [],
+						"children": [],
+						"v": embed.code,
+						"data": {
+							"search": { "exclude": true },
+							"embed": { "type": "html", "meta": { "html": embed.code, "div": false, "script": false, "compilable": false, "iframe": false } },
+							"insideRTE": false, "content": "", "devlink": { "runtimeProps": {}, "slot": "" }, "displayName": embed.displayName || "",
+							"attr": { "id": "" }, "xattr": [], "visibility": { "conditions": [], "keepInHtml": { "tag": "False", "val": {} } }
+						}
+					}],
+					"styles": [], "assets": [], "ix1": [], "ix2": { "interactions": [], "events": [], "actionLists": [] }
+				},
+				"meta": { "unlinkedSymbolCount": 0, "droppedLinks": 0, "dynBindRemovedCount": 0, "dynListBindRemovedCount": 0, "paginationRemovedCount": 0 }
+			};
+			try {
+				const payloadStr = JSON.stringify(payload);
+				const copyHandler = (e: ClipboardEvent) => {
+					e.clipboardData?.setData('application/json', payloadStr);
+					e.clipboardData?.setData('text/plain', 'Webflow Component');
+					e.preventDefault();
+				};
+				document.addEventListener('copy', copyHandler);
+				document.execCommand('copy');
+				document.removeEventListener('copy', copyHandler);
+				
+				const btn = document.getElementById(btnId);
+				if (btn) { btn.textContent = '✓ Copied to Webflow!'; setTimeout(() => btn.textContent = 'Copy to Webflow', 2000); }
+			} catch (err: any) {
+				console.error("Clipboard error:", err);
+				alert("Clipboard copy failed. Try copying the raw code instead.");
+			}
+		};
+	}
+	if (!(window as any).copyCssAsWebflowJSON) {
+		(window as any).copyCssAsWebflowJSON = async (index: number, btnId: string) => {
+			const embed = unsupportedCssEmbeds[index];
+			if (!embed) return;
+			const cssCode = `<style>\n${embed.cssText}\n</style>`;
+			const nodeId = crypto.randomUUID ? crypto.randomUUID() : "e" + Math.random().toString(36).substr(2, 9);
+			const payload = {
+				"type": "@webflow/XscpData",
+				"payload": {
+					"nodes": [{
+						"_id": nodeId,
+						"type": "HtmlEmbed",
+						"tag": "div",
+						"classes": [],
+						"children": [],
+						"v": cssCode,
+						"data": {
+							"search": { "exclude": true },
+							"embed": { "type": "html", "meta": { "html": cssCode, "div": false, "script": false, "compilable": false, "iframe": false } },
+							"insideRTE": false, "content": "", "devlink": { "runtimeProps": {}, "slot": "" }, "displayName": "Unsupported CSS",
+							"attr": { "id": "" }, "xattr": [], "visibility": { "conditions": [], "keepInHtml": { "tag": "False", "val": {} } }
+						}
+					}],
+					"styles": [], "assets": [], "ix1": [], "ix2": { "interactions": [], "events": [], "actionLists": [] }
+				},
+				"meta": { "unlinkedSymbolCount": 0, "droppedLinks": 0, "dynBindRemovedCount": 0, "dynListBindRemovedCount": 0, "paginationRemovedCount": 0 }
+			};
+			try {
+				const payloadStr = JSON.stringify(payload);
+				const copyHandler = (e: ClipboardEvent) => {
+					e.clipboardData?.setData('application/json', payloadStr);
+					e.clipboardData?.setData('text/plain', 'Webflow Component');
+					e.preventDefault();
+				};
+				document.addEventListener('copy', copyHandler);
+				document.execCommand('copy');
+				document.removeEventListener('copy', copyHandler);
+				
+				const btn = document.getElementById(btnId);
+				if (btn) { btn.textContent = '✓ Copied to Webflow!'; setTimeout(() => btn.textContent = 'Copy to Webflow', 2000); }
+			} catch (err: any) {
+				console.error("Clipboard error:", err);
+				alert("Clipboard copy failed. Try copying the raw code instead.");
+			}
+		};
+	}
+
+	let sectionsHtml = "";
+
+	// --- SVG section ---
+	if (hasSvg) {
+		let svgBody = "";
+		fallbackEmbeds.forEach((embed, i) => {
+			const idHtml = `embed-code-${i}`;
+			const displayStr = embed.displayName
+				? `<strong style="color:#f8fafc;font-weight:600;">${embed.displayName}</strong> — `
+				: "";
+			const location = embed.classList.length > 0 ? `.${embed.classList.join('.')}` : embed.tag;
+			const escapedCode = embed.code.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+			svgBody += `
+				<div style="background:#1e293b;padding:11px;margin-bottom:10px;border-radius:6px;border:1px solid #2d3f55;box-sizing:border-box;">
+					<div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:8px;">
+						<div style="font-size:12px;color:#94a3b8;">${displayStr}<span style="font-family:monospace;color:#38bdf8;">${location}</span></div>
+						<button onclick="selectWebflowElement(${i})" style="padding:2px 8px;background:rgba(56,189,248,0.1);color:#38bdf8;border:1px solid rgba(56,189,248,0.25);border-radius:4px;cursor:pointer;font-size:11px;font-weight:500;">Select on Canvas</button>
+					</div>
+					<p style="font-size:11px;color:#64748b;margin:0 0 6px;">Paste directly into Webflow, or copy the raw code for an existing embed:</p>
+					<textarea id="${idHtml}" readonly style="width:100%;height:72px;padding:7px;border-radius:4px;border:1px solid #334155;background:#070f1c;color:#7dd3fc;font-family:monospace;font-size:11px;box-sizing:border-box;resize:vertical;margin-bottom:7px;">${escapedCode}</textarea>
+					<div style="display:flex;gap:8px;">
+						<button onclick="copyAsWebflowJSON(${i}, 'btn-wf-${i}')" id="btn-wf-${i}" style="padding:5px 11px;background:#38bdf8;color:#0f172a;border:none;border-radius:4px;cursor:pointer;font-size:12px;font-weight:600;">Copy to Webflow</button>
+						<button onclick="navigator.clipboard.writeText(document.getElementById('${idHtml}').value);this.textContent='✓ Code Copied!';setTimeout(()=>this.textContent='Copy Raw Code',2000)" style="padding:5px 11px;background:#1e40af;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:12px;font-weight:500;">Copy Raw Code</button>
+					</div>
+				</div>
+			`;
+		});
+		sectionsHtml += buildAccordionSection(
+			"acc-svg",
+			"SVG Code Embeds",
+			fallbackEmbeds.length,
+			"#38bdf8",
+			svgBody
+		);
+	}
+
+	// --- Complex Values section ---
+	if (hasComplex) {
+		let cvBody = `<p style="font-size:11px;color:#94a3b8;margin:0 0 10px;">These complex CSS values (clamp, calc, etc.) were applied via the API. Verify each in the Webflow Style Panel — if the value looks wrong or is missing, copy and paste it manually.</p>`;
+		complexValueEmbeds.forEach((cv, i) => {
+			const idCv = `cv-code-${i}`;
+			const bpLabel = cv.breakpointId && cv.breakpointId !== "main" ? ` <span style="background:#1e3a2f;color:#4ade80;border:1px solid #166534;border-radius:3px;padding:0 5px;font-size:10px;">${cv.breakpointId}</span>` : "";
+			cvBody += `
+				<div style="background:#1e293b;padding:11px;margin-bottom:8px;border-radius:6px;border:1px solid #2d3f55;box-sizing:border-box;">
+					<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+						<span style="font-family:monospace;font-size:12px;color:#f472b6;">.${cv.className}</span>
+						<span style="color:#64748b;font-size:11px;">→</span>
+						<span style="font-family:monospace;font-size:12px;color:#fbbf24;">${cv.property}</span>
+						${bpLabel}
+						<button onclick="selectComplexValueElement(${i})" style="margin-left:auto;padding:2px 8px;background:rgba(56,189,248,0.1);color:#38bdf8;border:1px solid rgba(56,189,248,0.25);border-radius:4px;cursor:pointer;font-size:11px;font-weight:500;">Select on Canvas</button>
+					</div>
+					<div style="display:flex;gap:6px;align-items:center;">
+						<input id="${idCv}" readonly value="${cv.value.replace(/"/g, '&quot;')}" style="flex:1;padding:6px 8px;border-radius:4px;border:1px solid #334155;background:#070f1c;color:#a3e635;font-family:monospace;font-size:11px;box-sizing:border-box;" />
+						<button onclick="navigator.clipboard.writeText(document.getElementById('${idCv}').value);this.textContent='✓';setTimeout(()=>this.textContent='Copy',1800)" style="padding:5px 10px;background:#166534;color:#86efac;border:none;border-radius:4px;cursor:pointer;font-size:11px;font-weight:600;">Copy</button>
+					</div>
+				</div>
+			`;
+		});
+		sectionsHtml += buildAccordionSection(
+			"acc-cv",
+			"Complex CSS Values",
+			complexValueEmbeds.length,
+			"#a3e635",
+			cvBody
+		);
+	}
+
+	// --- Unsupported CSS section ---
+	if (hasUnsupportedCss) {
+		let unsuppBody = `<p style="font-size:11px;color:#94a3b8;margin:0 0 10px;">These CSS selectors (e.g., complex pseudo-classes or descendant selectors) are not natively supported by the Webflow Designer API. Paste them into the custom code section or an HTML Embed.</p>`;
+		unsupportedCssEmbeds.forEach((embed, i) => {
+			const idUnsupp = `unsupp-code-${i}`;
+			const escapedCode = `<style>\n${embed.cssText}\n</style>`.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+			unsuppBody += `
+				<div style="background:#1e293b;padding:11px;margin-bottom:10px;border-radius:6px;border:1px solid #2d3f55;box-sizing:border-box;">
+					<div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:8px;">
+						<div style="font-size:12px;color:#94a3b8;">Unsupported Selector: <span style="font-family:monospace;color:#f472b6;">.${embed.className}:${embed.pseudo}</span></div>
+					</div>
+					<p style="font-size:11px;color:#64748b;margin:0 0 6px;">Paste directly into Webflow, or copy the raw code for an existing embed:</p>
+					<textarea id="${idUnsupp}" readonly style="width:100%;height:80px;padding:7px;border-radius:4px;border:1px solid #334155;background:#070f1c;color:#f472b6;font-family:monospace;font-size:11px;box-sizing:border-box;resize:vertical;margin-bottom:7px;">${escapedCode}</textarea>
+					<div style="display:flex;gap:8px;">
+						<button onclick="copyCssAsWebflowJSON(${i}, 'btn-wf-css-${i}')" id="btn-wf-css-${i}" style="padding:5px 11px;background:#f472b6;color:#0f172a;border:none;border-radius:4px;cursor:pointer;font-size:12px;font-weight:600;">Copy to Webflow</button>
+						<button onclick="navigator.clipboard.writeText(document.getElementById('${idUnsupp}').value);this.textContent='✓ Code Copied!';setTimeout(()=>this.textContent='Copy Raw CSS',2000)" style="padding:5px 11px;background:#9d174d;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:12px;font-weight:500;">Copy Raw CSS</button>
+					</div>
+				</div>
+			`;
+		});
+		sectionsHtml += buildAccordionSection(
+			"acc-unsupp",
+			"Unsupported CSS Selectors",
+			unsupportedCssEmbeds.length,
+			"#f472b6",
+			unsuppBody
+		);
+	}
+
+	container.innerHTML = `
+		<div style="margin-bottom:8px;">
+			<div style="font-size:12px;font-weight:700;color:#f8fafc;letter-spacing:0.04em;margin-bottom:6px;display:flex;align-items:center;gap:6px;">
+				<span style="color:#f59e0b;">⚠</span> Webflow Musts
+			</div>
+			<p style="font-size:11px;color:#64748b;margin:0 0 10px;">These items need manual attention in the Webflow Designer. Expand a section to review.</p>
+		</div>
+		${sectionsHtml}
+	`;
+	container.style.display = "block";
+}
+
 // ------------------------------------
 // Progress Log
 // ------------------------------------
@@ -881,11 +1634,16 @@ let currentProgress = 0;
 let totalSteps = 0;
 
 function updateProgressBar(): void {
-	const progressFill = document.getElementById("progress-fill") as HTMLElement;
-	const progressText = document.getElementById("progress-percentage") as HTMLElement;
+	const progressFill = document.getElementById(
+		"progress-fill",
+	) as HTMLElement;
+	const progressText = document.getElementById(
+		"progress-percentage",
+	) as HTMLElement;
 	if (!progressFill || !progressText) return;
 
-	const percentage = totalSteps > 0 ? Math.round((currentProgress / totalSteps) * 100) : 0;
+	const percentage =
+		totalSteps > 0 ? Math.round((currentProgress / totalSteps) * 100) : 0;
 	progressFill.style.width = `${Math.min(percentage, 100)}%`;
 	progressText.textContent = `${Math.min(percentage, 100)}%`;
 }
@@ -920,7 +1678,11 @@ function log(message: string, level: LogLevel = "info"): void {
 	fetch("http://localhost:5174/log", {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
-		body: JSON.stringify({ message, level, timestamp: new Date().toISOString() }),
+		body: JSON.stringify({
+			message,
+			level,
+			timestamp: new Date().toISOString(),
+		}),
 	}).catch(() => {
 		/* Silent if server not running */
 	});
@@ -958,9 +1720,11 @@ window.addEventListener("unhandledrejection", (event) => {
 
 window.addEventListener("error", (event) => {
 	log(`RUNTIME ERROR: ${event.message}`, "error");
-	showHardError("Runtime Error (Crash)", `${event.message}\nat ${event.filename}:${event.lineno}:${event.colno}`);
+	showHardError(
+		"Runtime Error (Crash)",
+		`${event.message}\nat ${event.filename}:${event.lineno}:${event.colno}`,
+	);
 });
-
 
 function incrementProgress(amount = 1): void {
 	currentProgress += amount;
@@ -977,6 +1741,12 @@ function clearLog(): void {
 
 function init(): void {
 	log("--- APP INITIALIZED (Build 2026-04-09.0421) ---", "warn");
+	
+	// Set the Extension UI size to large for better workspace
+	webflow.setExtensionSize("large").catch(() => {
+		/* fallback if API not supported in this environment */
+	});
+
 	const app = document.getElementById("app");
 	if (!app) return;
 
@@ -1076,6 +1846,8 @@ function init(): void {
           <div id="progress-log-entries" class="progress-log-entries"></div>
         </div>
       </div>
+
+      <div id="fallback-embeds-container" class="fallback-embeds-container" style="display: none; width: 100%; margin-top: 16px;"></div>
 
       <div id="build-status" class="build-status" style="margin-top: 12px; font-size: 12px; color: #64748b; text-align: center; display: none;"></div>
       <div class="version-footer">Build: 2026-04-09.0421 (Log Level: INFO)</div>
@@ -1222,13 +1994,25 @@ async function handleBuild(): Promise<void> {
 	if (Array.isArray(payload)) {
 		payload = {
 			nodes: payload,
-			__meta: { version: 1, normalized: false, complexSelectorsResolved: false } as any
+			__meta: {
+				version: 1,
+				normalized: false,
+				complexSelectorsResolved: false,
+			} as any,
 		};
 	}
 
 	setLoading(true);
 	hideError();
 	clearLog();
+	fallbackEmbeds = [];
+	complexValueEmbeds = [];
+
+	const embedContainer = document.getElementById("fallback-embeds-container");
+	if (embedContainer) {
+		embedContainer.style.display = "none";
+		embedContainer.innerHTML = "";
+	}
 
 	const statusEl = document.getElementById("build-status");
 	if (statusEl) statusEl.style.display = "none";
@@ -1236,9 +2020,11 @@ async function handleBuild(): Promise<void> {
 	totalSteps = 0;
 	updateProgressBar();
 
-	const progressContainer = document.getElementById("progress-container") as HTMLElement;
+	const progressContainer = document.getElementById(
+		"progress-container",
+	) as HTMLElement;
 	if (progressContainer) progressContainer.classList.add("show");
-	
+
 	const logPanel = document.getElementById("progress-log") as HTMLElement;
 	if (logPanel) logPanel.classList.remove("has-errors");
 
@@ -1254,11 +2040,16 @@ async function handleBuild(): Promise<void> {
 		log(`Build failed: ${e?.message ?? e}`, "error");
 	} finally {
 		setLoading(false);
-		
+
 		// Reset state if successful
 		if (currentProgress >= totalSteps && totalSteps > 0) {
-			const finishedFileName = fileNameDisplay.textContent || "Pasted JSON";
-			
+			if (fallbackEmbeds.length > 0 || complexValueEmbeds.length > 0) {
+				showFallbackEmbedsUI();
+			}
+
+			const finishedFileName =
+				fileNameDisplay.textContent || "Pasted JSON";
+
 			// Show status
 			const statusEl = document.getElementById("build-status");
 			if (statusEl) {
@@ -1306,14 +2097,19 @@ const WEBFLOW_NATIVE_TAGS = [
 async function uploadAssetFromUrl(url: string): Promise<any> {
 	try {
 		if (!url || (!url.startsWith("http") && !url.startsWith("data:"))) {
-			console.warn("Skipping asset upload for non-absolute or data URL:", url);
+			console.warn(
+				"Skipping asset upload for non-absolute or data URL:",
+				url,
+			);
 			return null;
 		}
 
 		// 1. Fetch image with basic validation
 		const response = await fetch(url);
 		if (!response.ok) {
-			throw new Error(`Failed to fetch image: ${response.status} ${response.statusText}`);
+			throw new Error(
+				`Failed to fetch image: ${response.status} ${response.statusText}`,
+			);
 		}
 
 		// Use arrayBuffer instead of blob to ensure we get raw bytes.
@@ -1332,7 +2128,7 @@ async function uploadAssetFromUrl(url: string): Promise<any> {
 		if (mimeType.includes("jpeg") || mimeType.includes("jpg")) ext = "jpg";
 		else if (mimeType.includes("svg")) ext = "svg";
 		else if (mimeType.includes("webp")) ext = "webp";
-		
+
 		const fileName = `img-${Date.now()}.${ext}`;
 
 		// 3. Resilient upload sequence
@@ -1344,23 +2140,35 @@ async function uploadAssetFromUrl(url: string): Promise<any> {
 		} catch (err1: any) {
 			try {
 				log(`    → Pattern 2: Uploading as { file } object...`);
-				const file = new File([uint8Array], fileName, { type: mimeType });
+				const file = new File([uint8Array], fileName, {
+					type: mimeType,
+				});
 				return await (webflow as any).createAsset({ file });
 			} catch (err2: any) {
 				try {
-					log(`    → Pattern 3: Uploading File/Blob via defineProperty...`);
+					log(
+						`    → Pattern 3: Uploading File/Blob via defineProperty...`,
+					);
 					// Some environments don't have a fully spec-compliant File constructor
-					const backupBlob = new Blob([uint8Array], { type: mimeType });
-					Object.defineProperty(backupBlob, 'name', {
+					const backupBlob = new Blob([uint8Array], {
+						type: mimeType,
+					});
+					Object.defineProperty(backupBlob, "name", {
 						value: fileName,
-						writable: true
+						writable: true,
 					});
 					return await webflow.createAsset(backupBlob as File);
-				} catch (err3 : any) {
-					const finalMsg = err1?.message || err3?.message || "All upload patterns failed";
+				} catch (err3: any) {
+					const finalMsg =
+						err1?.message ||
+						err3?.message ||
+						"All upload patterns failed";
 					log(`    ✕ Asset upload failed: ${finalMsg}`, "error");
-					webflow.notify({ type: "Error", message: `Asset Sync Error: ${finalMsg}` });
-					throw err1; 
+					webflow.notify({
+						type: "Error",
+						message: `Asset Sync Error: ${finalMsg}`,
+					});
+					throw err1;
 				}
 			}
 		}
@@ -1422,13 +2230,63 @@ function getPresetForType(node: WebflowReadyNode): any {
 				(webflow.elementPresets as any).BlockElement ||
 				webflow.elementPresets.DOM
 			);
-		case "custom":
+		case "FormWrapper":
+			return webflow.elementPresets.FormWrapper || webflow.elementPresets.DivBlock;
+		case "FormForm":
+			return webflow.elementPresets.FormForm || webflow.elementPresets.DOM;
+		case "FormTextInput":
+			return webflow.elementPresets.FormTextInput || webflow.elementPresets.DOM;
+		case "FormTextarea":
+			return webflow.elementPresets.FormTextarea || webflow.elementPresets.DOM;
+		case "FormSelect":
+			return webflow.elementPresets.FormSelect || webflow.elementPresets.DOM;
+		case "FormCheckboxInput":
+			return webflow.elementPresets.FormCheckboxInput || webflow.elementPresets.DOM;
+		case "FormRadioInput":
+			return webflow.elementPresets.FormRadioInput || webflow.elementPresets.DOM;
+		case "FormBlockLabel":
+			return webflow.elementPresets.FormBlockLabel || webflow.elementPresets.DOM;
+		case "FormButton":
+			return webflow.elementPresets.FormButton || webflow.elementPresets.DOM;
+		case "FormSuccessMessage":
+			return webflow.elementPresets.FormSuccessMessage || webflow.elementPresets.DivBlock;
+		case "FormErrorMessage":
+			return webflow.elementPresets.FormErrorMessage || webflow.elementPresets.DivBlock;
+		case "custom": {
+			// Upgrade custom nodes whose tag matches a native Webflow form element.
+			// This handles stale JSON where the backend emitted type="custom" for
+			// form/label/input/textarea/select/button before the form-type mapping was added.
+			if (tag === "form") return webflow.elementPresets.FormForm || webflow.elementPresets.DOM;
+			if (tag === "label") return webflow.elementPresets.FormBlockLabel || webflow.elementPresets.DOM;
+			if (tag === "textarea") return webflow.elementPresets.FormTextarea || webflow.elementPresets.DOM;
+			if (tag === "select") return webflow.elementPresets.FormSelect || webflow.elementPresets.DOM;
+			if (tag === "button") return webflow.elementPresets.FormButton || webflow.elementPresets.DOM;
+			if (tag === "input") {
+				const inputType = (node.attributes?.type || "text").toLowerCase();
+				if (inputType === "checkbox") return webflow.elementPresets.FormCheckboxInput || webflow.elementPresets.DOM;
+				if (inputType === "radio") return webflow.elementPresets.FormRadioInput || webflow.elementPresets.DOM;
+				if (inputType === "submit") return webflow.elementPresets.FormButton || webflow.elementPresets.DOM;
+				return webflow.elementPresets.FormTextInput || webflow.elementPresets.DOM;
+			}
 			return webflow.elementPresets.DOM;
+		}
 	}
 
 	// 2. Map tags to native presets
 	if (tag === "ul" || tag === "ol") return webflow.elementPresets.List;
 	if (tag === "li") return webflow.elementPresets.ListItem;
+	if (tag === "form") return webflow.elementPresets.FormForm;
+	if (tag === "label") return webflow.elementPresets.FormBlockLabel;
+	if (tag === "textarea") return webflow.elementPresets.FormTextarea;
+	if (tag === "select") return webflow.elementPresets.FormSelect;
+	if (tag === "button") return webflow.elementPresets.FormButton;
+	if (tag === "input") {
+		const inputType = (node.attributes?.type || "text").toLowerCase();
+		if (inputType === "checkbox") return webflow.elementPresets.FormCheckboxInput;
+		if (inputType === "radio") return webflow.elementPresets.FormRadioInput;
+		if (inputType === "submit") return webflow.elementPresets.FormButton;
+		return webflow.elementPresets.FormTextInput;
+	}
 
 	// 2. Custom attributes check for Block types
 	// Allow common attributes that native Webflow elements support
@@ -1441,6 +2299,20 @@ function getPresetForType(node: WebflowReadyNode): any {
 		"alt",
 		"target",
 		"loading",
+		"name",
+		"id",
+		"for",
+		"placeholder",
+		"type",
+		"required",
+		"value",
+		"method",
+		"action",
+		"rows",
+		"cols",
+		"selected",
+		"disabled",
+		"data-name"
 	];
 	const hasCustomAttributes = Object.keys(node.attributes || {}).some(
 		(k) => !allowedAttrs.includes(k),
@@ -1448,7 +2320,7 @@ function getPresetForType(node: WebflowReadyNode): any {
 
 	if (
 		hasCustomAttributes &&
-		!["div", "section", "header", "footer", "main"].includes(tag || "")
+		!["div", "section", "header", "footer", "main", "form", "label", "input", "textarea", "select", "button"].includes(tag || "")
 	) {
 		return webflow.elementPresets.DOM;
 	}
@@ -1459,8 +2331,20 @@ function getPresetForType(node: WebflowReadyNode): any {
 
 	// Only use DivBlock for tags that Webflow officially supports as block containers.
 	// Lists of valid block tags: div, header, footer, nav, main, section, article, aside, address, figure.
-	const validBlockTags = ["div", "section", "header", "footer", "main", "nav", "aside", "article", "address", "figure"];
-	const isSupportedBlockTag = !tag || tag === "div" || validBlockTags.includes(tag);
+	const validBlockTags = [
+		"div",
+		"section",
+		"header",
+		"footer",
+		"main",
+		"nav",
+		"aside",
+		"article",
+		"address",
+		"figure",
+	];
+	const isSupportedBlockTag =
+		!tag || tag === "div" || validBlockTags.includes(tag);
 
 	if (isSupportedBlockTag) {
 		return webflow.elementPresets.DivBlock;
@@ -1478,24 +2362,40 @@ function getPresetForType(node: WebflowReadyNode): any {
  */
 async function smartAppend(parentNode: any, preset: any): Promise<any> {
 	if (typeof parentNode.append === "function") {
-		return await parentNode.append(preset);
+		return await withTimeout(
+			parentNode.append(preset),
+			10000,
+			"smartAppend-append",
+		);
 	}
 
 	if (typeof parentNode.after === "function") {
-		log(`    ⚠ Selection (${parentNode.type}) doesn't support children. Adding as sibling instead.`, "warn");
-		return await parentNode.after(preset);
+		log(
+			`    ⚠ Selection (${parentNode.type}) doesn't support children. Adding as sibling instead.`,
+			"warn",
+		);
+		return await withTimeout(
+			parentNode.after(preset),
+			10000,
+			"smartAppend-after",
+		);
 	}
 
 	// Try moving up one level
 	if (typeof parentNode.getParent === "function") {
 		const realParent = await parentNode.getParent();
 		if (realParent) {
-			log(`    ⚠ Selection not a container. Moving up to ${realParent.type}...`, "info");
+			log(
+				`    ⚠ Selection not a container. Moving up to ${realParent.type}...`,
+				"info",
+			);
 			return await smartAppend(realParent, preset);
 		}
 	}
 
-	throw new Error(`Current selection (${parentNode.type}) cannot have children or siblings.`);
+	throw new Error(
+		`Current selection (${parentNode.type}) cannot have children or siblings.`,
+	);
 }
 
 async function setElementText(element: any, text: string): Promise<void> {
@@ -1522,11 +2422,18 @@ async function setElementText(element: any, text: string): Promise<void> {
 	}
 
 	// 2. Refresh element via ID to ensure UI is hydrated for complex presets
-	if (element.id && (element.type === "TextBlock" || element.type === "BlockElement")) {
+	if (
+		element.id &&
+		(element.type === "TextBlock" ||
+			element.type === "BlockElement" ||
+			element.type === "DOM")
+	) {
 		try {
-			await new Promise(r => setTimeout(r, 100)); // Tick for UI flush
+			await new Promise((r) => setTimeout(r, 100)); // Tick for UI flush
 			const allElements = await webflow.getAllElements();
-			const freshRef = allElements.find((el: any) => el.id === element.id);
+			const freshRef = allElements.find(
+				(el: any) => el.id === element.id,
+			);
 			if (freshRef) {
 				const stringChild = await findStringDescendant(freshRef);
 				if (stringChild) {
@@ -1535,7 +2442,10 @@ async function setElementText(element: any, text: string): Promise<void> {
 				}
 			}
 		} catch (e: any) {
-			console.warn("Failed to find String descendant via fresh ID lookup:", e);
+			console.warn(
+				"Failed to find String descendant via fresh ID lookup:",
+				e,
+			);
 		}
 	}
 
@@ -1545,22 +2455,248 @@ async function setElementText(element: any, text: string): Promise<void> {
 	}
 }
 
+async function applyClassesAndStyles(
+	element: any,
+	nodeData: WebflowReadyNode,
+	isLegacy = false,
+): Promise<void> {
+	if (!element) return;
+
+	// ------------------------------------
+	// Classes (Webflow Styles / Combo Classes)
+	// ------------------------------------
+	const styleRefs: any[] = [];
+	const classes = [...(nodeData.classes || [])];
+
+	// Merge styles: node's own styles + backend-inlined complex selector styles
+	const nodeStyles = {
+		...(nodeData.styles || {}),
+		...(nodeData.inlineStyles || {}),
+	};
+	const hasStylesToApply = Object.keys(nodeStyles).length > 0;
+	const hasPseudoStyles =
+		nodeData.inlinePseudoStyles &&
+		Object.keys(nodeData.inlinePseudoStyles).length > 0;
+
+	// If the element has styles but no classes, auto-generate a class name
+	if ((hasStylesToApply || hasPseudoStyles) && classes.length === 0) {
+		const tagBase =
+			nodeData.tag || nodeData.type.toLowerCase() || "element";
+		classes.push(`${tagBase}-style`);
+	}
+
+	if (classes.length > 0 && element.setStyles) {
+		let currentParent: any = null;
+		const cleanClasses = [
+			...new Set(classes.filter((c) => c && c.trim().length > 0)),
+		];
+
+		const styleCache = (window as any).__wfStyleCache;
+
+		for (const className of cleanClasses) {
+			const cacheKey = currentParent
+				? `${currentParent.id}:${className}`
+				: className;
+			let style = styleCache?.get(cacheKey);
+			let fallbackStyle = style;
+
+			if (!style) {
+				style = await getStyleByName(className);
+				fallbackStyle = style;
+				if (style) {
+					const parent = await style.getParent();
+					if (parent?.id !== currentParent?.id) style = null;
+				}
+			}
+
+			if (!style) {
+				try {
+					style = await webflow.createStyle(
+						className,
+						currentParent ? { parent: currentParent } : {},
+					);
+					if (styleCache) styleCache.set(cacheKey, style);
+				} catch (e: any) {
+					const msg = e.message.toLowerCase();
+					if (
+						msg.includes("conflict") ||
+						msg.includes("duplicate") ||
+						msg.includes("already exists")
+					) {
+						style =
+							(await getStyleByName(className)) || fallbackStyle;
+					}
+
+					if (!style) {
+						log(
+							`    ⚠ Could not resolve class ${className} for chain: ${e.message}`,
+							"warn",
+						);
+					}
+				}
+			}
+
+			if (style) {
+				styleRefs.push(style);
+				currentParent = style;
+				if (styleCache) styleCache.set(cacheKey, style);
+			}
+		}
+
+		if (styleRefs.length > 0) {
+			try {
+				await withTimeout(
+					element.setStyles([...styleRefs]),
+					8000,
+					"setStyles",
+				);
+			} catch (e: any) {
+				log(`    ✕ Failed to apply style chain: ${e.message}`, "error");
+			}
+		}
+
+		// BACKFILL: Link this element to any complex values tracked for its classes
+		// that don't yet have an element reference (e.g. global styles).
+		for (const className of cleanClasses) {
+			const pending = complexValueEmbeds.filter(cv => cv.className === className && !cv.element);
+			for (const cv of pending) {
+				cv.element = element;
+				log(`    [DEBUG] Backfilled element ref for .${cv.className} complex value`, "info");
+			}
+		}
+	}
+
+	// ------------------------------------
+	// Apply Properties to the primary class
+	// ------------------------------------
+	if (styleRefs.length > 0) {
+		const primaryStyle = styleRefs[styleRefs.length - 1];
+		if (hasStylesToApply) {
+			await applyStyleProperties(
+				primaryStyle,
+				nodeStyles,
+				undefined,
+				isLegacy,
+				element,
+			);
+		}
+		if (hasPseudoStyles) {
+			for (const [pseudo, pseudoProps] of Object.entries(
+				nodeData.inlinePseudoStyles || {},
+			)) {
+				await applyStyleProperties(
+					primaryStyle,
+					pseudoProps as Record<string, string>,
+					{ pseudo },
+					isLegacy,
+					element,
+				);
+			}
+		}
+	}
+}
+
+
 async function buildElementTree(
 	parentNode: any,
 	rawNodeData: WebflowReadyNode,
 	isLegacy = false,
 ): Promise<void> {
-	// Normalize text: handle array of lines (literal string format) from backend
+    // Normalize text: handle array of lines (literal string format) from backend
 	const text = Array.isArray(rawNodeData.text)
 		? rawNodeData.text.join("\n")
 		: rawNodeData.text;
 	const nodeData = { ...rawNodeData, text: text as string | undefined };
 
+	// TYPE UPGRADE: Promote "custom" nodes that match native Webflow form tags.
+	// This covers stale JSON where type="custom" tag="form/input/label/..." was emitted
+	// before the backend gained form-type awareness.
+	if (nodeData.type === "custom") {
+		const tTag = nodeData.tag?.toLowerCase();
+		if (tTag === "form") {
+			nodeData.type = "FormForm";
+		} else if (tTag === "label") {
+			nodeData.type = "FormBlockLabel";
+		} else if (tTag === "textarea") {
+			nodeData.type = "FormTextarea";
+		} else if (tTag === "select") {
+			nodeData.type = "FormSelect";
+		} else if (tTag === "button") {
+			// Only upgrade button if it's clearly a form submit/button, not a custom-styled one.
+			// Heuristic: if it has type="submit" attribute or no children that are non-text.
+			const btnType = nodeData.attributes?.type?.toLowerCase();
+			if (btnType === "submit" || btnType === "button" || btnType === undefined) {
+				nodeData.type = "FormButton";
+			}
+		} else if (tTag === "input") {
+			const inputType = (nodeData.attributes?.type || "text").toLowerCase();
+			if (inputType === "checkbox") nodeData.type = "FormCheckboxInput";
+			else if (inputType === "radio") nodeData.type = "FormRadioInput";
+			else if (inputType === "submit") nodeData.type = "FormButton";
+			else nodeData.type = "FormTextInput";
+		}
+	}
+
 	// WEBFLOW COMPLIANCE: If a Heading or Paragraph has children, it MUST be a custom DOM element
 	// to avoid "Elements cannot be added to Paragraph elements" error.
+	const isTextType =
+		["Paragraph", "Heading", "Link", "TextBlock"].includes(
+			nodeData.type,
+		) ||
+		["p", "span", "label", "li", "a", "h1", "h2", "h3", "h4", "h5", "h6"].includes(nodeData.tag?.toLowerCase() || "");
 	const originalType = nodeData.type;
-	if ((nodeData.type === "Heading" || nodeData.type === "Paragraph") && nodeData.children && nodeData.children.length > 0) {
+	if (
+		(nodeData.type === "Heading" || nodeData.type === "Paragraph") &&
+		nodeData.children &&
+		nodeData.children.length > 0
+	) {
 		nodeData.type = "custom";
+	}
+
+	// SVG AUTOMATIC FALLBACK: Webflow API often blocks SVG specific attributes (d, viewBox, etc)
+	// or causes Designer instability when creating complex SVG trees via DOM.
+	// We detect the top-level 'svg' tag in a 'custom' node and treat it as a Manual Embed candidate.
+	const isSvgRoot = nodeData.type === "custom" && nodeData.tag?.toLowerCase() === "svg";
+	if (isSvgRoot) {
+		log(`    ⚠ SVG node detected (tag: ${nodeData.tag}). Handling as manual embed...`, "warn");
+		
+		const code = nodeToHtml(nodeData);
+		log(`    [DEBUG] SVG code serialized (${code.length} chars)`, "info");
+
+		const embedName = `SVG Manual Embed ${fallbackEmbeds.length + 1}`;
+		const embedEntry: FallbackEmbed = {
+			code,
+			classList: nodeData.classes || [],
+			tag: nodeData.tag || "svg",
+			displayName: embedName
+		};
+		recordFallbackEmbed(embedEntry);
+		
+		try {
+			log(`    [DEBUG] Creating HtmlEmbed...`, "info");
+			// Append an empty HtmlEmbed element where the user should paste the code
+			const embedEl = await withTimeout(
+				smartAppend(parentNode, webflow.elementPresets.HtmlEmbed || (webflow.elementPresets as any).DOM),
+				5000,
+				"svg-htmlembed"
+			);
+			
+			// Attach the element to the fallback entry for interactive selection
+			embedEntry.element = embedEl;
+
+			// Apply classes/styles to the placeholder element to preserve grid layout
+			if (embedEl) {
+				await applyClassesAndStyles(embedEl, nodeData, isLegacy);
+			}
+		} catch (e: any) {
+			log(`    ⚠ HtmlEmbed creation skipped: ${e.message || e}`, "info");
+		}
+		
+		const totalNodesInBranch = countAllNodes([nodeData]);
+		log(`    [DEBUG] Branch nodes counted: ${totalNodesInBranch}. Incrementing progress...`, "info");
+		incrementProgress(totalNodesInBranch);
+		log(`    [DEBUG] SVG branch finished. Returning.`, "info");
+		return;
 	}
 
 	const preset = getPresetForType(nodeData);
@@ -1572,7 +2708,10 @@ async function buildElementTree(
 		// ------------------------------------
 		// Use direct append for immediate access to the element reference
 		if (!preset) {
-			log(`    ✕ Unsupported node type or empty preset for type: ${nodeData.type}`, "error");
+			log(
+				`    ✕ Unsupported node type or empty preset for type: ${nodeData.type}`,
+				"error",
+			);
 			return;
 		}
 
@@ -1583,7 +2722,10 @@ async function buildElementTree(
 		if (nodeData.type === "HtmlEmbed") {
 			try {
 				log(`    [EMBED] Creating wrapper div.htmlembed...`);
-				const wrapper = await smartAppend(parentNode, webflow.elementPresets.DivBlock);
+				const wrapper = await smartAppend(
+					parentNode,
+					webflow.elementPresets.DivBlock,
+				);
 				let embedStyle = await getStyleByName("htmlembed");
 				if (!embedStyle) {
 					try {
@@ -1597,7 +2739,10 @@ async function buildElementTree(
 				if (embedStyle) await wrapper.setStyles([embedStyle]);
 				targetParent = wrapper;
 			} catch (wrapErr: any) {
-				log(`    ⚠ Failed to create wrapper div: ${wrapErr.message}. Proceeding without wrapper.`, "warn");
+				log(
+					`    ⚠ Failed to create wrapper div: ${wrapErr.message}. Proceeding without wrapper.`,
+					"warn",
+				);
 			}
 		}
 
@@ -1611,61 +2756,88 @@ async function buildElementTree(
 		// ------------------------------------
 		// HtmlEmbed: Re-fetch fresh reference
 		// ------------------------------------
-		// The element object returned from append() is a lightweight "creation receipt"
-		// that doesn't expose the full HtmlEmbed API (e.g. setHtml is missing).
-		// Webflow auto-selects the newly appended element, so getSelectedElement()
-		// returns the fully-initialized instance with the complete method surface.
 		if (nodeData.type === "HtmlEmbed") {
 			try {
 				const fresh = await webflow.getSelectedElement();
-				if (fresh && fresh.type === "HtmlEmbed") {
+				if (fresh && (fresh.type === "HtmlEmbed" || fresh.type === "DOM")) {
 					element = fresh;
-					log(`    [EMBED] Re-fetched fresh element reference (type: ${fresh.type})`, "info");
+					log(
+						`    [EMBED] Re-fetched fresh element reference (type: ${fresh.type})`,
+						"info",
+					);
 				}
 			} catch (e: any) {
-				log(`    [EMBED] Could not re-fetch element: ${e.message}. Using original reference.`, "warn");
+				log(
+					`    [EMBED] Could not re-fetch element: ${e.message}. Using original reference.`,
+					"warn",
+				);
 			}
 		}
 
 		// ------------------------------------
-		// List Handling: Empty default items
+		// Preset Children Clearing & Reference Shifting (List, FormForm)
 		// ------------------------------------
-		// Webflow adds 3 default ListItems to a new List. We must clear them first.
-		if (nodeData.type === "List" && element.getChildren) {
+		// Move this BEFORE classes/styles so classes/IDs target the actual functional element (e.g. FormForm instead of FormWrapper)
+		if ((nodeData.type === "List" || nodeData.type === "FormForm") && element.getChildren) {
 			try {
-				const defaultChildren = await element.getChildren();
-				if (defaultChildren && defaultChildren.length > 0) {
-					log(
-						`    [LIST] Clearing ${defaultChildren.length} default items...`,
-					);
-					for (const child of defaultChildren) {
-						await child.remove();
+				if (nodeData.type === "List") {
+					const defaultChildren = await element.getChildren();
+					if (defaultChildren && defaultChildren.length > 0) {
+						log(`    [LIST] Clearing ${defaultChildren.length} default items...`);
+						for (const child of defaultChildren) {
+							await child.remove();
+						}
+					}
+				} else if (nodeData.type === "FormForm") {
+					// FormForm preset creates a FormWrapper containing FormForm (index 0), SuccessMessage (index 1), ErrorMessage (index 2)
+					const wrapperChildren = await element.getChildren();
+					if (wrapperChildren && wrapperChildren.length > 0) {
+						const innerForm = wrapperChildren[0];
+						// Clear default inputs inside the inner form
+						if (innerForm && innerForm.getChildren) {
+							const formChildren = await innerForm.getChildren();
+							if (formChildren && formChildren.length > 0) {
+								log(`    [FORM] Clearing default inputs...`);
+								for (const child of formChildren) {
+									await child.remove();
+								}
+							}
+						}
+						// Shift element reference so classes and children target the inner FormForm, not the wrapper.
+						element = innerForm;
 					}
 				}
 			} catch (e: any) {
-				console.warn("Failed to clear default list children:", e);
+				console.warn("Failed to clear default children:", e);
 			}
 		}
+
+		// Apply classes and styles
+		await applyClassesAndStyles(element, nodeData, isLegacy);
 
 		// ------------------------------------
 		// Set Tag
 		// ------------------------------------
 		let tagToSet = nodeData.tag?.toLowerCase();
 		// Skip setting 'span' tag for non-DOM elements as it's not a valid top-level block tag for DivBlocks
-		if (tagToSet === "span" && element.type !== "DOM" && element.type !== "DOMElement" && element.type !== "dom") tagToSet = undefined;
+		if (
+			tagToSet === "span" &&
+			element.type !== "DOM" &&
+			element.type !== "DOMElement" &&
+			element.type !== "dom"
+		)
+			tagToSet = undefined;
 
 		// If we fell back to DivBlock for a Paragraph/Heading with children, ensure it maintains semantic tag
-		if (!tagToSet && (nodeData.children && nodeData.children.length > 0)) {
+		if (!tagToSet && nodeData.children && nodeData.children.length > 0) {
 			if (originalType === "Paragraph") tagToSet = "p";
-			if (originalType === "Heading") tagToSet = rawNodeData.tag?.toLowerCase() || "h2";
+			if (originalType === "Heading")
+				tagToSet = rawNodeData.tag?.toLowerCase() || "h2";
 		}
 
-		// Skip setting tag for specialized elements like HtmlEmbed which manage their own internal tag/content
-		// Determine if we are using a specialized preset or falling back to a custom DOM element
-		const isSpecializedHtmlEmbed = nodeData.type === "HtmlEmbed" && element.type !== "DOM";
+		const isSpecializedHtmlEmbed =
+			nodeData.type === "HtmlEmbed" && element.type !== "DOM";
 
-		// Skip setting tag for specialized elements like HtmlEmbed which manage their own internal tag/content.
-		// However, if we fell back to a custom DOM element, we MUST set the tag.
 		if (tagToSet && element.setTag && !isSpecializedHtmlEmbed) {
 			await element.setTag(tagToSet);
 		}
@@ -1689,39 +2861,36 @@ async function buildElementTree(
 		// ------------------------------------
 		// Text Content
 		// ------------------------------------
-		// Specialized elements (like HtmlEmbed) set their content via settings, not textContent.
-		// If we fell back to a custom DOM element (as suggested by Webflow Designer), we use textContent.
 		if ((element.setTextContent || element.setText) && !isSpecializedHtmlEmbed) {
-			const isTextType =
-				["Paragraph", "Heading", "Link", "TextBlock"].includes(nodeData.type) ||
-				nodeData.tag === "p" ||
-				nodeData.tag === "span";
 			const shouldSetText = nodeData.text !== undefined || isTextType;
 
 			if (shouldSetText) {
-				const text = nodeData.text || "";
-				const originalTag = nodeData.tag?.toLowerCase();
+				const textValue = nodeData.text || "";
 				const nodeHasChildren = nodeData.children && nodeData.children.length > 0;
 
-				const isContainerType = ["Block", "Heading", "Paragraph", "Link", "ListItem", "custom"].includes(nodeData.type);
-				
-				// WEBFLOW COMPLIANCE: We cannot add text AND children directly to a Paragraph/Heading in the same level
-				// without triggering "Elements cannot be added to Paragraph elements" if we use presets.
-				// If we use DOM elements (custom), we can be more flexible, but wrapping in spans/divs is safer for Layout.
-				if (isContainerType && text.length > 0 && nodeHasChildren) {
-					log(`    [${nodeData.type}] Adding TextBlock for node text: "${text.substring(0, 20)}..."`);
+				const isContainerType = [
+					"Block",
+					"Heading",
+					"Paragraph",
+					"Link",
+					"ListItem",
+					"custom",
+				].includes(nodeData.type);
+
+				if (isContainerType && textValue.length > 0 && nodeHasChildren) {
 					try {
 						const textBlock = await element.append(webflow.elementPresets.DOM);
-						// If parent is heading/paragraph, use span. Otherwise use div.
-						const wrapperTag = (originalTag === "p" || originalTag?.match(/^h[1-6]$/)) ? "span" : "div";
+						const wrapperTag =
+							nodeData.tag === "p" || nodeData.tag?.match(/^h[1-6]$/)
+								? "span"
+								: "div";
 						if (textBlock.setTag) await textBlock.setTag(wrapperTag);
-						await setElementText(textBlock, text);
+						await setElementText(textBlock, textValue);
 					} catch (e: any) {
-						log(`    ⚠ Could not create TextBlock child: ${e.message}. Falling back to parent text.`, "warn");
-						await setElementText(element, text);
+						await setElementText(element, textValue);
 					}
 				} else {
-					await setElementText(element, text);
+					await setElementText(element, textValue);
 				}
 			}
 		}
@@ -1731,7 +2900,9 @@ async function buildElementTree(
 		// ------------------------------------
 		if (nodeData.id) {
 			try {
-				if (element.setCustomAttribute) {
+				if (element.type === "DOM" && element.setAttribute) {
+					await withTimeout(element.setAttribute("id", nodeData.id), 5000, "setId");
+				} else if (element.setCustomAttribute) {
 					await withTimeout(element.setCustomAttribute("id", nodeData.id), 5000, "setId-custom");
 				} else if (element.setAttribute) {
 					await withTimeout(element.setAttribute("id", nodeData.id), 5000, "setId");
@@ -1741,23 +2912,17 @@ async function buildElementTree(
 			}
 		}
 
-		// Process custom attributes
-		if (
-			nodeData.attributes &&
-			Object.keys(nodeData.attributes).length > 0
-		) {
+		if (nodeData.attributes && Object.keys(nodeData.attributes).length > 0) {
 			for (const [key, rawValue] of Object.entries(nodeData.attributes)) {
-				// Skip attributes that are handled by specialized Webflow API methods later (Image/Link/Asset)
 				if (nodeData.type === "Image" && (key === "src" || key === "alt")) continue;
 				if (nodeData.type === "Link" && (key === "href" || key === "target")) continue;
 				if (key === "data-asset") continue;
 
-				// WEBFLOW COMPLIANCE: Empty strings can sometimes hang the IPC in the Designer.
-				// We map strictly empty strings to "true" to ensure the attribute is added without a hang.
 				const value = rawValue === "" ? "true" : String(rawValue);
-				
 				try {
-					if (element.setCustomAttribute) {
+					if (element.type === "DOM" && element.setAttribute) {
+						await withTimeout(element.setAttribute(key, value), 5000, `setAttribute-${key}`);
+					} else if (element.setCustomAttribute) {
 						await withTimeout(element.setCustomAttribute(key, value), 5000, `setAttribute-${key}`);
 					} else if (element.setAttribute) {
 						await withTimeout(element.setAttribute(key, value), 5000, `setAttribute-${key}`);
@@ -1768,125 +2933,36 @@ async function buildElementTree(
 			}
 		}
 
-		// ------------------------------------
-		// Classes (Webflow Styles / Combo Classes)
-		// ------------------------------------
-		const styleRefs: any[] = [];
-		const classes = [...(nodeData.classes || [])];
-
-		// Merge styles: node's own styles + backend-inlined complex selector styles
-		const nodeStyles = {
-			...(nodeData.styles || {}),
-			...(nodeData.inlineStyles || {}),
-		};
-		const hasStylesToApply = Object.keys(nodeStyles).length > 0;
-		const hasPseudoStyles =
-			nodeData.inlinePseudoStyles &&
-			Object.keys(nodeData.inlinePseudoStyles).length > 0;
-
-		// If the element has styles but no classes, auto-generate a class name
-		if ((hasStylesToApply || hasPseudoStyles) && classes.length === 0) {
-			const tagBase =
-				nodeData.tag || nodeData.type.toLowerCase() || "element";
-			classes.push(`${tagBase}-style`);
-		}
-
-		if (classes.length > 0 && element.setStyles) {
-			let currentParent: any = null;
-			const cleanClasses = [...new Set(classes.filter(
-				(c) => c && c.trim().length > 0,
-			))];
-
-			const styleCache = (window as any).__wfStyleCache;
-
-			for (const className of cleanClasses) {
-				const cacheKey = currentParent
-					? `${currentParent.id}:${className}`
-					: className;
-				let style = styleCache?.get(cacheKey);
-				let fallbackStyle = style;
-
-				if (!style) {
-					style = await getStyleByName(className);
-					fallbackStyle = style;
-					if (style) {
-						const parent = await style.getParent();
-						if (parent?.id !== currentParent?.id) style = null;
-					}
-				}
-
-				if (!style) {
-					try {
-						style = await webflow.createStyle(
-							className,
-							currentParent ? { parent: currentParent } : {},
-						);
-						if (styleCache) styleCache.set(cacheKey, style);
-					} catch (e: any) {
-						const msg = e.message.toLowerCase();
-						if (msg.includes("conflict") || msg.includes("duplicate") || msg.includes("already exists")) {
-							style =
-								(await getStyleByName(className)) ||
-								fallbackStyle;
-						}
-
-						if (!style) {
-							log(
-								`    ⚠ Could not resolve class ${className} for chain: ${e.message}`,
-								"warn",
-							);
-						}
-					}
-				}
-
-				if (style) {
-					styleRefs.push(style);
-					currentParent = style;
-					if (styleCache) styleCache.set(cacheKey, style);
-				}
-			}
-
-			if (styleRefs.length > 0) {
-				try {
-					await withTimeout(element.setStyles([...styleRefs]), 8000, "setStyles");
-				} catch (e: any) {
-					log(`    ✕ Failed to apply style chain: ${e.message}`, "error");
-				}
-			}
-		}
-
-		// ------------------------------------
-		// Apply Properties to the primary class
-		// ------------------------------------
-		if (styleRefs.length > 0) {
-			const primaryStyle = styleRefs[styleRefs.length - 1];
-			if (hasStylesToApply) {
-				await applyStyleProperties(
-					primaryStyle,
-					nodeStyles,
-					undefined,
-					isLegacy,
-				);
-			}
-			if (hasPseudoStyles) {
-				for (const [pseudo, pseudoProps] of Object.entries(
-					nodeData.inlinePseudoStyles || {},
-				)) {
-					await applyStyleProperties(
-						primaryStyle,
-						pseudoProps as Record<string, string>,
-						{ pseudo },
-						isLegacy,
-					);
-				}
-			}
-		}
-
-		// ------------------------------------
-		// Specialized Elements (Image, Link)
-		// ------------------------------------
 		const src = nodeData.attributes?.src;
 		const href = nodeData.attributes?.href;
+
+		// ------------------------------------
+		// Form Inputs Handlers
+		// ------------------------------------
+		if (
+			element.type === "FormTextInput" ||
+			element.type === "FormTextarea" ||
+			element.type === "FormSelect" ||
+			element.type === "FormCheckboxInput" ||
+			element.type === "FormRadioInput"
+		) {
+			if (nodeData.attributes?.name && typeof element.setName === "function") {
+				await element.setName(nodeData.attributes.name);
+			}
+			if (nodeData.attributes?.required != null && typeof element.setRequired === "function") {
+				await element.setRequired(true);
+			}
+			// Only FormTextInput supports setInputType
+			if (element.type === "FormTextInput" && nodeData.attributes?.type && typeof element.setInputType === "function") {
+				const inputType = nodeData.attributes.type.toLowerCase();
+				if (["text", "email", "password", "tel", "number", "url"].includes(inputType)) {
+					await element.setInputType(inputType);
+				}
+			}
+			if (nodeData.attributes?.placeholder && typeof element.setCustomAttribute === "function") {
+				await element.setCustomAttribute("placeholder", nodeData.attributes.placeholder);
+			}
+		}
 
 		if (nodeData.type === "Image") {
 			if (src && element.setAsset) {
@@ -1950,27 +3026,62 @@ async function buildElementTree(
 			if (nodeData.text) {
 				let success = false;
 				if (element.type === "DOM") {
-					log(`    [EMBED] Custom DOM fallback detected. Content applied via tag/textContent.`, "info");
+					log(
+						`    [EMBED] Custom DOM fallback detected. Content applied via tag/textContent.`,
+						"info",
+					);
 				} else {
-					log(`    [EMBED] Attempting automated internal content injection (Type: ${element.type})...`);
+					log(
+						`    [EMBED] Attempting automated internal content injection (Type: ${element.type})...`,
+					);
 
 					// Attempt multiple injection patterns for HtmlEmbed to bypass V2 API restrictions
 					const patterns = [
-						{ name: "setHtml", fn: (el: any, val: string) => el.setHtml(val) },
-						{ name: "setHtmlContent", fn: (el: any, val: string) => el.setHtmlContent(val) },
-						{ name: "setSettings({html})", fn: (el: any, val: string) => el.setSettings({ html: val }) },
-						{ name: "setSettings({code})", fn: (el: any, val: string) => el.setSettings({ code: val }) },
-						{ name: "setSettings('html')", fn: (el: any, val: string) => el.setSettings("html" as any, val) },
-						{ name: "setSettings('code')", fn: (el: any, val: string) => el.setSettings("code" as any, val) },
+						{
+							name: "setHtml",
+							fn: (el: any, val: string) => el.setHtml(val),
+						},
+						{
+							name: "setHtmlContent",
+							fn: (el: any, val: string) =>
+								el.setHtmlContent(val),
+						},
+						{
+							name: "setSettings({html})",
+							fn: (el: any, val: string) =>
+								el.setSettings({ html: val }),
+						},
+						{
+							name: "setSettings({code})",
+							fn: (el: any, val: string) =>
+								el.setSettings({ code: val }),
+						},
+						{
+							name: "setSettings('html')",
+							fn: (el: any, val: string) =>
+								el.setSettings("html" as any, val),
+						},
+						{
+							name: "setSettings('code')",
+							fn: (el: any, val: string) =>
+								el.setSettings("code" as any, val),
+						},
 					];
 
 					for (const pattern of patterns) {
 						if (success) break;
 						try {
-							if (typeof (element as any)[pattern.name.split('(')[0]] === "function") {
+							if (
+								typeof (element as any)[
+									pattern.name.split("(")[0]
+								] === "function"
+							) {
 								await pattern.fn(element, nodeData.text);
 								success = true;
-								log(`    ✓ Embed content injected via ${pattern.name}`, "success");
+								log(
+									`    ✓ Embed content injected via ${pattern.name}`,
+									"success",
+								);
 							}
 						} catch (err: any) {
 							// Silently try next pattern
@@ -1979,24 +3090,49 @@ async function buildElementTree(
 
 					// If all else fails
 					if (!success) {
-						log(`    ⚠ Automated injection blocked by Webflow API. Generating visible raw-code text box on canvas for manual copy...`, "warn");
+						const embedEntry: FallbackEmbed = {
+							code: nodeData.text as string,
+							classList: nodeData.classes || [],
+							tag: nodeData.tag || nodeData.type,
+							element: element
+						};
+						recordFallbackEmbed(embedEntry);
+
+						log(
+							`    ⚠ Automated injection blocked by Webflow API. Added to Manual Embeds list. generating visible raw-code placeholder on canvas...`,
+							"warn",
+						);
 						try {
-							// Webflow's DOM primitive allows <textarea> which preserves whitespace perfectly 
+							// Webflow's DOM primitive allows <textarea> which preserves whitespace perfectly
 							// entirely avoiding the data-attribute stringification issue.
 							// Use targetParent (the wrapper) to keep it contained
-							const textArea = await targetParent.append(webflow.elementPresets.DOM);
+							const textArea = await targetParent.append(
+								webflow.elementPresets.DOM,
+							);
 							if (textArea) {
 								await textArea.setTag("textarea");
 								// Webflow v2's primitive DOM sometimes blocks attributes; sticking to content.
 								await textArea.setTextContent(nodeData.text);
-								
-								log(`    👉 SOLUTION: Copy the code directly from the text area that just appeared on your canvas, paste it into the HTML Embed setting, and then delete the box.`, "info");
+
+								log(
+									`    👉 SOLUTION: Copy the code directly from the text area that just appeared on your canvas, paste it into the HTML Embed setting, and then delete the box.`,
+									"info",
+								);
 							}
 						} catch (textareaErr: any) {
-							log(`    ✕ Failed to create visual textarea fallback: ${textareaErr.message}`, "error");
+							log(
+								`    ✕ Failed to create visual textarea fallback: ${textareaErr.message}`,
+								"error",
+							);
 							// Attempt final data-attribute fallback if supported on the original element
-							if (typeof (element as any).setCustomAttribute === 'function') {
-								await (element as any).setCustomAttribute("data-code-source", nodeData.text);
+							if (
+								typeof (element as any).setCustomAttribute ===
+								"function"
+							) {
+								await (element as any).setCustomAttribute(
+									"data-code-source",
+									nodeData.text,
+								);
 							}
 						}
 					}
@@ -2006,6 +3142,35 @@ async function buildElementTree(
 		// Children (Recursive)
 		// ------------------------------------
 		incrementProgress();
+		
+		// Special handling for FormSelect: Use native addOption() for <option> children
+		// as FormSelect preset doesn't support .append() for arbitrary DOM nodes.
+		const isSelect = nodeData.type === "FormSelect" || (element && element.type === "FormSelect");
+		if (isSelect && typeof element.addOption === "function" && nodeData.children) {
+			const optionNodes = nodeData.children.filter(c => c.tag?.toLowerCase() === "option" || c.type === "custom" && (c as any).tag?.toLowerCase() === "option");
+			if (optionNodes.length > 0) {
+				log(`    [SELECT] Adding ${optionNodes.length} options natively...`);
+				for (const opt of optionNodes) {
+					// Extract display name: prefer direct text, then child String node, then fallback
+					let name = opt.text || "";
+					if (!name && opt.children) {
+						const stringChild = opt.children.find(c => !c.tag && c.text);
+						if (stringChild) name = stringChild.text || "";
+					}
+					if (!name) name = "Option";
+					
+					const value = opt.attributes?.value || name;
+					try {
+						await element.addOption({ name: String(name), value: String(value) });
+					} catch (e: any) {
+						log(`    ⚠ Failed to add option "${name}": ${e.message}`, "warn");
+					}
+				}
+				// Filter out these option nodes from recursion so they aren't added as siblings
+				nodeData.children = nodeData.children.filter(c => c.tag?.toLowerCase() !== "option" && !((c as any).tag === "option"));
+			}
+		}
+
 		if (nodeData.children && nodeData.children.length > 0) {
 			for (const child of nodeData.children) {
 				await buildElementTree(element, child, isLegacy);
@@ -2013,60 +3178,95 @@ async function buildElementTree(
 		}
 	} catch (err: any) {
 		const label = nodeData.classes?.[0] || nodeData.tag || nodeData.type;
-		log(`    ✕ Error building node [${label}]: ${err.message || err}`, "error");
+		log(
+			`    ✕ Error building node [${label}]: ${err.message || err}`,
+			"error",
+		);
 		console.error("Error building node:", nodeData, err);
 	}
 }
 
 function resolveValueForCreate(
 	type: string,
-	serVal: WebflowVariableValue | undefined,
+	serVal: any,
 ): any {
-	if (!serVal || (serVal.value === undefined && !serVal.isCustom)) {
-		switch (type) {
-			case "Color":
-				return "#000000";
-			case "Size":
-				return { unit: "px", value: 0 };
-			case "FontFamily":
-				return "Inter";
-			case "Number":
-				return 0;
-			case "Percentage":
-				return 0;
-			default:
-				return "#000000";
-		}
+	if (!serVal) return undefined;
+
+	// If it's a simple string or number, return it (e.g. Color hex or Number)
+	if (typeof serVal === "string" || typeof serVal === "number") {
+		return serVal;
 	}
 
+	// Handle the structure: { type, value: ... }
+	// But be careful: if it's { unit, value }, that IS the value (for Size).
+	let effectiveValue = serVal;
+	if (serVal.value !== undefined && serVal.unit === undefined) {
+		// It's a wrapper like { type: "Color", value: "#..." }
+		effectiveValue = serVal.value;
+	}
+	
+	// If it's a custom variable (isCustom: true), use customValue
 	if (serVal.isCustom && serVal.customValue) {
-		const val = serVal.customValue.trim();
-		// Match var(--variable-name) or var(--variable-name, fallback)
-		const varMatch = val.match(/^var\((--[^,)]+)(?:,\s*[^)]+)?\)$/);
+		effectiveValue = serVal.customValue;
+	}
+
+	if (typeof effectiveValue === "string") {
+		const trimmed = effectiveValue.trim();
+		const lower = trimmed.toLowerCase();
+
+		// 1. Alias Resolution — var(--name) → native Webflow variable alias
+		const varMatch = trimmed.match(/^var\((--[^,)]+)(?:,\s*[^)]+)?\)$/);
 		if (varMatch) {
 			const varName = varMatch[1].trim();
-			// Check cache for existing variable object to create a native Alias (purple pill)
-			const cached = variableCache.get(varName);
-			if (cached && cached.variable) {
+			const cached = tryResolveVariable(varName);
+			
+			if (cached && cached.cssName) {
+				log(`    [RESOLVE] Resolved var() alias for ${type}: "${varName}" -> "var(${cached.cssName})"`);
+				return { type: 'custom', value: `var(${cached.cssName})` };
+			} else if (cached && cached.variable) {
 				return cached.variable;
 			}
+			// Unresolved var() reference — pass as CustomValue so Webflow stores the raw string
+			log(`    [RESOLVE] Unresolved var() for ${type}: "${trimmed}" — storing as CustomValue`);
+			return { type: 'custom', value: trimmed };
 		}
 
-		// clamp/calc/min/max — Webflow's variable.set() accepts the raw CSS string directly.
-		// Do NOT wrap in { type: "custom" } — that object format is not a valid Webflow API value.
+		// 2. Complex CSS functions (clamp/calc/min/max)
+		// The Webflow API's CustomValue type is { type: 'custom', value: string }.
+		// Passing a raw string fails silently and leaves the variable at its 0px placeholder.
 		if (
-			val.startsWith("clamp(") ||
-			val.startsWith("calc(") ||
-			val.startsWith("min(") ||
-			val.startsWith("max(")
+			lower.startsWith("clamp(") ||
+			lower.startsWith("calc(") ||
+			lower.startsWith("min(") ||
+			lower.startsWith("max(")
 		) {
-			return val;
+			log(`    [RESOLVE] Complex CSS function for ${type}: "${trimmed}" — wrapping as CustomValue`);
+			return { type: 'custom', value: trimmed };
 		}
 
-		// For any other custom value, pass raw string — Webflow handles it or ignores it gracefully.
-		return val;
+		// 3. Size with unit strings
+		if (type === "Size" && /^-?[0-9.]+(px|rem|em|vw|vh|%|ch|ex)$/.test(lower)) {
+			const match = lower.match(/^(-?[0-9.]+)([a-z%]+)$/);
+			if (match) {
+				const res = { value: parseFloat(match[1]), unit: match[2] };
+				log(`    [RESOLVE] String to Size object for ${type}: "${trimmed}" -> ${JSON.stringify(res)}`);
+				return res;
+			}
+		}
+		
+		return trimmed;
 	}
-	return serVal.value;
+
+	// If it's already a Size object { value, unit }, return it
+	if (type === "Size" && typeof effectiveValue === "object" && effectiveValue !== null) {
+		if (effectiveValue.unit !== undefined && effectiveValue.value !== undefined) {
+			const res = { value: Number(effectiveValue.value), unit: String(effectiveValue.unit) };
+			log(`    [RESOLVE] Direct Size object for ${type}: ${JSON.stringify(res)}`);
+			return res;
+		}
+	}
+
+	return effectiveValue;
 }
 
 async function pasteCollections(
@@ -2080,14 +3280,19 @@ async function pasteCollections(
 
 	// Pre-fetch all existing collections once
 	const existingCollections = await webflow.getAllVariableCollections();
-	const defaultCollection = typeof webflow.getDefaultVariableCollection === 'function' 
-		? await webflow.getDefaultVariableCollection() 
-		: existingCollections[0];
-		
+	const defaultCollection =
+		typeof webflow.getDefaultVariableCollection === "function"
+			? await webflow.getDefaultVariableCollection()
+			: existingCollections[0];
+
 	const existingCollectionMap = new Map<string, any>();
 	for (const existing of existingCollections) {
 		try {
-			const n = await (existing as any).getName();
+			const n = (await withTimeout(
+				(existing as any).getName(),
+				5000,
+				"existingCol.getName",
+			)) as any;
 			if (n) existingCollectionMap.set(n.trim(), existing);
 		} catch (e) {
 			// Some system collections might fail on getName()
@@ -2095,35 +3300,44 @@ async function pasteCollections(
 	}
 
 	// 1. Setup collection map and gather all modes/variables strictly by their intended group
-	const collectionMap = new Map<string, { modes: string[], variables: WebflowVariable[] }>();
-	
+	const collectionMap = new Map<
+		string,
+		{ modes: string[]; variables: WebflowVariable[] }
+	>();
+
 	for (const col of collections) {
 		const parentColName = col.name || "Global Variables";
-		
+
 		if (!collectionMap.has(parentColName)) {
 			collectionMap.set(parentColName, { modes: [], variables: [] });
 		}
-		
+
 		const colEntry = collectionMap.get(parentColName)!;
-		
+
 		if (col.modes && col.modes.length > 0) {
-			col.modes.forEach(m => {
-				if (!colEntry.modes.includes(m.name)) colEntry.modes.push(m.name);
+			col.modes.forEach((m: any) => {
+				const mName = typeof m === "string" ? m : m?.name;
+				if (mName && !colEntry.modes.includes(mName))
+					colEntry.modes.push(mName);
 			});
 		}
 
 		for (const v of col.variables) {
 			const finalColName = v.group || parentColName;
-			
+
 			if (!collectionMap.has(finalColName)) {
 				collectionMap.set(finalColName, { modes: [], variables: [] });
 			}
-			
+
 			const targetEntry = collectionMap.get(finalColName)!;
 			targetEntry.variables.push(v);
-			
+
 			// Only infer modes from variables if the collection itself didn't provide any
-			if (targetEntry.modes.length === 0 || !col.modes || col.modes.length === 0) {
+			if (
+				targetEntry.modes.length === 0 ||
+				!col.modes ||
+				col.modes.length === 0
+			) {
 				for (const modeName of Object.keys(v.values)) {
 					if (!targetEntry.modes.includes(modeName)) {
 						targetEntry.modes.push(modeName);
@@ -2137,54 +3351,95 @@ async function pasteCollections(
 
 	// 2. Pass 1: Setup Collections, Modes, and Create/Cache all Variables
 	log(`Step 1: Setting up collections and creating variables...`);
-	const variableProcessingQueue: Array<{ serializedVar: WebflowVariable, targetCol: any, modeRefs: Record<string, any> }> = [];
+	const variableProcessingQueue: Array<{
+		serializedVar: WebflowVariable;
+		targetCol: any;
+		modeRefs: Record<string, any>;
+	}> = [];
 
 	for (const [colName, colData] of collectionMap.entries()) {
-		log(`  Processing collection: "${colName}" (${colData.modes.length} mode(s))`);
+		log(
+			`  Processing collection: "${colName}" (${colData.modes.length} mode(s))`,
+		);
 
-		let targetCol: any = existingCollectionMap.get(colName.trim());
 		const lowerName = colName.trim().toLowerCase();
-		const isBaseVariant = lowerName === "base collection" || lowerName === "base" || lowerName === "default";
+		const isBaseVariant =
+			lowerName === "base collection" ||
+			lowerName === "base" ||
+			lowerName === "default";
+
+		let targetCol: any = null;
+		if (isBaseVariant) {
+			log(
+				`    ℹ Mapping "${colName}" to project default collection...`,
+				"info",
+			);
+			targetCol = defaultCollection;
+		} else {
+			targetCol = existingCollectionMap.get(colName.trim());
+		}
 
 		if (!targetCol) {
-			if (isBaseVariant) {
-				log(`    ℹ Mapping "${colName}" to project default collection...`, "info");
-				targetCol = defaultCollection;
-			} else {
-				log(`    + Creating new collection: "${colName}"...`);
-				try {
-					targetCol = await webflow.createVariableCollection(colName);
-					existingCollectionMap.set(colName.trim(), targetCol);
-				} catch (err: any) {
-					log(`    ✕ Failed to create collection "${colName}": ${err.message}`, "error");
-					continue;
-				}
+			log(`    + Creating new collection: "${colName}"...`);
+			try {
+				targetCol = (await withTimeout(
+					webflow.createVariableCollection(colName),
+					15000,
+					"createVariableCollection",
+				)) as any;
+				existingCollectionMap.set(colName.trim(), targetCol);
+			} catch (err: any) {
+				log(
+					`    ✕ Failed to create collection "${colName}": ${err.message}`,
+					"error",
+				);
+				continue;
 			}
 		}
 
 		if (!targetCol) {
-			log(`    ✕ Critical Error: No target collection for "${colName}"`, "error");
+			log(
+				`    ✕ Critical Error: No target collection for "${colName}"`,
+				"error",
+			);
 			continue;
 		}
 
 		// Sync Modes
-		const modesInCol = await targetCol.getAllVariableModes();
+		const modesInCol = (await withTimeout(
+			targetCol.getAllVariableModes(),
+			10000,
+			"getAllVariableModes",
+		)) as any[];
 		const modeRefs: Record<string, any> = {};
 		for (const m of modesInCol) {
-			const n = await m.getName();
+			const n = (await withTimeout(
+				m.getName(),
+				5000,
+				"mode.getName",
+			)) as any;
 			modeRefs[n] = m;
 		}
 
-		for (const modeName of colData.modes) {
-			if (modeName === "Base Mode") continue;
+		for (const modeDef of colData.modes) {
+			const mName =
+				typeof modeDef === "string" ? modeDef : (modeDef as any)?.name;
+			if (!mName || mName === "Base Mode") continue;
 
-			if (!modeRefs[modeName]) {
-				log(`    + Creating mode "${modeName}" in collection "${colName}"...`);
+			if (!modeRefs[mName]) {
+				log(`    + Creating mode "${mName}" in collection "${colName}"...`);
 				try {
-					const newMode = await targetCol.createVariableMode(modeName);
-					modeRefs[modeName] = newMode;
+					const newMode = (await withTimeout(
+						targetCol.createVariableMode(mName),
+						10000,
+						"createVariableMode",
+					)) as any;
+					modeRefs[mName] = newMode;
 				} catch (err: any) {
-					log(`    ✕ Failed to create mode "${modeName}" in "${colName}": ${err.message}`, "error");
+					log(
+						`    ✕ Failed to create mode "${mName}" in "${colName}": ${err.message}`,
+						"error",
+					);
 				}
 			}
 		}
@@ -2196,53 +3451,130 @@ async function pasteCollections(
 		}
 
 		// Pre-fetch all variables in THIS collection
-		const varsInCol = await targetCol.getAllVariables();
+		const varsInCol = (await withTimeout(
+			targetCol.getAllVariables(),
+			15000,
+			"targetCol.getAllVariables",
+		)) as any[];
 		const varMap = new Map<string, any>();
 		for (const v of varsInCol) {
-			const n = await v.getName();
+			const n = (await withTimeout(
+				v.getName(),
+				5000,
+				"v.getName",
+			)) as any;
 			varMap.set(n, v);
 		}
 
 		// Create/Cache variables
 		for (const serializedVar of colData.variables) {
-			let webflowVar = varMap.get(serializedVar.name);
+			const expectedName = serializedVar.name.replace(/--/g, "/");
+			let webflowVar = varMap.get(expectedName) || varMap.get(serializedVar.name);
 
 			if (!webflowVar) {
-				// Resolve a literal baseline for creation (Webflow API requires a literal value on create)
-				// We fall back to standard defaults if the baseline is an alias, as aliases are synced in Pass 2.
-				const baseSerVal = serializedVar.values[baseModeName] || Object.values(serializedVar.values)[0];
-				let defaultValue = resolveValueForCreate(serializedVar.type, baseSerVal);
-				
-				// Ensure defaultValue is literal for creation pass.
-				// Webflow variables MUST be created with a literal value (number/color/etc).
-				// We filter out complex objects or custom types here and use a safe baseline.
-				const isLiteral = 
-					defaultValue !== null && 
-					typeof defaultValue !== "object" || 
-					(defaultValue.value !== undefined && defaultValue.unit);
+				// PASS 1: CREATION
+				// Resolve the base mode value upfront. For CustomValues (clamp/calc/etc)
+				// we use them directly at creation — no need for Pass 2 to patch.
+				// For everything else, fall back to a safe literal baseline.
+				const baseSerVal =
+					serializedVar.values["Base Mode"] ??
+					Object.values(serializedVar.values)[0];
+				const baseResolved = baseSerVal
+					? resolveValueForCreate(serializedVar.type, baseSerVal)
+					: undefined;
+				const isCustomVal =
+					baseResolved !== null &&
+					typeof baseResolved === "object" &&
+					(baseResolved as any).type === "custom";
 
-				if (!isLiteral) {
-					// Fallback to standard defaults for creation pass. actual values are synced in Pass 2.
-					switch (serializedVar.type) {
-						case "Color": defaultValue = "#000000"; break;
-						case "Size": defaultValue = { unit: "px", value: 0 }; break;
-						case "FontFamily": defaultValue = "Inter"; break;
-						case "Number": defaultValue = 0; break;
-						case "Percentage": defaultValue = 0; break;
-					}
+				let defaultValue: any;
+				switch (serializedVar.type) {
+					case "Color":
+						defaultValue = typeof baseResolved === "string" ? baseResolved : "#000000";
+						break;
+					case "Size":
+						// Use CustomValue directly (e.g. clamp/calc), else use resolved { unit, value } or fallback
+						if (isCustomVal) {
+							defaultValue = baseResolved;
+						} else if (baseResolved && typeof baseResolved === "object" && (baseResolved as any).unit) {
+							defaultValue = baseResolved;
+						} else {
+							defaultValue = { unit: "px", value: 0 };
+						}
+						break;
+					case "FontFamily":
+						defaultValue = typeof baseResolved === "string" ? baseResolved : "Inter";
+						break;
+					case "Number":
+						defaultValue = typeof baseResolved === "number" ? baseResolved : 0;
+						break;
+					case "Percentage":
+						defaultValue = typeof baseResolved === "number" ? baseResolved : 0;
+						break;
+					default:
+						defaultValue = "#000000";
 				}
 
 				try {
-					const name = serializedVar.name;
+					const name = expectedName;
+					log(`    [CREATE] Initializing ${serializedVar.type} variable "${name}" with value: ${JSON.stringify(defaultValue)}`);
 					switch (serializedVar.type) {
-						case "Color": webflowVar = await targetCol.createColorVariable(name, defaultValue); break;
-						case "Size": webflowVar = await targetCol.createSizeVariable(name, defaultValue); break;
-						case "FontFamily": webflowVar = await targetCol.createFontFamilyVariable(name, defaultValue); break;
-						case "Number": webflowVar = await targetCol.createNumberVariable(name, defaultValue); break;
-						case "Percentage": webflowVar = await targetCol.createPercentageVariable(name, defaultValue); break;
+						case "Color":
+							webflowVar = (await withTimeout(
+								targetCol.createColorVariable(
+									name,
+									defaultValue,
+								),
+								10000,
+								"createColorVariable",
+							)) as any;
+							break;
+						case "Size":
+							webflowVar = (await withTimeout(
+								targetCol.createSizeVariable(
+									name,
+									defaultValue,
+								),
+								10000,
+								"createSizeVariable",
+							)) as any;
+							break;
+						case "FontFamily":
+							webflowVar = (await withTimeout(
+								targetCol.createFontFamilyVariable(
+									name,
+									defaultValue,
+								),
+								10000,
+								"createFontFamilyVariable",
+							)) as any;
+							break;
+						case "Number":
+							webflowVar = (await withTimeout(
+								targetCol.createNumberVariable(
+									name,
+									defaultValue,
+								),
+								10000,
+								"createNumberVariable",
+							)) as any;
+							break;
+						case "Percentage":
+							webflowVar = (await withTimeout(
+								targetCol.createPercentageVariable(
+									name,
+									defaultValue,
+								),
+								10000,
+								"createPercentageVariable",
+							)) as any;
+							break;
 					}
 				} catch (creErr: any) {
-					log(`    ✕ Failed to create variable "${serializedVar.name}": ${creErr.message}`, "error");
+					log(
+						`    ✕ Failed to create variable "${serializedVar.name}": ${creErr.message}`,
+						"error",
+					);
 					continue;
 				}
 			}
@@ -2250,23 +3582,48 @@ async function pasteCollections(
 			if (webflowVar) {
 				// Cache it immediately so subsequent variables (even in this pass) can reference it
 				try {
-					const [binding, rawValue, cssName] = await Promise.all([
-						webflowVar.getBinding(),
-						webflowVar.get(),
-						typeof webflowVar.getCSSName === "function" ? webflowVar.getCSSName() : Promise.resolve(`--${serializedVar.name}`),
-					]);
-					const meta = { variable: webflowVar, binding, rawValue, type: serializedVar.type, cssName };
+					const [binding, rawValue, cssName] = (await Promise.all([
+						withTimeout(
+							webflowVar.getBinding(),
+							5000,
+							"v.getBinding",
+						),
+						withTimeout(webflowVar.get(), 5000, "v.get"),
+						typeof webflowVar.getCSSName === "function"
+							? withTimeout(
+									webflowVar.getCSSName(),
+									5000,
+									"v.getCSSName",
+							  )
+							: Promise.resolve(`--${serializedVar.name}`),
+					])) as any[];
+					const meta = {
+						variable: webflowVar,
+						binding,
+						rawValue,
+						type: serializedVar.type,
+						cssName,
+					};
 					variableCache.set(serializedVar.name, meta);
 					variableCache.set(`--${serializedVar.name}`, meta);
 				} catch (e) {
-					const fallbackMeta = { variable: webflowVar, type: serializedVar.type };
+					const fallbackMeta = {
+						variable: webflowVar,
+						type: serializedVar.type,
+					};
 					variableCache.set(serializedVar.name, fallbackMeta);
 					variableCache.set(`--${serializedVar.name}`, fallbackMeta);
 				}
-				
+
 				// Queue for value syncing in Pass 2
-				variableProcessingQueue.push({ serializedVar, targetCol, modeRefs });
+				variableProcessingQueue.push({
+					serializedVar,
+					targetCol,
+					modeRefs,
+				});
 			}
+			// Add a tiny delay to allow the Designer's UI thread to breathe between creations
+			await sleep(25);
 		}
 	}
 
@@ -2275,32 +3632,54 @@ async function pasteCollections(
 	const SYNC_CHUNK = 10;
 	for (let i = 0; i < variableProcessingQueue.length; i += SYNC_CHUNK) {
 		const chunk = variableProcessingQueue.slice(i, i + SYNC_CHUNK);
-		await Promise.all(chunk.map(async ({ serializedVar, modeRefs }) => {
-			const webflowVar = variableCache.get(serializedVar.name)?.variable;
-			if (!webflowVar) return;
+		await Promise.all(
+			chunk.map(async ({ serializedVar, modeRefs }) => {
+				const webflowVar = variableCache.get(
+					serializedVar.name,
+				)?.variable;
+				if (!webflowVar) return;
 
-			for (const [modeName, modeSerVal] of Object.entries(serializedVar.values)) {
-				const modeRef = modeRefs[modeName];
-				if (!modeRef) continue;
+				for (const [modeName, modeSerVal] of Object.entries(
+					serializedVar.values,
+				)) {
+					const modeRef = modeRefs[modeName];
+					if (!modeRef) continue;
 
-				try {
-					const valueToSet = resolveValueForCreate(serializedVar.type, modeSerVal);
-					await webflowVar.set(valueToSet, { mode: modeRef });
-				} catch (modeErr: any) {
-					log(`    ✕ Failed to set mode "${modeName}" on "${serializedVar.name}": ${modeErr.message}`, "warn");
+					try {
+						const valueToSet = resolveValueForCreate(
+							serializedVar.type,
+							modeSerVal,
+						);
+						log(
+							`    [SYNC] Setting "${serializedVar.name}" (${serializedVar.type}) in mode "${modeName}" to: ${JSON.stringify(valueToSet)}`,
+						);
+						await withTimeout(
+							webflowVar.set(valueToSet, { mode: modeRef }),
+							10000,
+							"variable.set",
+						);
+					} catch (modeErr: any) {
+						log(
+							`    ✕ Failed to set mode "${modeName}" on "${serializedVar.name}": ${modeErr.message}`,
+							"warn",
+						);
+					}
 				}
-			}
-		}));
+			}),
+		);
 		incrementProgress(chunk.length);
 		await sleep(50);
 	}
 
-	log(`✓ Variable synchronization complete (Pass 1: Creation, Pass 2: Value Sync)`, "success");
+	log(
+		`✓ Variable synchronization complete (Pass 1: Creation, Pass 2: Value Sync)`,
+		"success",
+	);
 }
 
 /**
  * Synchronizes the internal variable cache with existing variables in the Webflow project.
- * This ensures that modular JSON segments (which might lack the collections array) 
+ * This ensures that modular JSON segments (which might lack the collections array)
  * can still resolve CSS variables back to their Webflow UI equivalent.
  */
 
@@ -2308,43 +3687,70 @@ async function syncVariableCacheFromWebflow(): Promise<void> {
 	log("Syncing variables from Webflow project...");
 	const startTime = Date.now();
 	try {
-		const collections = await webflow.getAllVariableCollections();
+		const collections = (await withTimeout(
+			webflow.getAllVariableCollections(),
+			10000,
+			"getAllVariableCollections",
+		)) as any[];
 		let totalFound = 0;
 
 		for (const col of collections) {
-			const variables = await col.getAllVariables();
-			const BATCH_SIZE = 40;
+			const variables = (await withTimeout(
+				col.getAllVariables(),
+				10000,
+				"getAllVariables",
+			)) as any[];
+			const BATCH_SIZE = 10; // Reduced from 40 for stability
 
 			for (let i = 0; i < variables.length; i += BATCH_SIZE) {
 				const batch = variables.slice(i, i + BATCH_SIZE);
 				await Promise.all(
-					batch.map(async (v) => {
-						// Fetch name first — required for all cache keys.
-						// If this fails, we cannot cache, so we skip.
+					batch.map(async (v: any) => {
 						let name: string;
 						try {
-							name = await v.getName();
+							name = (await withTimeout(
+								v.getName(),
+								5000,
+								"v.getName",
+							)) as any;
 							if (!name) return;
 						} catch {
 							return;
 						}
 
-						// Fetch optional metadata individually.
-						// v.get() THROWS for custom-value Size vars (clamp/calc/etc).
-						// v.getBinding() may also throw. Never let these block the variable
-						// object itself from being cached — the object reference is what
-						// applyStyleProperties needs for native variable binding (purple pill).
 						let binding: any = null;
 						let rawValue: any = null;
 						let cssName: string | null = null;
 
-						try { binding = await v.getBinding(); } catch { /* optional */ }
-						try { rawValue = await v.get(); } catch { /* custom values throw */ }
+						try {
+							binding = await withTimeout(
+								v.getBinding(),
+								5000,
+								"v.getBinding",
+							);
+						} catch {
+							/* optional */
+						}
+						try {
+							rawValue = await withTimeout(
+								v.get(),
+								5000,
+								"v.get",
+							);
+						} catch {
+							/* custom values throw */
+						}
 						try {
 							if (typeof v.getCSSName === "function") {
-								cssName = await v.getCSSName();
+								cssName = (await withTimeout(
+									v.getCSSName(),
+									5000,
+									"v.getCSSName",
+								)) as any;
 							}
-						} catch { /* optional */ }
+						} catch {
+							/* optional */
+						}
 
 						const resolvedCssName = cssName || `--${name}`;
 						const meta = {
@@ -2360,8 +3766,12 @@ async function syncVariableCacheFromWebflow(): Promise<void> {
 
 						// Also store under the normalised CSS var name (e.g. --font-size-h1)
 						// so style values like var(--font-size-h1) resolve via direct lookup.
-						const cleanName = name.trim().toLowerCase().replace(/\s+/g, "-");
+						const cleanName = name
+							.trim()
+							.toLowerCase()
+							.replace(/\s+/g, "-");
 						variableCache.set(`--${cleanName}`, meta);
+						variableCache.set(cleanName, meta);
 
 						totalFound++;
 					}),
@@ -2370,25 +3780,44 @@ async function syncVariableCacheFromWebflow(): Promise<void> {
 		}
 		const duration = ((Date.now() - startTime) / 1000).toFixed(1);
 		log(
-			`✓ Discovered ${totalFound} variables in project (${duration}s)`,
+			`✓ Discovered ${totalFound} variables across ${collections.length} collections (${duration}s)`,
 			"success",
 		);
 	} catch (err: any) {
-		log(`Failed to sync existing variables: ${err.message}`, "warn");
+		log(`✕ Failed to sync existing variables: ${err.message}`, "error");
 	}
 }
 
 async function syncStyleCacheFromWebflow(): Promise<void> {
-
 	log("Syncing styles from Webflow project...");
 	const startTime = Date.now();
 	try {
-		const allStyles = await webflow.getAllStyles();
+		const allStyles = (await withTimeout(
+			webflow.getAllStyles(),
+			15000,
+			"getAllStyles",
+		)) as any[];
 		allStylesMap.clear();
-		for (const style of allStyles) {
-			const name = await style.getName();
-			allStylesMap.set(name.trim(), style);
+
+		const BATCH_SIZE = 15;
+		for (let i = 0; i < allStyles.length; i += BATCH_SIZE) {
+			const batch = allStyles.slice(i, i + BATCH_SIZE);
+			await Promise.all(
+				batch.map(async (style: any) => {
+					try {
+						const name = (await withTimeout(
+							style.getName(),
+							5000,
+							`style.getName-${i}`,
+						)) as any;
+						if (name) allStylesMap.set(name.trim(), style);
+					} catch (e) {
+						// skip styles that fail to report name
+					}
+				}),
+			);
 		}
+
 		const duration = ((Date.now() - startTime) / 1000).toFixed(1);
 		log(`✓ Synced ${allStylesMap.size} styles (${duration}s)`, "success");
 	} catch (err: any) {
@@ -2396,9 +3825,18 @@ async function syncStyleCacheFromWebflow(): Promise<void> {
 	}
 }
 
-
 async function buildSiteFromJson(payload: SitePayload): Promise<void> {
-	const selected = await webflow.getSelectedElement();
+	let selected: any;
+	try {
+		selected = await withTimeout(
+			webflow.getSelectedElement(),
+			10000,
+			"getSelectedElement",
+		);
+	} catch (e) {
+		log(`✕ No element selected in Designer: ${e.message}`, "error");
+	}
+
 	if (!selected) {
 		await webflow.notify({
 			type: "Error",
@@ -2428,16 +3866,25 @@ async function buildSiteFromJson(payload: SitePayload): Promise<void> {
 	// (Fluid collection reset removed)
 	// Reset global style cache for each new build
 	(window as any).__wfStyleCache = new Map<string, any>();
+	
+	// Reset Webflow Musts tracking arrays
+	fallbackEmbeds = [];
+	complexValueEmbeds = [];
 
 	// Step 0: Sync from existing project variables — only when the payload actually
 	// references CSS variables (var()). Skipping this on variable-free builds saves
 	// 5–30s of unnecessary IPC round-trips to Webflow's variable store.
 	const payloadStr = JSON.stringify(payload);
-	const payloadHasVars = payloadStr.includes("var(") || payloadStr.includes("clamp(") || payloadStr.includes("calc(");
+	const payloadHasVars =
+		payloadStr.includes("var(") ||
+		payloadStr.includes("clamp(") ||
+		payloadStr.includes("calc(");
 	if (payloadHasVars) {
 		await syncVariableCacheFromWebflow();
 	} else {
-		log("No CSS variables or complex expressions detected — skipping variable sync.");
+		log(
+			"No CSS variables or complex expressions detected — skipping variable sync.",
+		);
 	}
 
 	await syncStyleCacheFromWebflow();
@@ -2449,7 +3896,7 @@ async function buildSiteFromJson(payload: SitePayload): Promise<void> {
 			0,
 		);
 		totalSteps += totalVars;
-		
+
 		webflow.notify({
 			type: "Info",
 			message: `Importing ${totalVars} variables...`,
@@ -2491,13 +3938,6 @@ async function buildSiteFromJson(payload: SitePayload): Promise<void> {
 	}
 
 	let totalNodes = 0;
-	function countAllNodes(nodes: WebflowReadyNode[]): number {
-		let count = nodes.length;
-		for (const n of nodes) {
-			if (n.children) count += countAllNodes(n.children);
-		}
-		return count;
-	}
 
 	pages.forEach((p) => {
 		totalNodes += countAllNodes(p.nodes ?? []);
@@ -2523,9 +3963,9 @@ async function buildSiteFromJson(payload: SitePayload): Promise<void> {
 		const page = pages[pi];
 		const nodes = page.nodes ?? [];
 		log(
-			`Page ${pi + 1}/${pages.length}: building ${nodes.length} root node${
-				nodes.length !== 1 ? "s" : ""
-			}...`,
+			`Page ${pi + 1}/${pages.length}: building ${
+				nodes.length
+			} root node${nodes.length !== 1 ? "s" : ""}...`,
 		);
 
 		for (let ni = 0; ni < nodes.length; ni++) {
@@ -2590,7 +4030,9 @@ async function handleAuditStyles(): Promise<void> {
 	if (logPanel) logPanel.classList.remove("has-errors");
 
 	// Show progress container so user can see the logs
-	const progressContainer = document.getElementById("progress-container") as HTMLElement;
+	const progressContainer = document.getElementById(
+		"progress-container",
+	) as HTMLElement;
 	if (progressContainer) progressContainer.classList.add("show");
 
 	currentProgress = 0;
@@ -2631,7 +4073,9 @@ async function handleAuditStyles(): Promise<void> {
 
 			const styleName = await style.getName();
 			// User requested 'main' breakpoint only for now to ensure speed and focus
-			const properties = await style.getProperties({ breakpoint: "main" });
+			const properties = await style.getProperties({
+				breakpoint: "main",
+			});
 
 			for (const [prop, val] of Object.entries(properties)) {
 				if (typeof val !== "string") continue;
@@ -2642,7 +4086,8 @@ async function handleAuditStyles(): Promise<void> {
 				// 1. color-mix check (Critical Publish Blocker)
 				if (val.includes("color-mix")) {
 					isInvalid = true;
-					reason = "Unsupported 'color-mix' function (Publish Blocker)";
+					reason =
+						"Unsupported 'color-mix' function (Publish Blocker)";
 				}
 
 				// 2. Broken parens / calc expansion check
@@ -2650,28 +4095,34 @@ async function handleAuditStyles(): Promise<void> {
 				const closeCount = (val.match(/\)/g) || []).length;
 				if (openCount !== closeCount) {
 					isInvalid = true;
-					reason = "Broken parentheses/calc expansion (Publish Blocker)";
+					reason =
+						"Broken parentheses/calc expansion (Publish Blocker)";
 				}
 
 				// 3. Logical properties check (Webflow Variable incompatibility)
 				if (logicalProps.includes(prop)) {
 					isInvalid = true;
-					reason = "Unsupported logical property (Webflow Variable Incompatibility)";
+					reason =
+						"Unsupported logical property (Webflow Variable Incompatibility)";
 				}
 
 				// 4. Shorthand with variables check (Best practice: expand for native bindings)
 				if (
 					shorthandProps.includes(prop) &&
-					(val.includes("var(") || val.includes("calc(") || val.includes("clamp("))
+					(val.includes("var(") ||
+						val.includes("calc(") ||
+						val.includes("clamp("))
 				) {
 					isInvalid = true;
-					reason = "Complex shorthand with variables (Expand for native mapping)";
+					reason =
+						"Complex shorthand with variables (Expand for native mapping)";
 				}
 
 				// 5. Transition-property variable check
 				if (prop === "transition-property" && val.includes("--")) {
 					isInvalid = true;
-					reason = "CSS Variable in transition-property (Mapping Failure)";
+					reason =
+						"CSS Variable in transition-property (Mapping Failure)";
 				}
 
 				// 6. Garbage fragments check
@@ -2682,7 +4133,8 @@ async function handleAuditStyles(): Promise<void> {
 						(val.match(/0 0/g) || []).length > 3)
 				) {
 					isInvalid = true;
-					reason = "Garbage fragment or corrupt coordinate string (Publish Blocker)";
+					reason =
+						"Garbage fragment or corrupt coordinate string (Publish Blocker)";
 				}
 
 				if (isInvalid) {
@@ -2697,9 +4149,15 @@ async function handleAuditStyles(): Promise<void> {
 		}
 
 		if (foundCount === 0) {
-			log("✓ Scan complete: No invalid styles found on Main breakpoint.", "success");
+			log(
+				"✓ Scan complete: No invalid styles found on Main breakpoint.",
+				"success",
+			);
 		} else {
-			log(`Scan complete: Found ${foundCount} invalid properties.`, "warn");
+			log(
+				`Scan complete: Found ${foundCount} invalid properties.`,
+				"warn",
+			);
 		}
 	} catch (err: any) {
 		log(`Scan failed: ${err.message}`, "error");

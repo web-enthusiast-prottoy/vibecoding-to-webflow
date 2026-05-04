@@ -1,8 +1,52 @@
+import * as fs from "fs";
+import * as path from "path";
 import { parse, serialize } from "parse5";
 import postcss from "postcss";
 import { normalizeCssProperties, normalizeHexAlpha, } from "../normalizer/cssNormalizer";
-function inferVariableType(value) {
+function getMimeType(filePath) {
+    const ext = path.extname(filePath).toLowerCase();
+    switch (ext) {
+        case ".png": return "image/png";
+        case ".jpg":
+        case ".jpeg": return "image/jpeg";
+        case ".svg": return "image/svg+xml";
+        case ".gif": return "image/gif";
+        case ".webp": return "image/webp";
+        default: return "application/octet-stream";
+    }
+}
+function processAssetUrl(url, baseDir) {
+    if (!baseDir || url.startsWith("http") || url.startsWith("data:") || url.startsWith("//")) {
+        return url;
+    }
+    // Clean up url slightly to avoid trailing quotes or problems
+    let cleanUrl = url.replace(/['"]/g, "").trim();
+    try {
+        const fullPath = path.resolve(baseDir, cleanUrl);
+        if (fs.existsSync(fullPath) && fs.statSync(fullPath).isFile()) {
+            const fileData = fs.readFileSync(fullPath);
+            const base64 = fileData.toString("base64");
+            const mimeType = getMimeType(fullPath);
+            return `data:${mimeType};base64,${base64}`;
+        }
+    }
+    catch (e) {
+        console.warn(`    [ASSET] Warning: Failed to inline local asset: ${cleanUrl}`);
+    }
+    return url;
+}
+function inferVariableType(value, varMap, depth = 0) {
     const lowerVal = value.trim().toLowerCase();
+    // Handle var() references
+    if (lowerVal.startsWith("var(") && depth < 3 && varMap) {
+        const varMatch = lowerVal.match(/^var\((--[^,)]+)(?:,\s*([^)]+))?\)$/);
+        if (varMatch) {
+            const varName = varMatch[1].trim();
+            const resolved = varMap[varName];
+            if (resolved)
+                return inferVariableType(resolved, varMap, depth + 1);
+        }
+    }
     // 1. Colors & Gradients
     if (lowerVal.startsWith("#") ||
         lowerVal.startsWith("rgb") ||
@@ -28,11 +72,15 @@ function inferVariableType(value) {
         lowerVal.includes("calc(") ||
         lowerVal.includes("clamp(") ||
         lowerVal.includes("min(") ||
-        lowerVal.includes("max(")) {
+        lowerVal.includes("max(") ||
+        lowerVal.includes("var(") // If it's a complex var expression
+    ) {
         return "Size";
     }
     // 5. Font Families (quotes or commas without CSS functions)
-    if (value.includes('"') || value.includes("'") || value.includes(",")) {
+    if ((value.includes('"') || value.includes("'") || value.includes(",")) &&
+        !lowerVal.includes("(") // CSS functions (clamp, calc, rgb) use parens and commas
+    ) {
         return "FontFamily";
     }
     return "Size"; // fallback
@@ -42,9 +90,9 @@ function inferVariableType(value) {
  */
 function getVariableCollection(name, type) {
     const n = name.toLowerCase();
-    // 1. Colors -> Base
+    // 1. Colors -> Base Collection
     if (type === "Color")
-        return "Base";
+        return "Base Collection";
     // 2. Typography -> FontFamily or anything related to text/font
     if (type === "FontFamily" ||
         n.includes("font") ||
@@ -72,23 +120,19 @@ function getVariableCollection(name, type) {
         n.includes("aspect")) {
         return "Global Variables";
     }
-    // Fallback to Base (default for colors or unknown)
-    return "Base";
+    // Fallback to Base Collection
+    return "Base Collection";
 }
 function parseValueForVariable(type, value) {
     const val = value.trim();
     const lowerVal = val.toLowerCase();
     // Handle keywords not supported by Webflow variables
     if (["initial", "unset", "revert"].includes(lowerVal)) {
-        if (type === "Color")
-            return "transparent";
-        if (type === "Size")
-            return { value: 0, unit: "px" };
-        if (type === "Percentage")
-            return 0;
-        if (type === "Number")
-            return 0;
-        return 0;
+        return null;
+    }
+    // Handle var() references as custom values so frontend can resolve them to native aliases
+    if (lowerVal.includes("var(")) {
+        return { isCustom: true, customValue: val };
     }
     if (type === "Size") {
         // Check for complex CSS functions first - these must be handled as custom values
@@ -98,6 +142,7 @@ function parseValueForVariable(type, value) {
             lowerVal.includes("max(")) {
             // Return a format that the frontend index.ts:resolveValueForCreate can handle
             // We need to return an object that will be used to set values[mode]
+            console.log(`    [VAR] Detected complex Size: "${val}"`);
             return { isCustom: true, customValue: val };
         }
         const match = val.match(/^(-?\d+(\.\d+)?)(px|em|rem|vw|vh|%|ch|ex)?$/);
@@ -106,6 +151,7 @@ function parseValueForVariable(type, value) {
         }
         // If it has units but isn't a simple number+unit (e.g. "10px 20px" - though not common for single var)
         // treat as custom if it's not a simple number
+        console.log(`    [VAR] Detected non-simple Size: "${val}"`);
         return { isCustom: true, customValue: val };
     }
     if (type === "Percentage") {
@@ -126,7 +172,14 @@ function parseValueForVariable(type, value) {
     return val;
 }
 function isSupportedSelector(selector) {
+    // If it doesn't contain a class (starts with dot), it's a tag selector.
+    // We treat tag selectors as unsupported so they go into the CSS embed.
+    // This is more reliable for base styles like body, a, img, etc.
+    if (!selector.includes("."))
+        return false;
     if (selector.includes("[") || selector.includes("]") || selector.includes(">") || selector.includes("~") || selector.includes("+"))
+        return false;
+    if (selector.includes("-webkit-") || selector.includes("-moz-") || selector.includes("-ms-") || selector.includes("-o-"))
         return false;
     const unsupportedPseudos = ["::before", "::after", ":before", ":after", ":nth-child", ":last-child", ":first-child", ":not", ":focus-within", ":checked", ":disabled", ":nth-of-type", ":empty", ":target"];
     for (const p of unsupportedPseudos) {
@@ -135,24 +188,13 @@ function isSupportedSelector(selector) {
     }
     return true;
 }
-const SUPPORTED_PREFIXES = [
-    "display", "position", "top", "right", "bottom", "left", "inset",
-    "flex", "align", "justify", "order", "gap", "grid", "place",
-    "width", "height", "min-width", "min-height", "max-width", "max-height", "aspect-ratio",
-    "margin", "padding",
-    "color", "background", "border", "box-shadow", "opacity",
-    "font", "text", "line-height", "letter-spacing", "word", "white-space", "vertical-align",
-    "z-index", "overflow", "cursor", "list-style", "outline", "fill", "stroke",
-    "object-fit", "object-position", "float", "clear"
+const UNSUPPORTED_PROPERTIES = [
+    "content",
 ];
 function isSupportedProperty(prop) {
     if (prop.startsWith("--"))
         return false;
-    for (const prefix of SUPPORTED_PREFIXES) {
-        if (prop === prefix || prop.startsWith(prefix + "-"))
-            return true;
-    }
-    return false;
+    return !UNSUPPORTED_PROPERTIES.includes(prop);
 }
 function resolveVars(value, varMap) {
     let oldVal = "";
@@ -197,10 +239,11 @@ export function parseStyleTag(css) {
         }
     });
     root.walkAtRules((atRule) => {
-        if (atRule.name === "keyframes" || atRule.name === "font-face") {
+        if (atRule.name === "keyframes") {
             keyframes += atRule.toString() + "\n";
         }
     });
+    const unsupportedVarsByMode = new Map();
     root.walkRules((rule) => {
         // If rule is inside a keyframe, skip it (we already captured the whole at-rule)
         let rp = rule.parent;
@@ -215,14 +258,101 @@ export function parseStyleTag(css) {
         const declarations = {};
         const unsupportedRuleDeclarations = {};
         const supportedRuleDeclarations = {};
+        const varModeMap = {
+            main: "Base Mode",
+            medium: "Tablet",
+            small: "Phone Landscape",
+            tiny: "Phone portrait",
+            large: "Large",
+            xl: "XL",
+            xxl: "XXL",
+        };
+        let breakpointId = "main";
+        let isInsideRecognizedMedia = false;
+        let isInsideAnyMedia = false;
+        // Check if this rule is inside a media query
+        let mediaParent = rule.parent;
+        while (mediaParent && mediaParent.type !== "root") {
+            if (mediaParent.type === "atrule" &&
+                mediaParent.name === "media") {
+                isInsideAnyMedia = true;
+                const params = mediaParent.params.toLowerCase();
+                const maxWidthMatch = params.match(/max-width:\s*(\d+(?:\.\d+)?)\s*(px|rem|em)/);
+                const minWidthMatch = params.match(/min-width:\s*(\d+(?:\.\d+)?)\s*(px|rem|em)/);
+                if (maxWidthMatch) {
+                    let width = parseFloat(maxWidthMatch[1]);
+                    if (maxWidthMatch[2] === 'rem' || maxWidthMatch[2] === 'em') {
+                        width *= 16;
+                    }
+                    // inclusive Tablet (991px and below, but above Mobile Landscape)
+                    if (width > 768 && width <= 991) {
+                        breakpointId = "medium";
+                        isInsideRecognizedMedia = true;
+                    }
+                    // inclusive Mobile Landscape (767px and below, but above Mobile Portrait)
+                    else if (width > 479 && width <= 768) {
+                        breakpointId = "small";
+                        isInsideRecognizedMedia = true;
+                    }
+                    // inclusive Mobile Portrait (479px and below)
+                    else if (width <= 479) {
+                        breakpointId = "tiny";
+                        isInsideRecognizedMedia = true;
+                    }
+                }
+                else if (minWidthMatch) {
+                    let width = parseFloat(minWidthMatch[1]);
+                    if (minWidthMatch[2] === 'rem' || minWidthMatch[2] === 'em') {
+                        width *= 16;
+                    }
+                    if (width >= 1280 && width <= 1440) {
+                        breakpointId = "large";
+                        isInsideRecognizedMedia = true;
+                    }
+                    else if (width >= 1920) {
+                        breakpointId = "xxl";
+                        isInsideRecognizedMedia = true;
+                    }
+                }
+            }
+            mediaParent = mediaParent.parent;
+        }
+        // SAFETY: If we are inside a media query but it wasn't matched to a Webflow breakpoint,
+        // we MUST treat it as unsupported CSS so it doesn't overwrite the 'main' desktop styles.
+        if (isInsideAnyMedia && !isInsideRecognizedMedia) {
+            let block = `${selectors.join(", ")} {\n`;
+            rule.walkDecls((decl) => {
+                block += `  ${decl.prop}: ${decl.value};\n`;
+            });
+            block += `}\n`;
+            unsupportedCss += wrapInMedia(rule, block);
+            return;
+        }
+        const currentMode = varModeMap[breakpointId] || "Base Mode";
         rule.walkDecls((decl) => {
             const isUniversal = selectors.some((s) => s.startsWith("*") || s === ":root");
             let prop = decl.prop;
             const value = decl.value;
             if (isUniversal && prop.startsWith("--")) {
-                const type = inferVariableType(value);
-                const parsedValue = parseValueForVariable(type, value);
                 const variableName = prop.substring(2);
+                const type = inferVariableType(value, rawVarMap);
+                // Webflow variables support Size, Color, FontFamily, Number, and Percentage.
+                // Gradients and URLs are still NOT supported as native variables in Webflow.
+                // Time units (s, ms) and easing functions are now allowed to pass through
+                // to support native animation and transition properties.
+                const isUnsupportedValue = value.includes("gradient(") ||
+                    value.includes("url(");
+                if (isUnsupportedValue) {
+                    // Collect for consolidated :root block per mode
+                    if (!unsupportedVarsByMode.has(currentMode)) {
+                        unsupportedVarsByMode.set(currentMode, {});
+                    }
+                    unsupportedVarsByMode.get(currentMode)[prop] = value;
+                    return;
+                }
+                const parsedValue = parseValueForVariable(type, value);
+                if (parsedValue === null)
+                    return;
                 const varVal = { type };
                 if (typeof parsedValue === "object" &&
                     parsedValue !== null &&
@@ -232,35 +362,21 @@ export function parseStyleTag(css) {
                 else {
                     varVal.value = parsedValue;
                 }
-                variables.push({
-                    name: variableName,
-                    type,
-                    values: { Default: varVal },
-                    group: getVariableCollection(variableName, type),
-                });
-                if (supportedSelectors.length > 0)
-                    declarations[prop] = value;
-                if (unsupportedSelectors.length > 0)
-                    supportedRuleDeclarations[decl.prop] = value;
+                // Find existing variable to merge modes
+                let existingVar = variables.find(v => v.name === variableName);
+                if (!existingVar) {
+                    existingVar = {
+                        name: variableName,
+                        type,
+                        values: {},
+                        group: getVariableCollection(variableName, type),
+                    };
+                    variables.push(existingVar);
+                }
+                existingVar.values[currentMode] = varVal;
                 return;
             }
             let isPropSupported = isSupportedProperty(prop);
-            // Handle vendor prefixes
-            if (prop.startsWith("-webkit-") ||
-                prop.startsWith("-moz-") ||
-                prop.startsWith("-ms-") ||
-                prop.startsWith("-o-")) {
-                const standardProp = prop.replace(/^-(webkit|moz|ms|o)-/, "");
-                // Map known supported ones, skip others
-                if (standardProp === "backdrop-filter") {
-                    prop = standardProp;
-                    isPropSupported = true;
-                }
-                else if (!isUniversal || !prop.startsWith("--")) {
-                    unsupportedRuleDeclarations[decl.prop] = value;
-                    return;
-                }
-            }
             if (!isPropSupported) {
                 unsupportedRuleDeclarations[decl.prop] = value;
             }
@@ -276,7 +392,7 @@ export function parseStyleTag(css) {
         if (Object.keys(unsupportedRuleDeclarations).length > 0) {
             let block = `${selectors.join(", ")} {\n`;
             for (const [p, v] of Object.entries(unsupportedRuleDeclarations)) {
-                block += `  ${p}: ${resolveVars(v, rawVarMap)};\n`;
+                block += `  ${p}: ${v};\n`;
             }
             block += `}\n`;
             unsupportedCss += wrapInMedia(rule, block);
@@ -284,42 +400,13 @@ export function parseStyleTag(css) {
         if (Object.keys(supportedRuleDeclarations).length > 0 && unsupportedSelectors.length > 0) {
             let block = `${unsupportedSelectors.join(", ")} {\n`;
             for (const [p, v] of Object.entries(supportedRuleDeclarations)) {
-                block += `  ${p}: ${resolveVars(v, rawVarMap)};\n`;
+                block += `  ${p}: ${v};\n`;
             }
             block += `}\n`;
             unsupportedCss += wrapInMedia(rule, block);
         }
         if (Object.keys(declarations).length === 0 || supportedSelectors.length === 0)
             return;
-        let breakpointId = "main";
-        // Check if this rule is inside a media query
-        let mediaParent = rule.parent;
-        while (mediaParent && mediaParent.type !== "root") {
-            if (mediaParent.type === "atrule" &&
-                mediaParent.name === "media") {
-                const params = mediaParent.params.toLowerCase();
-                // Use regex for more robust matching (handles spaces, units, and modern syntax)
-                const maxWidthMatch = params.match(/max-width:\s*(\d+(?:\.\d+)?)\s*px/);
-                const minWidthMatch = params.match(/min-width:\s*(\d+(?:\.\d+)?)\s*px/);
-                if (maxWidthMatch) {
-                    const width = parseFloat(maxWidthMatch[1]);
-                    if (width >= 991 && width <= 992)
-                        breakpointId = "medium";
-                    else if (width >= 767 && width <= 768)
-                        breakpointId = "small";
-                    else if (width >= 479 && width <= 480)
-                        breakpointId = "tiny";
-                }
-                else if (minWidthMatch) {
-                    const width = parseFloat(minWidthMatch[1]);
-                    if (width >= 1280 && width <= 1440)
-                        breakpointId = "large";
-                    else if (width >= 1920)
-                        breakpointId = "xxl";
-                }
-            }
-            mediaParent = mediaParent.parent;
-        }
         // Normalize properties at parse time — frontend receives clean kebab-case maps
         const normalized = normalizeCssProperties(declarations);
         for (const selector of supportedSelectors) {
@@ -332,9 +419,21 @@ export function parseStyleTag(css) {
             Object.assign(styles[selector][breakpointId], normalized);
         }
     });
+    // At the end, before return:
+    for (const [mode, vars] of unsupportedVarsByMode.entries()) {
+        if (Object.keys(vars).length === 0)
+            continue;
+        const modeComment = mode === "Base Mode" ? "" : ` /* Mode: ${mode} */`;
+        let block = `:root${modeComment} {\n`;
+        for (const [p, v] of Object.entries(vars)) {
+            block += `  ${p}: ${v};\n`;
+        }
+        block += `}\n`;
+        unsupportedCss = block + unsupportedCss; // Prepend variables to top of CSS embed
+    }
     return { styles, variables, keyframes, unsupportedCss };
 }
-function convertHtmlNode(node) {
+function convertHtmlNode(node, baseDir) {
     if (node.nodeName === "#text") {
         const text = node.value.trim();
         return text
@@ -374,7 +473,13 @@ function convertHtmlNode(node) {
             });
         }
         else {
-            attributes[attr.name] = attr.value;
+            const val = attr.value;
+            if ((attr.name === "src" || attr.name === "data-asset") && val) {
+                attributes[attr.name] = processAssetUrl(val, baseDir);
+            }
+            else {
+                attributes[attr.name] = val;
+            }
         }
     });
     // Normalize inline styles through the same pipeline as global styles
@@ -392,8 +497,29 @@ function convertHtmlNode(node) {
         type = "List";
     else if (tagName === "li")
         type = "ListItem";
+    else if (tagName === "form")
+        type = "FormForm";
+    else if (tagName === "label")
+        type = "FormBlockLabel";
+    else if (tagName === "textarea")
+        type = "FormTextarea";
+    else if (tagName === "select")
+        type = "FormSelect";
+    else if (tagName === "button")
+        type = "FormButton";
+    else if (tagName === "input") {
+        const inputType = (attributes["type"] || "text").toLowerCase();
+        if (inputType === "checkbox")
+            type = "FormCheckboxInput";
+        else if (inputType === "radio")
+            type = "FormRadioInput";
+        else if (inputType === "submit")
+            type = "FormButton";
+        else
+            type = "FormTextInput";
+    }
     else if (["script", "style", "link", "meta"].includes(tagName)) {
-        // script, style, link, and meta tags MUST be HtmlEmbeds because they can't be native DOM blocks in Webflow Designer
+        // script, style, link, and meta tags MUST be HtmlEmbeds because they can't be native DOM blocks in Webflow Designer without attribute errors
         let textVal;
         if (tagName === "script" || tagName === "style") {
             const innerCode = (node.childNodes || [])
@@ -427,11 +553,13 @@ function convertHtmlNode(node) {
         if (child.nodeName === "#text") {
             const val = child.value.trim();
             if (val) {
-                if (type === "Block" && tagName === "div") {
-                    // SPECIAL CASE: Text inside a div is wrapped in a TextBlock child
+                if ((type === "Block" && tagName === "div") || type === "ListItem") {
+                    // SPECIAL CASE: Text inside a div or list item is wrapped in a custom span element
+                    // This ensures text is rendered reliably via direct DOM manipulation,
+                    // avoiding issues where native TextBlock presets fail to hydrate correctly.
                     children.push({
-                        type: "TextBlock",
-                        tag: "div",
+                        type: "custom",
+                        tag: "span",
                         text: val,
                         classes: [],
                         children: [],
@@ -444,34 +572,36 @@ function convertHtmlNode(node) {
             }
         }
         else {
-            const converted = convertHtmlNode(child);
+            const converted = convertHtmlNode(child, baseDir);
             if (converted) {
-                if (tagName === "p" &&
-                    converted.tag === "span" &&
-                    converted.children.length === 0) {
-                    if (converted.text)
-                        aggregateText +=
-                            (aggregateText ? " " : "") + converted.text;
-                }
-                else {
-                    children.push(converted);
-                    hasRealElements = true;
-                }
+                children.push(converted);
+                hasRealElements = true;
             }
         }
     });
+    // WEBFLOW COMPLIANCE: Valid block tags for DivBlock are strict.
+    // If it's a Block type but not a valid tag, we switch to "custom" (DOM element)
+    const validBlockTags = ["div", "section", "header", "footer", "main", "nav", "aside", "article", "address", "figure"];
+    if (type === "Block" && !validBlockTags.includes(tagName)) {
+        type = "custom";
+    }
+    // WEBFLOW COMPLIANCE: Paragraphs and Headings cannot have child elements in Webflow.
+    // If they have children, we MUST use a custom DOM element instead.
+    if ((type === "Paragraph" || type === "Heading") && hasRealElements) {
+        type = "custom";
+    }
     return {
         type,
-        tag: type === "Block" || type === "Heading" ? tagName : undefined,
+        tag: type === "custom" || type === "Block" || type === "Heading" ? tagName : undefined,
         classes,
         id,
         styles: Object.keys(styles).length > 0 ? styles : undefined,
         attributes: Object.keys(attributes).length > 0 ? attributes : undefined,
         text: aggregateText || undefined,
-        children: hasRealElements ? children : [],
+        children: children,
     };
 }
-export function parseHtml(code) {
+export function parseHtml(code, baseDir) {
     const document = parse(code);
     const globalStyles = {};
     const globalVariables = [];
@@ -514,7 +644,7 @@ export function parseHtml(code) {
         return { nodes: [], globalStyles, collections: [] };
     const nodes = [];
     body.childNodes.forEach((child) => {
-        const converted = convertHtmlNode(child);
+        const converted = convertHtmlNode(child, baseDir);
         if (converted)
             nodes.push(converted);
     });
@@ -522,18 +652,30 @@ export function parseHtml(code) {
     if (globalVariables.length > 0) {
         const groups = {};
         globalVariables.forEach((v) => {
-            const group = v.group || "Base";
+            const group = v.group || "Base Collection";
             if (!groups[group])
                 groups[group] = [];
-            groups[group].push(v);
+            // Deduplicate and merge by name across multiple style tags/files
+            const existing = groups[group].find(ev => ev.name === v.name);
+            if (existing) {
+                Object.assign(existing.values, v.values);
+            }
+            else {
+                groups[group].push(v);
+            }
         });
-        collections = Object.entries(groups).map(([name, vars]) => ({
-            name,
-            modes: [{ name: "Default" }],
-            variables: vars,
-        }));
+        collections = Object.entries(groups).map(([name, vars]) => {
+            // Extract all unique mode names present in this collection
+            const allModes = new Set();
+            vars.forEach(v => Object.keys(v.values).forEach(m => allModes.add(m)));
+            return {
+                name,
+                modes: Array.from(allModes).map(m => ({ name: m })),
+                variables: vars,
+            };
+        });
         // Optional: Sort collections to a predictable order
-        const order = ["Base", "Typography", "Global Variables"];
+        const order = ["Base Collection", "Typography", "Global Variables"];
         collections.sort((a, b) => {
             const idxA = order.indexOf(a.name);
             const idxB = order.indexOf(b.name);

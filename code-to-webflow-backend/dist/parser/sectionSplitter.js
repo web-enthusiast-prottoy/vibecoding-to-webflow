@@ -221,7 +221,7 @@ export function splitSiteStructure(siteStructure, outputDir, baseName) {
         const styleEmbedNode = {
             type: "HtmlEmbed",
             tag: "div", // Provide a default tag
-            text: combinedStyles.trim().replace(/\s+/g, ' ').replace(/\s*([{}:;,>+~])\s*/g, '$1'),
+            text: combinedStyles.trim().replace(/\s+/g, ' ').replace(/"/g, "'"),
             classes: [],
             children: [],
         };
@@ -238,7 +238,7 @@ export function splitSiteStructure(siteStructure, outputDir, baseName) {
         const scriptEmbedNode = {
             type: "HtmlEmbed",
             tag: "div",
-            text: customScriptsHtml.trim().replace(/\s+/g, ' ').replace(/\s*([{}:;,>+~])\s*/g, '$1'),
+            text: customScriptsHtml.trim().replace(/\s+/g, ' ').replace(/"/g, "'"),
             classes: [],
             children: [],
         };

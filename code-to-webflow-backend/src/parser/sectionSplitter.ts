@@ -280,7 +280,7 @@ export function splitSiteStructure(
 		const styleEmbedNode: WebflowReadyNode = {
 			type: "HtmlEmbed",
 			tag: "div", // Provide a default tag
-			text: combinedStyles.trim().replace(/\s+/g, ' ').replace(/\s*([{}:;,>+~])\s*/g, '$1'),
+			text: combinedStyles.trim().replace(/\s+/g, ' ').replace(/"/g, "'"),
 			classes: [],
 			children: [],
 		} as any;
@@ -303,7 +303,7 @@ export function splitSiteStructure(
 		const scriptEmbedNode: WebflowReadyNode = {
 			type: "HtmlEmbed",
 			tag: "div",
-			text: customScriptsHtml.trim().replace(/\s+/g, ' ').replace(/\s*([{}:;,>+~])\s*/g, '$1'),
+			text: customScriptsHtml.trim().replace(/\s+/g, ' ').replace(/"/g, "'"),
 			classes: [],
 			children: [],
 		} as any;

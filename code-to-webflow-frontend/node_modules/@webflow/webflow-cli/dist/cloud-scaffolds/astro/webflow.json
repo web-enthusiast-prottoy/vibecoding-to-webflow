@@ -2,11 +2,12 @@
   "cloud": {
     "framework": "astro"
   },
-  "devlink": {
-    "rootDir": "./devlink",
-    "cssModules": true,
-    "fileExtensions": {
-      "js": "jsx"
-    }
+  "devlink-export": {
+    "rootDir": "./webflow",
+    "components": ".*",
+    "componentGroups": ".*",
+    "ts": false,
+    "cssScopes": true,
+    "relativeHrefRoot": "/"
   }
 }

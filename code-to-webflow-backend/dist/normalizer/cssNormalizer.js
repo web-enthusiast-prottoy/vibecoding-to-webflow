@@ -32,10 +32,15 @@ function resolveVendorPrefix(key) {
         key.startsWith("-ms-") ||
         key.startsWith("-o-")) {
         const standard = key.replace(/^-(webkit|moz|ms|o)-/, "");
-        // Only keep `backdrop-filter` — everything else is dropped
+        // Standardize specific ones we know Webflow prefers in standard form
         if (standard === "backdrop-filter")
             return standard;
-        return null; // Signal: skip this property
+        if (standard === "appearance")
+            return standard;
+        if (standard === "user-select")
+            return standard;
+        // For everything else, keep the prefixed version so it can be applied as a custom property in Webflow
+        return key;
     }
     return key; // Unchanged
 }
@@ -51,19 +56,17 @@ function resolveBackground(value) {
 // ------------------------------------
 function splitGap(value) {
     const trimmed = value.trim();
-    // If it's a variable reference (CSS var() or Webflow's internal variable format)
-    const isVar = trimmed.includes("var(") || trimmed.includes("variable-");
-    // Handle multi-part gap (e.g., "10px 20px")
-    const parts = trimmed.split(/\s+/).filter(Boolean);
-    if (isVar || parts.length > 1) {
+    // split spaces but not inside parentheses (e.g. var() or calc() or clamp())
+    const parts = trimmed.match(/(?:[^\s(]+|\((?:[^()]+|\([^()]*\))*\))+/g);
+    if (parts && parts.length > 1) {
         const row = parts[0];
-        const col = parts[1] || parts[0]; // fallback to same value if only one variable/value provided but splitting is required
+        const col = parts[1] || parts[0];
         return {
-            "row-gap": row,
-            "column-gap": col,
+            "grid-row-gap": row,
+            "grid-column-gap": col,
         };
     }
-    return { gap: trimmed };
+    return { "grid-row-gap": trimmed, "grid-column-gap": trimmed };
 }
 // ------------------------------------
 // 4b. Webflow Required Expansions
@@ -72,7 +75,8 @@ function splitGap(value) {
 // ------------------------------------
 function expandPaddingMargin(key, val) {
     // split spaces but not inside parentheses (e.g. var() or calc())
-    const parts = val.match(/(?:[^\s(]+|\([^)]*\))+/g);
+    // handles nested parentheses for calc(var(--x) * 1.5)
+    const parts = val.match(/(?:[^\s(]+|\((?:[^()]+|\([^()]*\))*\))+/g);
     if (!parts)
         return { [key]: val };
     const [t, r = t, b = t, l = r] = parts;
@@ -84,7 +88,7 @@ function expandPaddingMargin(key, val) {
     };
 }
 function expandBorderRadius(val) {
-    const parts = val.match(/(?:[^\s(]+|\([^)]*\))+/g);
+    const parts = val.match(/(?:[^\s(]+|\((?:[^()]+|\([^()]*\))*\))+/g);
     if (!parts || val.includes("/"))
         return { "border-radius": val };
     const [tl, tr = tl, br = tl, bl = tr] = parts;
@@ -95,8 +99,8 @@ function expandBorderRadius(val) {
         "border-bottom-left-radius": bl,
     };
 }
-function expandBorder(val) {
-    const parts = val.match(/(?:[^\s(]+|\([^)]*\))+/g);
+function expandBorder(val, side) {
+    const parts = val.match(/(?:[^\s(]+|\((?:[^()]+|\([^()]*\))*\))+/g);
     if (!parts)
         return null;
     let width, style, color;
@@ -108,31 +112,33 @@ function expandBorder(val) {
         else if (p.match(/^(0|0px|0rem|0em|[1-9]\d*(?:\.\d+)?(?:px|rem|em|vw|vh|%))$/))
             width = p;
         else if (p.includes("var(")) {
-            if (p.includes("color") || p.includes("bg") || p.includes("border"))
+            // Heuristic for variable identification in border shorthand
+            if (p.includes("color") ||
+                p.includes("bg") ||
+                p.includes("brand") ||
+                p.includes("palette"))
                 color = p;
-            else
-                width = p; // fallback
+            else if (p.includes("width") ||
+                p.includes("size") ||
+                p.includes("spacing") ||
+                p.includes("border"))
+                width = p;
+            else if (!color)
+                color = p;
+            else if (!width)
+                width = p;
         }
     });
     const res = {};
-    if (width) {
-        res["border-top-width"] = width;
-        res["border-right-width"] = width;
-        res["border-bottom-width"] = width;
-        res["border-left-width"] = width;
-    }
-    if (style) {
-        res["border-top-style"] = style;
-        res["border-right-style"] = style;
-        res["border-bottom-style"] = style;
-        res["border-left-style"] = style;
-    }
-    if (color) {
-        res["border-top-color"] = color;
-        res["border-right-color"] = color;
-        res["border-bottom-color"] = color;
-        res["border-left-color"] = color;
-    }
+    const sides = side ? [side] : ["top", "right", "bottom", "left"];
+    sides.forEach((s) => {
+        if (width)
+            res[`border-${s}-width`] = width;
+        if (style)
+            res[`border-${s}-style`] = style;
+        if (color)
+            res[`border-${s}-color`] = color;
+    });
     return Object.keys(res).length > 0 ? res : null;
 }
 // ------------------------------------
@@ -170,6 +176,47 @@ export function normalizeHexAlpha(value) {
         }
         return match;
     });
+}
+// ------------------------------------
+// 4d. Grid Template Normalization
+// Webflow's Designer UI doesn't always handle CSS `repeat()` well in the
+// columns/rows fields. We expand them to explicit values (repeat(3, 1fr) -> 1fr 1fr 1fr).
+// ------------------------------------
+function normalizeGridTemplate(value) {
+    if (!value.includes("repeat("))
+        return value;
+    let result = value;
+    // Use a loop to handle potential nested or multiple repeat() calls
+    let iterations = 0;
+    while (result.includes("repeat(") && iterations < 5) {
+        // More robust regex to handle units with their own parentheses like var() or calc()
+        const next = result.replace(/repeat\((\d+),\s*([^()]*(?:\([^()]*\)[^()]*)*)\)/g, (_, count, unit) => {
+            const n = parseInt(count);
+            if (isNaN(n))
+                return _;
+            return new Array(n).fill(unit.trim()).join(" ");
+        });
+        if (next === result)
+            break;
+        result = next;
+        iterations++;
+    }
+    return result;
+}
+function splitGridTemplate(value) {
+    const trimmed = value.trim();
+    if (trimmed.includes("/")) {
+        const [rows, columns] = trimmed.split("/").map((s) => s.trim());
+        return {
+            "grid-template-rows": normalizeGridTemplate(rows),
+            "grid-template-columns": normalizeGridTemplate(columns),
+        };
+    }
+    // If no slash, assume it's just columns for simplicity in many common cases,
+    // but the UI usually prefers explicit rows/cols.
+    return {
+        "grid-template-columns": normalizeGridTemplate(trimmed),
+    };
 }
 /**
  * Normalizes a map of CSS properties:
@@ -213,14 +260,78 @@ export function normalizeCssProperties(properties, varMap = {}) {
             Object.assign(out, splitGap(val));
             continue;
         }
+        if (key === "row-gap" || key === "grid-row-gap") {
+            out["grid-row-gap"] = val;
+            continue;
+        }
+        if (key === "column-gap" || key === "grid-column-gap") {
+            out["grid-column-gap"] = val;
+            continue;
+        }
         // Step 4b: padding/margin/border expansion
         if (key === "padding" || key === "margin") {
             Object.assign(out, expandPaddingMargin(key, val));
             continue;
         }
+        // Step 4b-ii: CSS logical properties → physical equivalents
+        // Webflow does not support margin-inline, padding-inline, margin-block, padding-block.
+        // Split "X Y" → start/end, single value → both sides.
+        if (key === "margin-inline" || key === "padding-inline") {
+            const base = key.startsWith("margin") ? "margin" : "padding";
+            const parts = val.match(/(?:[^\s(]+|\((?:[^()]+|\([^()]*\))*\))+/g) || [val];
+            const [start, end = start] = parts;
+            out[`${base}-left`] = start;
+            out[`${base}-right`] = end;
+            continue;
+        }
+        if (key === "margin-block" || key === "padding-block") {
+            const base = key.startsWith("margin") ? "margin" : "padding";
+            const parts = val.match(/(?:[^\s(]+|\((?:[^()]+|\([^()]*\))*\))+/g) || [val];
+            const [start, end = start] = parts;
+            out[`${base}-top`] = start;
+            out[`${base}-bottom`] = end;
+            continue;
+        }
+        if (key === "margin-inline-start") {
+            out["margin-left"] = val;
+            continue;
+        }
+        if (key === "margin-inline-end") {
+            out["margin-right"] = val;
+            continue;
+        }
+        if (key === "margin-block-start") {
+            out["margin-top"] = val;
+            continue;
+        }
+        if (key === "margin-block-end") {
+            out["margin-bottom"] = val;
+            continue;
+        }
+        if (key === "padding-inline-start") {
+            out["padding-left"] = val;
+            continue;
+        }
+        if (key === "padding-inline-end") {
+            out["padding-right"] = val;
+            continue;
+        }
+        if (key === "padding-block-start") {
+            out["padding-top"] = val;
+            continue;
+        }
+        if (key === "padding-block-end") {
+            out["padding-bottom"] = val;
+            continue;
+        }
         if (key.startsWith("border")) {
-            if (key === "border") {
-                const bRes = expandBorder(val);
+            if (key === "border" ||
+                key === "border-top" ||
+                key === "border-right" ||
+                key === "border-bottom" ||
+                key === "border-left") {
+                const side = key === "border" ? undefined : key.replace("border-", "");
+                const bRes = expandBorder(val, side);
                 if (bRes)
                     Object.assign(out, bRes);
             }
@@ -250,6 +361,19 @@ export function normalizeCssProperties(properties, varMap = {}) {
             }
             continue;
         }
+        // Step 4d: Grid normalization
+        if (key === "grid-template") {
+            Object.assign(out, splitGridTemplate(val));
+            continue;
+        }
+        if (key === "grid-template-columns" ||
+            key === "grid-template-rows" ||
+            key === "grid-template-column" ||
+            key === "grid-template-row") {
+            const pluralKey = key.endsWith("s") ? key : `${key}s`;
+            out[pluralKey] = normalizeGridTemplate(val);
+            continue;
+        }
         out[key] = val;
     }
     // Step 6: Resolve --tw-* variable chains
@@ -264,6 +388,12 @@ export function normalizeCssProperties(properties, varMap = {}) {
                 return fallback?.trim() || "0 0 #0000"; // Tailwind default empty-shadow
             });
         }
+    }
+    // Step 7: Webflow-specific Grid Defaults
+    // If columns are defined but rows are not, Webflow often performs better
+    // if we explicitly set grid-template-rows to auto.
+    if (out["grid-template-columns"] && !out["grid-template-rows"]) {
+        out["grid-template-rows"] = "auto";
     }
     return out;
 }

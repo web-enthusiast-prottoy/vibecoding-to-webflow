@@ -123,6 +123,17 @@ if (selected.textContent !== undefined) {
 }
 ```
 
+// Display Name (Navigator panel)
+**`element.setDisplayName(displayName: string): Promise<null>`**
+**`element.getDisplayName(): Promise<string | null>`**
+Sets or gets the user-facing display name of an element in the Navigator panel.
+```typescript
+await selected.setDisplayName("Hero Wrapper");
+const name = await selected.getDisplayName();
+// Pass empty string to reset:
+// await selected.setDisplayName("");
+```
+
 // Custom Attributes
 **`element.setCustomAttribute(name: string, value: string): Promise<null>`**
 **`element.removeCustomAttribute(name: string): Promise<null>`**
@@ -158,6 +169,33 @@ if (selected.type === 'String' && 'setText' in selected) {
 ```
 
 **Forms**: Use `FormForm` preset — auto-generates full form with fields, success/error messages.
+
+### Form structure
+A Webflow form consists of several nested elements that work together:
+| Element | Description | Parent Element |
+| --- | --- | --- |
+| `FormWrapper` | The outermost container element that encapsulates the entire form structure | |
+| `FormForm` | The main form element containing all form fields and inputs | `FormWrapper` |
+| `FormSuccessMessage` | The success message after successful form submission | `FormWrapper` |
+| `FormErrorMessage` | The error message if form submission fails | `FormWrapper` |
+| `FormInput` | An individual form field. | |
+| `FormBlockLabel` | The label for a `FormInput` | `FormInput` |
+| `FormButton` | The submit button for the form | `FormForm` |
+
+### Form inputs
+You can create form inputs using the following element presets:
+* `FormTextInput`
+* `FormTextarea`
+* `FormSelect`
+* `FormCheckboxInput`
+* `FormRadioInput`
+
+### Form Methods
+- `form.setName(name: string): Promise<null>`
+- `form.setSettings(settings: { state: string, name: string, action: string, method: string }): Promise<null>`
+- `formInput.setRequired(value: boolean): Promise<null>`
+- `formInput.setName(name: string): Promise<null>`
+- `formInput.setInputType(type: 'text' | 'email' | 'password' | 'tel' | 'number' | 'url'): Promise<null>`
 
 ## 2. Styles & Classes
 Manage global styles, classes, and their CSS properties across different breakpoints and pseudo-states.
@@ -729,7 +767,10 @@ await webflow.notify({
 });
 
 // Resize UI
-await webflow.resizeExtension(width, height); // or setExtensionSize
+// Set the desired size for the Extension UI.
+// Syntax: webflow.setExtensionSize(size: 'default' | 'comfortable' | 'large' | {width: number; height: number}): Promise<null>
+// Default: 240x360 | Comfortable: 320x460 | Large: 800x600
+await webflow.setExtensionSize("large");
 
 // Site info, subscribe to events (selection change, etc.), app discovery, modals/panels.
 ```
@@ -973,11 +1014,60 @@ await style.setProperty('color', '#fff', wfOptions);
     - **Avoid**: Applying it as a plain string in a batched `setProperties()` call (it may be ignored or mismanaged).
     - **Recommended**: Upgrade the property to a "complex" entry and apply it individually via `setProperty()`. This forces the Designer to treat it as a direct CSS declaration, ensuring the value is at least applied as raw CSS.
 
+### 11.7 Grid Gap & Responsive Mapping Gotchas
+- **Symptom**: `row-gap`, `column-gap`, or `gap` properties are ignored on responsive breakpoints (XL, Med, etc.) or when using variable proxies, even if they appear in the JSON.
+- **Root Cause**: The modern CSS gap property names are sometimes mismanaged by the Designer API's internal parser during responsive synchronization.
+- **The Fix**: 
+    - **Map to Legacy Keys**: Before applying, map modern keys to their legacy grid counterparts: `row-gap` → `grid-row-gap`, `column-gap` → `grid-column-gap`, `gap` → `grid-gap`.
+    - **Result**: Visual behavior is identical, but responsive propagation and variable binding are significantly more stable.
+
+### 11.8 Variable Binding Strategy (Proxy vs. String)
+- **The Conflict**: 
+    - **String Literals** (`var(--name)`): Extremely stable for main-breakpoint properties and complex shorthands (transitions, etc.). However, they often **lose breakpoint context** when applied via the API (the value applies to all breakpoints instead of just the target one).
+    - **Variable Proxies** (Purple Pill objects): Correctly handle responsive propagation and UI variable linking. However, they can cause **IPC deadlocks** or be **silently ignored** by certain properties (like modern `gap`).
+- **The Rule of Thumb**:
+    - Use **Variable Proxies** for spacing (padding, margin) and layout (grid-*-gap) where responsive behavior is critical.
+    - Use **String Literals** for decoration (colors, fonts) or complex shorthands where stability is more important than responsive variable linking.
+
+## 12. Mandatory Bug-Fixing Checklist
+
+Whenever investigating a bug or sync error in the Webflow extension, you MUST check these points:
+
+1. **Property Mapping check**: Is the property using a modern name (e.g. `gap`) that should be mapped to a legacy equivalent (`grid-gap`) for stability?
+2. **Variable Binding check**: Are we passing a variable proxy object to a property that only supports string literals, or vice versa? (See §11.8)
+3. **Responsive Context check**: Are breakpoints being lost? (Usually fixed by using Variable Proxies instead of raw `var()` strings).
+4. **Pseudo-State check**: Is the property being applied to a pseudo-state? If so, is it being applied **individually** via `setProperty` to avoid timeouts?
+5. **IPC Batch check**: Is the batch size too large? (Default to `CHUNK_SIZE = 5` or less).
+6. **Value Normalization check**: Are numeric zero values passed as `0px` (safe) instead of `0` (can cause parser stalls)?
+
 ## Common Workflows
 1. **Auto-generate Section**: Get selected → Append complex `elementBuilder` structure → Apply styles/variables.
 2. **Component Library Tool**: Select elements → Register as components → Bulk instantiate.
 3. **Design Token Sync**: Pull variables → Apply to selected elements.
 4. **Smart Form Builder**: Insert FormForm + customize fields dynamically.
+
+## 12. Fixing Bugs & Designer API Gotchas (CRITICAL)
+
+This section contains "Hard-Won Lessons" from complex synchronization tasks. Always consult this before debugging Grid or Responsive issues.
+
+### 12.1 Grid Property Normalization
+- **Plural vs. Singular**: Webflow's Designer API strictly expects plural keys (`grid-template-columns`, `grid-template-rows`). Singular CSS aliases like `grid-template-column` will be ignored or cause UI desync.
+- **Shorthand Expansion**: Properties like `grid-template` or `grid-gap` should be expanded into their constituent properties (e.g., `grid-row-gap`, `grid-column-gap`) for maximum stability in the Designer panels.
+- **Repeat Expansion**: `repeat(n, unit)` values must be expanded into explicit space-separated units (e.g., `1fr 1fr`) in the JSON output to ensure the Designer's Grid Editor can hydrate correctly.
+
+### 12.2 Shorthand Splitting & CSS Functions
+- **Parenthesis Awareness**: When splitting shorthands (e.g., `gap: 10px 20px` or `margin: var(--a) var(--b)`), use a regex that **ignores whitespace inside parentheses**. 
+- **The Clamp/Calc Bug**: A simple `.split(/\s+/)` will break values like `clamp(1rem, 2vw, 3rem)`, resulting in corrupted strings like `clamp(1rem,`. Use `trimmed.match(/(?:[^\s(]+|\((?:[^()]+|\([^()]*\))*\))+/g)` instead.
+
+### 12.3 Breakpoint Aggregation & Media Queries
+- **Range-Based Matching**: Webflow's breakpoints are inclusive. Avoid fixed checks like `if (width === 991)`. Use range-based matching:
+    - Tablet (`medium`): `768px < width <= 991px`
+    - Phone Landscape (`small`): `479px < width <= 768px`
+    - Phone Portrait (`tiny`): `width <= 479px`
+- **Fallback Overwrite Risk**: If a media query (e.g., `@media (max-width: 900px)`) is not successfully recognized as a Webflow breakpoint, it **must not** default to the `main` bucket. Doing so will cause mobile styles to overwrite desktop styles. Unrecognized media queries must be pushed to `styles-embed.json`.
+
+### 12.4 Zero Values & Units
+- **The Stalling Zero**: Always pass numeric zero values with units (e.g., `0px`) when targeting layout properties. Unitless `0` can sometimes cause the Designer parser to stall or hang during style application.
 
 **Skill Usage Tip**: When generating code for Webflow extensions, always start with getting references (`getSelectedElement`, `getCurrentPage`, `getDefaultVariableCollection`), use async/await, include user notifications, and prefer presets for standard elements. Reference this skill for accurate method names and patterns. For pseudo-states, always use individual `setProperty` calls to avoid timeouts.
 

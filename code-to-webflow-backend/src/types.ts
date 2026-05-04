@@ -1,5 +1,5 @@
 export interface WebflowReadyNode {
-  type: "Block" | "Heading" | "Paragraph" | "Link" | "Image" | "HtmlEmbed" | "List" | "ListItem" | "TextBlock" | "custom";
+  type: "Block" | "Heading" | "Paragraph" | "Link" | "Image" | "HtmlEmbed" | "List" | "ListItem" | "TextBlock" | "custom" | "FormWrapper" | "FormForm" | "FormTextInput" | "FormTextarea" | "FormSelect" | "FormCheckboxInput" | "FormRadioInput" | "FormBlockLabel" | "FormButton" | "FormSuccessMessage" | "FormErrorMessage";
   tag?: string; // e.g., "div", "section" for HTML blocks
   classes: string[]; // Utility or component classes (e.g., "padding-global", "hero_component")
   /** Component Metadata */

@@ -58,20 +58,32 @@ program
                 }
                 if (variables && variables.length > 0) {
                     siteStructure.collections = siteStructure.collections || [];
-                    let existingCol = siteStructure.collections.find(c => c.name === "Global Variables");
-                    if (!existingCol) {
-                        existingCol = { name: "Global Variables", modes: [{ name: "Default" }], variables: [] };
-                        siteStructure.collections.push(existingCol);
-                    }
                     for (const v of variables) {
-                        if (!existingCol.variables.find(ev => ev.name === v.name)) {
+                        const groupName = v.group || "Base Collection";
+                        let existingCol = siteStructure.collections.find(c => c.name === groupName);
+                        if (!existingCol) {
+                            existingCol = { name: groupName, modes: [], variables: [] };
+                            siteStructure.collections.push(existingCol);
+                        }
+                        const existingVar = existingCol.variables.find(ev => ev.name === v.name);
+                        if (existingVar) {
+                            console.log(`    [CLI] Merging values for variable: ${v.name} in ${groupName}`);
+                            Object.assign(existingVar.values, v.values);
+                        }
+                        else {
                             existingCol.variables.push(v);
+                        }
+                        // Sync modes in collection
+                        for (const modeName of Object.keys(v.values)) {
+                            if (!existingCol.modes.find(m => m.name === modeName)) {
+                                existingCol.modes.push({ name: modeName });
+                            }
                         }
                     }
                 }
             }
             else {
-                const result = isHtml ? parseHtml(code) : parseTsx(code);
+                const result = isHtml ? parseHtml(code, path.dirname(fullPath)) : parseTsx(code);
                 // Merge global styles if they exist
                 if (result.globalStyles) {
                     for (const [selector, breakpoints] of Object.entries(result.globalStyles)) {
@@ -95,10 +107,19 @@ program
                             existingCol = { name: col.name, modes: [...col.modes], variables: [] };
                             siteStructure.collections.push(existingCol);
                         }
-                        // Add variables, ignoring duplicates by name
                         for (const v of col.variables) {
-                            if (!existingCol.variables.find(ev => ev.name === v.name)) {
+                            const existingVar = existingCol.variables.find(ev => ev.name === v.name);
+                            if (existingVar) {
+                                Object.assign(existingVar.values, v.values);
+                            }
+                            else {
                                 existingCol.variables.push(v);
+                            }
+                        }
+                        // Resync unique modes
+                        for (const mode of col.modes) {
+                            if (!existingCol.modes.find(m => m.name === mode.name)) {
+                                existingCol.modes.push(mode);
                             }
                         }
                     }

@@ -168,6 +168,11 @@ function parseValueForVariable(type: string, value: string): any {
 		return null;
 	}
 
+	// Handle var() references as custom values so frontend can resolve them to native aliases
+	if (lowerVal.includes("var(")) {
+		return { isCustom: true, customValue: val };
+	}
+
 	if (type === "Size") {
 		// Check for complex CSS functions first - these must be handled as custom values
 		if (
@@ -221,6 +226,7 @@ function isSupportedSelector(selector: string): boolean {
 	if (!selector.includes(".")) return false;
 
 	if (selector.includes("[") || selector.includes("]") || selector.includes(">") || selector.includes("~") || selector.includes("+")) return false;
+	if (selector.includes("-webkit-") || selector.includes("-moz-") || selector.includes("-ms-") || selector.includes("-o-")) return false;
 	const unsupportedPseudos = ["::before", "::after", ":before", ":after", ":nth-child", ":last-child", ":first-child", ":not", ":focus-within", ":checked", ":disabled", ":nth-of-type", ":empty", ":target"];
 	for (const p of unsupportedPseudos) {
 		if (selector.includes(p)) return false;
@@ -251,23 +257,7 @@ function resolveVars(value: string, varMap: Record<string, string>): string {
 	return newVal;
 }
 
-function wrapInMedia(rule: any, block: string): string {
-	let inMedia = false;
-	let mediaParams = "";
-	let mediaParent = rule.parent;
-	while (mediaParent && mediaParent.type !== "root") {
-		if (mediaParent.type === "atrule" && (mediaParent as any).name === "media") {
-			inMedia = true;
-			mediaParams = `@media ${(mediaParent as any).params}`;
-			break;
-		}
-		mediaParent = mediaParent.parent;
-	}
-	if (inMedia) {
-		return `${mediaParams} {\n  ${block.trim().split('\n').join('\n  ')}\n}\n`;
-	}
-	return block;
-}
+
 
 export function parseStyleTag(css: string): {
 	styles: Record<string, BreakpointStyles>;
@@ -279,6 +269,32 @@ export function parseStyleTag(css: string): {
 	const variables: WebflowVariable[] = [];
 	let keyframes = "";
 	let unsupportedCss = "";
+
+	const unsupportedMediaBlocks = new Map<string, string[]>();
+	const unsupportedRootBlocks: string[] = [];
+
+	function addUnsupportedBlock(rule: any, block: string) {
+		let inMedia = false;
+		let mediaParams = "";
+		let mediaParent = rule.parent;
+		while (mediaParent && mediaParent.type !== "root") {
+			if (mediaParent.type === "atrule" && (mediaParent as any).name === "media") {
+				inMedia = true;
+				mediaParams = `@media ${(mediaParent as any).params}`;
+				break;
+			}
+			mediaParent = mediaParent.parent;
+		}
+		
+		if (inMedia) {
+			if (!unsupportedMediaBlocks.has(mediaParams)) {
+				unsupportedMediaBlocks.set(mediaParams, []);
+			}
+			unsupportedMediaBlocks.get(mediaParams)!.push(block);
+		} else {
+			unsupportedRootBlocks.push(block);
+		}
+	}
 	const root = postcss.parse(css);
 
 	const rawVarMap: Record<string, string> = {};
@@ -327,6 +343,9 @@ export function parseStyleTag(css: string): {
 		};
 
 		let breakpointId: BreakpointId = "main";
+		let isInsideRecognizedMedia = false;
+		let isInsideAnyMedia = false;
+
 		// Check if this rule is inside a media query
 		let mediaParent = rule.parent;
 		while (mediaParent && mediaParent.type !== "root") {
@@ -334,22 +353,59 @@ export function parseStyleTag(css: string): {
 				mediaParent.type === "atrule" &&
 				(mediaParent as any).name === "media"
 			) {
+				isInsideAnyMedia = true;
 				const params = (mediaParent as any).params.toLowerCase();
-				const maxWidthMatch = params.match(/max-width:\s*(\d+(?:\.\d+)?)\s*px/);
-				const minWidthMatch = params.match(/min-width:\s*(\d+(?:\.\d+)?)\s*px/);
+				const maxWidthMatch = params.match(/max-width:\s*(\d+(?:\.\d+)?)\s*(px|rem|em)/);
+				const minWidthMatch = params.match(/min-width:\s*(\d+(?:\.\d+)?)\s*(px|rem|em)/);
 
 				if (maxWidthMatch) {
-					const width = parseFloat(maxWidthMatch[1]);
-					if (width >= 991 && width <= 992) breakpointId = "medium";
-					else if (width >= 767 && width <= 768) breakpointId = "small";
-					else if (width >= 479 && width <= 480) breakpointId = "tiny";
+					let width = parseFloat(maxWidthMatch[1]);
+					if (maxWidthMatch[2] === 'rem' || maxWidthMatch[2] === 'em') {
+						width *= 16;
+					}
+					// inclusive Tablet (991px and below, but above Mobile Landscape)
+					if (width > 768 && width <= 991) {
+						breakpointId = "medium";
+						isInsideRecognizedMedia = true;
+					}
+					// inclusive Mobile Landscape (767px and below, but above Mobile Portrait)
+					else if (width > 479 && width <= 768) {
+						breakpointId = "small";
+						isInsideRecognizedMedia = true;
+					}
+					// inclusive Mobile Portrait (479px and below)
+					else if (width <= 479) {
+						breakpointId = "tiny";
+						isInsideRecognizedMedia = true;
+					}
 				} else if (minWidthMatch) {
-					const width = parseFloat(minWidthMatch[1]);
-					if (width >= 1280 && width <= 1440) breakpointId = "large";
-					else if (width >= 1920) breakpointId = "xxl";
+					let width = parseFloat(minWidthMatch[1]);
+					if (minWidthMatch[2] === 'rem' || minWidthMatch[2] === 'em') {
+						width *= 16;
+					}
+					if (width >= 1280 && width <= 1440) {
+						breakpointId = "large";
+						isInsideRecognizedMedia = true;
+					}
+					else if (width >= 1920) {
+						breakpointId = "xxl";
+						isInsideRecognizedMedia = true;
+					}
 				}
 			}
 			mediaParent = mediaParent.parent;
+		}
+
+		// SAFETY: If we are inside a media query but it wasn't matched to a Webflow breakpoint,
+		// we MUST treat it as unsupported CSS so it doesn't overwrite the 'main' desktop styles.
+		if (isInsideAnyMedia && !isInsideRecognizedMedia) {
+			let block = `${selectors.join(", ")} {\n`;
+			rule.walkDecls((decl) => {
+				block += `  ${decl.prop}: ${decl.value};\n`;
+			});
+			block += `}\n`;
+			addUnsupportedBlock(rule, block);
+			return;
 		}
 
 		const currentMode = varModeMap[breakpointId] || "Base Mode";
@@ -365,12 +421,11 @@ export function parseStyleTag(css: string): {
 				const variableName = prop.substring(2);
 				const type = inferVariableType(value, rawVarMap);
 
-				// Webflow variables only support Size (clamp, calc, min, max), Color, FontFamily, Number, Percentage.
-				// Time units (s, ms), easing functions, and gradients are NOT supported as native variables in Webflow.
+				// Webflow variables support Size, Color, FontFamily, Number, and Percentage.
+				// Gradients and URLs are still NOT supported as native variables in Webflow.
+				// Time units (s, ms) and easing functions are now allowed to pass through
+				// to support native animation and transition properties.
 				const isUnsupportedValue = 
-					/\d+(s|ms)\b/.test(value) || 
-					value.includes("cubic-bezier") || 
-					value.includes("steps(") ||
 					value.includes("gradient(") || 
 					value.includes("url(");
 
@@ -432,19 +487,19 @@ export function parseStyleTag(css: string): {
 		if (Object.keys(unsupportedRuleDeclarations).length > 0) {
 			let block = `${selectors.join(", ")} {\n`;
 			for (const [p, v] of Object.entries(unsupportedRuleDeclarations)) {
-				block += `  ${p}: ${resolveVars(v, rawVarMap)};\n`;
+				block += `  ${p}: ${v};\n`;
 			}
 			block += `}\n`;
-			unsupportedCss += wrapInMedia(rule, block);
+			addUnsupportedBlock(rule, block);
 		}
 
 		if (Object.keys(supportedRuleDeclarations).length > 0 && unsupportedSelectors.length > 0) {
 			let block = `${unsupportedSelectors.join(", ")} {\n`;
 			for (const [p, v] of Object.entries(supportedRuleDeclarations)) {
-				block += `  ${p}: ${resolveVars(v, rawVarMap)};\n`;
+				block += `  ${p}: ${v};\n`;
 			}
 			block += `}\n`;
-			unsupportedCss += wrapInMedia(rule, block);
+			addUnsupportedBlock(rule, block);
 		}
 
 		if (Object.keys(declarations).length === 0 || supportedSelectors.length === 0) return;
@@ -465,6 +520,29 @@ export function parseStyleTag(css: string): {
 			Object.assign(styles[selector][breakpointId]!, normalized);
 		}
 	});
+
+	// Reconstruct unsupportedCss from root blocks and media blocks
+	let reconstructedCss = "";
+	
+	// Add root blocks first
+	if (unsupportedRootBlocks.length > 0) {
+		reconstructedCss += unsupportedRootBlocks.join("\n") + "\n";
+	}
+	
+	// Add media blocks
+	for (const [mediaParams, blocks] of unsupportedMediaBlocks.entries()) {
+		reconstructedCss += `${mediaParams} {\n`;
+		for (let i = 0; i < blocks.length; i++) {
+			const block = blocks[i];
+			reconstructedCss += `  ${block.trim().split('\n').join('\n  ')}\n`;
+			if (i < blocks.length - 1) {
+				reconstructedCss += "\n";
+			}
+		}
+		reconstructedCss += "}\n\n";
+	}
+	
+	unsupportedCss = reconstructedCss + unsupportedCss;
 
 	// At the end, before return:
 	for (const [mode, vars] of unsupportedVarsByMode.entries()) {
@@ -542,8 +620,20 @@ function convertHtmlNode(node: any, baseDir?: string): WebflowReadyNode | null {
 	else if (tagName === "img") type = "Image";
 	else if (tagName === "ul" || tagName === "ol") type = "List";
 	else if (tagName === "li") type = "ListItem";
+	else if (tagName === "form") type = "FormForm";
+	else if (tagName === "label") type = "FormBlockLabel";
+	else if (tagName === "textarea") type = "FormTextarea";
+	else if (tagName === "select") type = "FormSelect";
+	else if (tagName === "button") type = "FormButton";
+	else if (tagName === "input") {
+		const inputType = (attributes["type"] || "text").toLowerCase();
+		if (inputType === "checkbox") type = "FormCheckboxInput";
+		else if (inputType === "radio") type = "FormRadioInput";
+		else if (inputType === "submit") type = "FormButton";
+		else type = "FormTextInput";
+	}
 	else if (["script", "style", "link", "meta"].includes(tagName)) {
-		// script, style, link, and meta tags MUST be HtmlEmbeds because they can't be native DOM blocks in Webflow Designer
+		// script, style, link, and meta tags MUST be HtmlEmbeds because they can't be native DOM blocks in Webflow Designer without attribute errors
 		let textVal: string | string[];
 
 		if (tagName === "script" || tagName === "style") {

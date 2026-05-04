@@ -149,3 +149,6 @@ These patterns are known to cause Webflow publishing failures or UI corruption a
    - Corrupt coordinate strings (e.g., duplicated `rgba(0, 0, 0, 0)` with excess zeros).
 4. **Logical Properties**: Properties like `padding-inline`, `margin-block` should be expanded to physical equivalents (`padding-left`, etc.) for Variable compatibility.
 5. **Transition Variables**: Custom properties (`--var`) in `transition-property` usually fail to map correctly in the native UI.
+6. **Complex CSS Expressions (`clamp`, `calc`, `var`, etc.)**:
+   - **Gotcha**: When setting values for `SizeVariable`s programmatically using the Designer API, passing a raw CSS string like `"clamp(1rem, 2vw, 3rem)"` to `.set()` or `createSizeVariable()` will **fail silently** and default to `0px`.
+   - **Fix**: You MUST wrap complex CSS strings and unresolved `var()` references in a `CustomValue` object: `{ type: "custom", value: "clamp(1rem, 2vw, 3rem)" }`.

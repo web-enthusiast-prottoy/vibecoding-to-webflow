@@ -2,7 +2,7 @@
 @layer properties, theme, base, webflow, components, utilities;
 
 /* Webflow global styles are imported in the 'webflow' layer */
-@import "../devlink/global.css" layer(webflow);
+@import "../webflow/css/global.css" layer(webflow);
 @import "tailwindcss";
 
 :root {

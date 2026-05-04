@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
-import { DevLinkProvider } from "@/devlink/DevLinkProvider";
+import { DevLinkProvider } from "@/webflow/DevLinkProvider";
 
 const inter = Inter({
   subsets: ["latin"],
