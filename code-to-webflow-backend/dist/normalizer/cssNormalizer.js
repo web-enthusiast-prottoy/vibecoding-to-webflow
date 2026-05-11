@@ -400,6 +400,47 @@ export function normalizeCssProperties(properties, varMap = {}) {
 // ------------------------------------
 // Complex selector pre-resolution
 // ------------------------------------
+const BREAKPOINT_KEYS = new Set([
+    "main",
+    "medium",
+    "small",
+    "tiny",
+    "large",
+    "xl",
+    "xxl",
+]);
+function isBreakpointStyleMap(value) {
+    if (!value || typeof value !== "object" || Array.isArray(value))
+        return false;
+    const entries = Object.entries(value);
+    if (entries.length === 0)
+        return false;
+    return entries.every(([key, nested]) => BREAKPOINT_KEYS.has(key) &&
+        !!nested &&
+        typeof nested === "object" &&
+        !Array.isArray(nested));
+}
+function toBreakpointStyleMap(value) {
+    if (!value)
+        return {};
+    if (isBreakpointStyleMap(value)) {
+        const out = {};
+        for (const [bp, props] of Object.entries(value)) {
+            out[bp] = { ...(props || {}) };
+        }
+        return out;
+    }
+    return { main: { ...value } };
+}
+function mergeBreakpointStyleMaps(existing, incoming) {
+    const merged = toBreakpointStyleMap(existing);
+    for (const [bp, props] of Object.entries(incoming)) {
+        if (!props || typeof props !== "object" || Object.keys(props).length === 0)
+            continue;
+        merged[bp] = { ...(merged[bp] || {}), ...props };
+    }
+    return merged;
+}
 /**
  * Resolves complex (descendant / tag child) CSS selectors into the nodes they target.
  *
@@ -421,19 +462,13 @@ export function resolveComplexSelectors(complexSelectors, nodes) {
         for (const [selector, bpStyles] of Object.entries(complexSelectors)) {
             const [baseSelector, pseudo] = selector.split(":");
             if (matches(node, ancestorClasses, baseSelector.trim())) {
-                // Merge the main breakpoint styles into node.styles
-                const mainProps = bpStyles.main || bpStyles;
-                if (mainProps && typeof mainProps === "object") {
-                    if (!pseudo) {
-                        node.styles = { ...(node.styles || {}), ...mainProps };
-                    }
-                    else {
-                        node.inlinePseudoStyles = node.inlinePseudoStyles || {};
-                        node.inlinePseudoStyles[pseudo] = {
-                            ...(node.inlinePseudoStyles[pseudo] || {}),
-                            ...mainProps,
-                        };
-                    }
+                const normalizedBpStyles = mergeBreakpointStyleMaps(undefined, bpStyles);
+                if (!pseudo) {
+                    node.inlineStyles = mergeBreakpointStyleMaps(node.inlineStyles, normalizedBpStyles);
+                }
+                else {
+                    node.inlinePseudoStyles = node.inlinePseudoStyles || {};
+                    node.inlinePseudoStyles[pseudo] = mergeBreakpointStyleMaps(node.inlinePseudoStyles[pseudo], normalizedBpStyles);
                 }
             }
         }

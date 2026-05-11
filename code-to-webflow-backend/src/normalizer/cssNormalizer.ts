@@ -460,6 +460,60 @@ export function normalizeCssProperties(
 // Complex selector pre-resolution
 // ------------------------------------
 
+const BREAKPOINT_KEYS = new Set([
+	"main",
+	"medium",
+	"small",
+	"tiny",
+	"large",
+	"xl",
+	"xxl",
+] as const);
+
+function isBreakpointStyleMap(
+	value: unknown,
+): value is Record<string, Record<string, string>> {
+	if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+
+	const entries = Object.entries(value as Record<string, unknown>);
+	if (entries.length === 0) return false;
+
+	return entries.every(
+		([key, nested]) =>
+			BREAKPOINT_KEYS.has(key as (typeof BREAKPOINT_KEYS extends Set<infer T> ? T : never)) &&
+			!!nested &&
+			typeof nested === "object" &&
+			!Array.isArray(nested),
+	);
+}
+
+function toBreakpointStyleMap(
+	value?: Record<string, string> | Record<string, Record<string, string>>,
+): Record<string, Record<string, string>> {
+	if (!value) return {};
+	if (isBreakpointStyleMap(value)) {
+		const out: Record<string, Record<string, string>> = {};
+		for (const [bp, props] of Object.entries(value)) {
+			out[bp] = { ...(props || {}) };
+		}
+		return out;
+	}
+	return { main: { ...value } };
+}
+
+function mergeBreakpointStyleMaps(
+	existing: Record<string, string> | Record<string, Record<string, string>> | undefined,
+	incoming: Record<string, Record<string, string>>,
+): Record<string, Record<string, string>> {
+	const merged = toBreakpointStyleMap(existing);
+	for (const [bp, props] of Object.entries(incoming)) {
+		if (!props || typeof props !== "object" || Object.keys(props).length === 0)
+			continue;
+		merged[bp] = { ...(merged[bp] || {}), ...props };
+	}
+	return merged;
+}
+
 /**
  * Resolves complex (descendant / tag child) CSS selectors into the nodes they target.
  *
@@ -485,18 +539,21 @@ export function resolveComplexSelectors(
 			const [baseSelector, pseudo] = selector.split(":");
 
 			if (matches(node, ancestorClasses, baseSelector.trim())) {
-				// Merge the main breakpoint styles into node.styles
-				const mainProps = (bpStyles as any).main || bpStyles;
-				if (mainProps && typeof mainProps === "object") {
-					if (!pseudo) {
-						node.styles = { ...(node.styles || {}), ...mainProps };
-					} else {
-						node.inlinePseudoStyles = node.inlinePseudoStyles || {};
-						node.inlinePseudoStyles[pseudo] = {
-							...(node.inlinePseudoStyles[pseudo] || {}),
-							...mainProps,
-						};
-					}
+				const normalizedBpStyles = mergeBreakpointStyleMaps(
+					undefined,
+					bpStyles as Record<string, Record<string, string>>,
+				);
+				if (!pseudo) {
+					node.inlineStyles = mergeBreakpointStyleMaps(
+						node.inlineStyles as any,
+						normalizedBpStyles,
+					) as any;
+				} else {
+					node.inlinePseudoStyles = node.inlinePseudoStyles || {};
+					node.inlinePseudoStyles[pseudo] = mergeBreakpointStyleMaps(
+						node.inlinePseudoStyles[pseudo] as any,
+						normalizedBpStyles,
+					) as any;
 				}
 			}
 		}

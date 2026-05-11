@@ -14,6 +14,21 @@ interface Window {
 	__wfStyleCache?: Map<string, any>;
 }
 
+type BreakpointKey = "main" | "medium" | "small" | "tiny" | "large" | "xl" | "xxl";
+type CssPropertyMap = Record<string, string>;
+type BreakpointStyleMap = Partial<Record<BreakpointKey, CssPropertyMap>>;
+type NodeStyleMap = CssPropertyMap | BreakpointStyleMap;
+
+const BREAKPOINT_KEYS = new Set<BreakpointKey>([
+	"main",
+	"medium",
+	"small",
+	"tiny",
+	"large",
+	"xl",
+	"xxl",
+]);
+
 interface WebflowReadyNode {
 	type:
 		| "Block"
@@ -30,11 +45,11 @@ interface WebflowReadyNode {
 	tag?: string;
 	classes: string[];
 	/** Pre-normalized styles from backend (kebab-case, no vendor prefixes, no --* vars). */
-	styles?: Record<string, string>;
+	styles?: NodeStyleMap;
 	/** Styles pre-resolved from complex descendant selectors by the backend (e.g. '.nav a'). */
-	inlineStyles?: Record<string, string>;
+	inlineStyles?: NodeStyleMap;
 	/** Styles from complex descendant selectors with pseudo states */
-	inlinePseudoStyles?: Record<string, Record<string, string>>;
+	inlinePseudoStyles?: Record<string, NodeStyleMap>;
 	attributes?: Record<string, any>;
 	id?: string;
 	text?: string | string[];
@@ -1203,21 +1218,152 @@ let progressLog: HTMLElement;
 
 let uploadedPayload: SitePayload | null = null;
 
+function collectAllClasses(nodes: WebflowReadyNode[], classSet: Set<string> = new Set()): Set<string> {
+	for (const node of nodes) {
+		if (node.classes) node.classes.forEach((c) => classSet.add(c));
+		if (node.children) collectAllClasses(node.children, classSet);
+	}
+	return classSet;
+}
+
+function convertNodeToWebflowClipboard(
+	node: WebflowReadyNode,
+	styleMap: Map<string, string>,
+): any {
+	const nodeId = crypto.randomUUID
+		? crypto.randomUUID()
+		: "e" + Math.random().toString(36).substr(2, 9);
+
+	// 1. Resolve classes to IDs
+	const classes = (node.classes || []).map((c) => styleMap.get(c) || c);
+
+	// 2. Handle SVG Root -> HtmlEmbed
+	const isSvgRoot =
+		node.type === "custom" && node.tag?.toLowerCase() === "svg";
+	if (isSvgRoot) {
+		// Build clean code (without classes)
+		const savedClasses = node.classes;
+		// @ts-ignore
+		node.classes = [];
+		const code = nodeToHtml(node).replace(/\s+class="[^"]*"/gi, "");
+		// @ts-ignore
+		node.classes = savedClasses;
+
+		return {
+			_id: nodeId,
+			type: "HtmlEmbed",
+			tag: "div",
+			classes: classes,
+			children: [],
+			data: {
+				search: { exclude: true },
+				embed: {
+					type: "html",
+					meta: {
+						html: code,
+						div: false,
+						script: false,
+						compilable: false,
+						iframe: false,
+					},
+				},
+				insideRTE: false,
+				content: "",
+				displayName: "SVG Embed",
+				attr: { id: node.id || "" },
+				xattr: [],
+				visibility: {
+					conditions: [],
+					keepInHtml: { tag: "False", val: {} },
+				},
+			},
+		};
+	}
+
+	// 3. Handle Standard Nodes
+	const children = (node.children || []).map((c) =>
+		convertNodeToWebflowClipboard(c, styleMap),
+	);
+
+	// Map internal types to Webflow Clipboard types
+	let wfType = node.type as string;
+	if (wfType === "custom" || wfType === "Block") wfType = "Block";
+
+	const payload: any = {
+		_id: nodeId,
+		type: wfType,
+		tag: node.tag,
+		classes: classes,
+		children: children,
+	};
+
+	// Special data for certain types
+	if (wfType === "Image") {
+		payload.data = {
+			asset: node.attributes?.src || "",
+			alt: node.attributes?.alt || "",
+		};
+	} else if (wfType === "Link") {
+		payload.data = {
+			url: node.attributes?.href || "#",
+			target: node.attributes?.target || "",
+		};
+	} else if (wfType === "Heading") {
+		const levelMatch = node.tag?.match(/^h([1-6])$/i);
+		const level = levelMatch ? parseInt(levelMatch[1]) : 2;
+		payload.data = { level };
+	}
+
+	return payload;
+}
+
+function isBreakpointStyleMap(value: unknown): value is BreakpointStyleMap {
+	if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+
+	const entries = Object.entries(value as Record<string, unknown>);
+	if (entries.length === 0) return false;
+
+	return entries.every(
+		([key, nested]) =>
+			BREAKPOINT_KEYS.has(key as BreakpointKey) &&
+			!!nested &&
+			typeof nested === "object" &&
+			!Array.isArray(nested),
+	);
+}
+
+function hasNodeStyles(value?: NodeStyleMap): boolean {
+	if (!value) return false;
+	if (isBreakpointStyleMap(value)) {
+		return Object.values(value).some(
+			(props) => !!props && Object.keys(props).length > 0,
+		);
+	}
+	return Object.keys(value).length > 0;
+}
+
+function getPreviewStyles(value?: NodeStyleMap): CssPropertyMap | undefined {
+	if (!value) return undefined;
+	return isBreakpointStyleMap(value) ? value.main : value;
+}
+
 function nodeToHtml(node: WebflowReadyNode): string {
-    const tag = node.tag || (node.type === "Heading" ? "h1" : node.type === "Paragraph" ? "p" : "div");
-    
-    // Collect attributes
+	    const tag = node.tag || (node.type === "Heading" ? "h1" : node.type === "Paragraph" ? "p" : "div");
+	    
+	    // Collect attributes (excluding class which is handled separately)
     const attrs = Object.entries(node.attributes || {})
+        .filter(([k]) => k.toLowerCase() !== "class" && k.toLowerCase() !== "classname")
         .map(([k, v]) => ` ${k}="${v}"`)
         .join("");
 
-    // Inline styles
-    let stylesStr = "";
-    if (node.styles && Object.keys(node.styles).length > 0) {
-        stylesStr = ` style="${Object.entries(node.styles)
-            .map(([k, v]) => `${k}:${v}`)
-            .join(";")}"`;
-    }
+	    // Inline styles
+	    let stylesStr = "";
+	    const previewStyles = getPreviewStyles(node.styles);
+	    if (previewStyles && Object.keys(previewStyles).length > 0) {
+	        stylesStr = ` style="${Object.entries(previewStyles)
+	            .map(([k, v]) => `${k}:${v}`)
+	            .join(";")}"`;
+	    }
 
     // Classes
     let classStr = "";
@@ -1275,9 +1421,21 @@ interface UnsupportedCssEmbed {
 	cssText: string;
 }
 
+interface IdEmbed {
+	/** The id value to set, e.g. "hero-prev" */
+	id: string;
+	/** Class list of the element, for context */
+	classList: string[];
+	/** Display name for UI */
+	displayName?: string;
+	/** Webflow element reference for canvas selection */
+	element?: any;
+}
+
 let fallbackEmbeds: FallbackEmbed[] = [];
 let complexValueEmbeds: ComplexValueEmbed[] = [];
 let unsupportedCssEmbeds: UnsupportedCssEmbed[] = [];
+let idEmbeds: IdEmbed[] = [];
 
 function recordUnsupportedCss(embed: UnsupportedCssEmbed) {
 	const duplicate = unsupportedCssEmbeds.find(existing =>
@@ -1295,15 +1453,7 @@ function recordUnsupportedCss(embed: UnsupportedCssEmbed) {
  * Prevents duplicates for the same code and location.
  */
 function recordFallbackEmbed(embed: FallbackEmbed) {
-	const duplicate = fallbackEmbeds.find(existing =>
-		existing.code === embed.code &&
-		existing.tag === embed.tag &&
-		JSON.stringify(existing.classList) === JSON.stringify(embed.classList)
-	);
-
-	if (!duplicate) {
-		fallbackEmbeds.push(embed);
-	}
+	fallbackEmbeds.push(embed);
 }
 
 /**
@@ -1349,6 +1499,11 @@ function buildAccordionSection(id: string, title: string, badge: number, accentC
 	`;
 }
 
+function recordIdEmbed(embed: IdEmbed) {
+	const dup = idEmbeds.find(e => e.id === embed.id);
+	if (!dup) idEmbeds.push(embed);
+}
+
 function showFallbackEmbedsUI() {
 	const container = document.getElementById("fallback-embeds-container");
 	if (!container) return;
@@ -1356,7 +1511,8 @@ function showFallbackEmbedsUI() {
 	const hasSvg = fallbackEmbeds.length > 0;
 	const hasComplex = complexValueEmbeds.length > 0;
 	const hasUnsupportedCss = unsupportedCssEmbeds.length > 0;
-	if (!hasSvg && !hasComplex && !hasUnsupportedCss) return;
+	const hasIds = idEmbeds.length > 0;
+	if (!hasSvg && !hasComplex && !hasUnsupportedCss && !hasIds) return;
 
 	// Global selector helpers (only register once)
 	if (!(window as any).selectWebflowElement) {
@@ -1372,6 +1528,17 @@ function showFallbackEmbedsUI() {
 			}
 		};
 	}
+	// Always re-register selectIdElement so it captures the fresh idEmbeds closure from this build
+	(window as any).selectIdElement = async (index: number) => {
+		const embed = idEmbeds[index];
+		if (embed && embed.element) {
+			try {
+				await webflow.setSelectedElement(embed.element);
+			} catch (e: any) {
+				log(`Failed to select element for ID "${embed.id}": ${e.message}`, "warn");
+			}
+		}
+	};
 	if (!(window as any).selectComplexValueElement) {
 		(window as any).selectComplexValueElement = async (index: number) => {
 			const cv = complexValueEmbeds[index];
@@ -1424,51 +1591,93 @@ function showFallbackEmbedsUI() {
 			}
 		};
 	}
-	if (!(window as any).copyAsWebflowJSON) {
-		(window as any).copyAsWebflowJSON = async (index: number, btnId: string) => {
-			const embed = fallbackEmbeds[index];
-			if (!embed) return;
-			const nodeId = crypto.randomUUID ? crypto.randomUUID() : "e" + Math.random().toString(36).substr(2, 9);
-			const payload = {
-				"type": "@webflow/XscpData",
-				"payload": {
-					"nodes": [{
-						"_id": nodeId,
-						"type": "HtmlEmbed",
-						"tag": "div",
-						"classes": [],
-						"children": [],
-						"v": embed.code,
-						"data": {
-							"search": { "exclude": true },
-							"embed": { "type": "html", "meta": { "html": embed.code, "div": false, "script": false, "compilable": false, "iframe": false } },
-							"insideRTE": false, "content": "", "devlink": { "runtimeProps": {}, "slot": "" }, "displayName": embed.displayName || "",
-							"attr": { "id": "" }, "xattr": [], "visibility": { "conditions": [], "keepInHtml": { "tag": "False", "val": {} } }
-						}
-					}],
-					"styles": [], "assets": [], "ix1": [], "ix2": { "interactions": [], "events": [], "actionLists": [] }
-				},
-				"meta": { "unlinkedSymbolCount": 0, "droppedLinks": 0, "dynBindRemovedCount": 0, "dynListBindRemovedCount": 0, "paginationRemovedCount": 0 }
-			};
+	// Always re-register so it captures the current fallbackEmbeds closure freshly.
+	// The `if (!window.copyAsWebflowJSON)` guard is intentionally removed — stale closures
+	// from a previous build would reference an old fallbackEmbeds snapshot.
+	(window as any).copyAsWebflowJSON = async (index: number, btnId: string) => {
+		const embed = fallbackEmbeds[index];
+		if (!embed) return;
+
+		// Safety strip: remove any residual class="..." attribute from the embed HTML.
+		// Classes must live on the Code Embed WRAPPER in Webflow's Designer panel, not
+		// inside the raw SVG/HTML code. The build phase strips them at serialisation time,
+		// but this regex is a belt-and-suspenders guard for any edge cases.
+		const cleanCode = embed.code.replace(/\s+class="[^"]*"/gi, "");
+
+		const nodeId = crypto.randomUUID ? crypto.randomUUID() : "e" + Math.random().toString(36).substr(2, 9);
+		const styles: any[] = [];
+		const classes: string[] = [];
+		for (let i = 0; i < (embed.classList || []).length; i++) {
+			const className = embed.classList[i];
+			// Try to resolve the real Webflow style ID so the pasted embed links to the
+			// existing class (already created by applyGlobalStyles) rather than orphaning.
+			let styleId = `style-${nodeId}-${i}`;
 			try {
-				const payloadStr = JSON.stringify(payload);
-				const copyHandler = (e: ClipboardEvent) => {
-					e.clipboardData?.setData('application/json', payloadStr);
-					e.clipboardData?.setData('text/plain', 'Webflow Component');
-					e.preventDefault();
-				};
-				document.addEventListener('copy', copyHandler);
-				document.execCommand('copy');
-				document.removeEventListener('copy', copyHandler);
-				
-				const btn = document.getElementById(btnId);
-				if (btn) { btn.textContent = '✓ Copied to Webflow!'; setTimeout(() => btn.textContent = 'Copy to Webflow', 2000); }
-			} catch (err: any) {
-				console.error("Clipboard error:", err);
-				alert("Clipboard copy failed. Try copying the raw code instead.");
+				const existing = await getStyleByName(className);
+				if (existing && existing.id) {
+					styleId = existing.id;
+				}
+			} catch (e) {
+				// Ignore — falls back to dummy ID; Webflow will match by name on paste.
 			}
+			styles.push({
+				"_id": styleId,
+				"fake": false,
+				"type": "class",
+				"name": className,
+				"namespace": "",
+				"comb": "",
+				"styleLess": "",
+				"variants": {},
+				"children": [],
+				"pluginType": null,
+				"createdBy": null,
+				"origin": null,
+				"selector": null
+			});
+			classes.push(styleId);
+		}
+
+		const payload = {
+			"type": "@webflow/XscpData",
+			"payload": {
+				"nodes": [{
+					"_id": nodeId,
+					"type": "HtmlEmbed",
+					"tag": "div",
+					// Classes on the HtmlEmbed NODE = visible in Webflow's style panel
+					"classes": classes,
+					"children": [],
+					"v": cleanCode,
+					"data": {
+						"search": { "exclude": true },
+						"embed": { "type": "html", "meta": { "html": cleanCode, "div": false, "script": false, "compilable": false, "iframe": false } },
+						"insideRTE": false, "content": "", "devlink": { "runtimeProps": {}, "slot": "" }, "displayName": embed.displayName || "",
+						"attr": { "id": "" }, "xattr": [], "visibility": { "conditions": [], "keepInHtml": { "tag": "False", "val": {} } }
+					}
+				}],
+				"styles": styles, "assets": [], "ix1": [], "ix2": { "interactions": [], "events": [], "actionLists": [] }
+			},
+			"meta": { "unlinkedSymbolCount": 0, "droppedLinks": 0, "dynBindRemovedCount": 0, "dynListBindRemovedCount": 0, "paginationRemovedCount": 0 }
 		};
-	}
+		try {
+			const payloadStr = JSON.stringify(payload);
+			const copyHandler = (e: ClipboardEvent) => {
+				e.clipboardData?.setData('application/json', payloadStr);
+				e.clipboardData?.setData('text/plain', 'Webflow Component');
+				e.preventDefault();
+			};
+			document.addEventListener('copy', copyHandler);
+			document.execCommand('copy');
+			document.removeEventListener('copy', copyHandler);
+
+			const btn = document.getElementById(btnId);
+			if (btn) { btn.textContent = '✓ Copied to Webflow!'; setTimeout(() => btn.textContent = 'Copy to Webflow', 2000); }
+		} catch (err: any) {
+			console.error("Clipboard error:", err);
+			alert("Clipboard copy failed. Try copying the raw code instead.");
+		}
+	};
 	if (!(window as any).copyCssAsWebflowJSON) {
 		(window as any).copyCssAsWebflowJSON = async (index: number, btnId: string) => {
 			const embed = unsupportedCssEmbeds[index];
@@ -1527,14 +1736,23 @@ function showFallbackEmbedsUI() {
 				? `<strong style="color:#f8fafc;font-weight:600;">${embed.displayName}</strong> — `
 				: "";
 			const location = embed.classList.length > 0 ? `.${embed.classList.join('.')}` : embed.tag;
-			const escapedCode = embed.code.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+			// Strip residual class= attributes so the textarea preview is also clean.
+			const displayCode = embed.code.replace(/\s+class="[^"]*"/gi, "");
+			const escapedCode = displayCode.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+			const classTagsHtml = embed.classList.length > 0
+				? embed.classList.map(c => `<span style="display:inline-block;background:#0f3460;color:#38bdf8;border:1px solid #1e4a8a;border-radius:3px;padding:0 6px;font-size:10px;font-family:monospace;margin-right:3px;">.${c}</span>`).join("")
+				: `<span style="color:#64748b;font-size:10px;">no classes</span>`;
 			svgBody += `
 				<div style="background:#1e293b;padding:11px;margin-bottom:10px;border-radius:6px;border:1px solid #2d3f55;box-sizing:border-box;">
 					<div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:8px;">
 						<div style="font-size:12px;color:#94a3b8;">${displayStr}<span style="font-family:monospace;color:#38bdf8;">${location}</span></div>
 						<button onclick="selectWebflowElement(${i})" style="padding:2px 8px;background:rgba(56,189,248,0.1);color:#38bdf8;border:1px solid rgba(56,189,248,0.25);border-radius:4px;cursor:pointer;font-size:11px;font-weight:500;">Select on Canvas</button>
 					</div>
-					<p style="font-size:11px;color:#64748b;margin:0 0 6px;">Paste directly into Webflow, or copy the raw code for an existing embed:</p>
+					<div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;padding:5px 8px;background:#0a1929;border-radius:4px;border:1px solid #1a3050;">
+						<span style="font-size:10px;color:#64748b;white-space:nowrap;">Class on embed wrapper →</span>
+						${classTagsHtml}
+					</div>
+					<p style="font-size:11px;color:#64748b;margin:0 0 6px;">The class above is applied to the <strong style="color:#94a3b8;">Code Embed element</strong> in Webflow's Designer — not inside the embed code.</p>
 					<textarea id="${idHtml}" readonly style="width:100%;height:72px;padding:7px;border-radius:4px;border:1px solid #334155;background:#070f1c;color:#7dd3fc;font-family:monospace;font-size:11px;box-sizing:border-box;resize:vertical;margin-bottom:7px;">${escapedCode}</textarea>
 					<div style="display:flex;gap:8px;">
 						<button onclick="copyAsWebflowJSON(${i}, 'btn-wf-${i}')" id="btn-wf-${i}" style="padding:5px 11px;background:#38bdf8;color:#0f172a;border:none;border-radius:4px;cursor:pointer;font-size:12px;font-weight:600;">Copy to Webflow</button>
@@ -1612,6 +1830,39 @@ function showFallbackEmbedsUI() {
 		);
 	}
 
+	// --- IDs to Set Manually section ---
+	if (hasIds) {
+		let idBody = `<p style="font-size:11px;color:#94a3b8;margin:0 0 10px;">Webflow's Designer API restricts setting IDs directly. Add each ID manually in the <strong style="color:#e2e8f0;">Settings → ID</strong> panel after selecting the element on canvas.</p>`;
+		idEmbeds.forEach((embed, i) => {
+			const classTagsHtml = embed.classList.length > 0
+				? embed.classList.map(c => `<span style="display:inline-block;background:#0f3460;color:#38bdf8;border:1px solid #1e4a8a;border-radius:3px;padding:0 6px;font-size:10px;font-family:monospace;margin-right:3px;">.${c}</span>`).join("")
+				: `<span style="color:#64748b;font-size:10px;">no classes</span>`;
+			idBody += `
+				<div style="background:#1e293b;padding:11px;margin-bottom:8px;border-radius:6px;border:1px solid #2d3f55;box-sizing:border-box;">
+					<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+						<div style="flex:1;">
+							<div style="font-size:10px;color:#64748b;margin-bottom:4px;">Element classes →</div>
+							${classTagsHtml}
+						</div>
+						<button onclick="selectIdElement(${i})" style="padding:2px 8px;background:rgba(56,189,248,0.1);color:#38bdf8;border:1px solid rgba(56,189,248,0.25);border-radius:4px;cursor:pointer;font-size:11px;font-weight:500;">Select on Canvas</button>
+					</div>
+					<div style="display:flex;gap:6px;align-items:center;">
+						<span style="font-size:10px;color:#64748b;white-space:nowrap;">ID to set →</span>
+						<input id="id-val-${i}" readonly value="${embed.id}" style="flex:1;padding:5px 8px;border-radius:4px;border:1px solid #334155;background:#070f1c;color:#fb923c;font-family:monospace;font-size:12px;font-weight:600;box-sizing:border-box;" />
+						<button onclick="navigator.clipboard.writeText(document.getElementById('id-val-${i}').value);this.textContent='✓';setTimeout(()=>this.textContent='Copy',1800)" style="padding:5px 10px;background:#7c3aed;color:#e9d5ff;border:none;border-radius:4px;cursor:pointer;font-size:11px;font-weight:600;">Copy</button>
+					</div>
+				</div>
+			`;
+		});
+		sectionsHtml += buildAccordionSection(
+			"acc-ids",
+			"IDs to Set Manually",
+			idEmbeds.length,
+			"#fb923c",
+			idBody
+		);
+	}
+
 	container.innerHTML = `
 		<div style="margin-bottom:8px;">
 			<div style="font-size:12px;font-weight:700;color:#f8fafc;letter-spacing:0.04em;margin-bottom:6px;display:flex;align-items:center;gap:6px;">
@@ -1648,15 +1899,58 @@ function updateProgressBar(): void {
 	progressText.textContent = `${Math.min(percentage, 100)}%`;
 }
 
+function setLogAccordionExpanded(expanded: boolean): void {
+	const entries = document.getElementById(
+		"progress-log-entries",
+	) as HTMLElement | null;
+	const logAccIcon = document.getElementById("log-acc-icon") as HTMLElement | null;
+	const logToggleText = document.getElementById(
+		"log-toggle-text",
+	) as HTMLElement | null;
+	if (!entries) return;
+
+	entries.style.display = expanded ? "" : "none";
+	if (logAccIcon) {
+		logAccIcon.style.transform = expanded ? "rotate(0deg)" : "rotate(-90deg)";
+	}
+	if (logToggleText) {
+		logToggleText.textContent = expanded ? "Hide Logs" : "Show Logs";
+	}
+}
+
+function syncLogPanelState(options?: {
+	keepVisible?: boolean;
+	expanded?: boolean;
+}): void {
+	const logPanel = document.getElementById("progress-log") as HTMLElement | null;
+	const entries = document.getElementById(
+		"progress-log-entries",
+	) as HTMLElement | null;
+	if (!logPanel || !entries) return;
+
+	const hasEntries = entries.childElementCount > 0;
+	const hasAttentionItems = entries.querySelector(".log-warn, .log-error");
+	const shouldKeepVisible = options?.keepVisible ?? hasEntries;
+
+	logPanel.classList.toggle("has-entries", shouldKeepVisible && hasEntries);
+	logPanel.classList.toggle("has-errors", !!hasAttentionItems);
+
+	if (!hasEntries) {
+		setLogAccordionExpanded(options?.expanded ?? true);
+		return;
+	}
+
+	if (typeof options?.expanded === "boolean") {
+		setLogAccordionExpanded(options.expanded);
+	}
+}
+
 function log(message: string, level: LogLevel = "info"): void {
 	console.log(`[${level.toUpperCase()}] ${message}`);
 
-	// Minimal UI: only show warnings and errors in the log panel
-	const isWarningOrError = level === "warn" || level === "error";
-	if (!isWarningOrError || !progressLog) return;
-
-	const logPanel = document.getElementById("progress-log") as HTMLElement;
-	if (logPanel) logPanel.classList.add("has-errors");
+	// Minimal UI: show successes, warnings, and errors in the log panel
+	const shouldShowInUI = level === "success" || level === "warn" || level === "error";
+	if (!shouldShowInUI || !progressLog) return;
 
 	const entry = document.createElement("div");
 	entry.className = `log-entry log-${level}`;
@@ -1673,19 +1967,8 @@ function log(message: string, level: LogLevel = "info"): void {
 	window.requestAnimationFrame(() => {
 		progressLog.scrollTop = progressLog.scrollHeight;
 	});
+	syncLogPanelState({ keepVisible: true });
 
-	// Bridge to Debug Server if it's running
-	fetch("http://localhost:5174/log", {
-		method: "POST",
-		headers: { "Content-Type": "application/json" },
-		body: JSON.stringify({
-			message,
-			level,
-			timestamp: new Date().toISOString(),
-		}),
-	}).catch(() => {
-		/* Silent if server not running */
-	});
 }
 
 function showHardError(title: string, message: string): void {
@@ -1733,6 +2016,7 @@ function incrementProgress(amount = 1): void {
 
 function clearLog(): void {
 	if (progressLog) progressLog.innerHTML = "";
+	syncLogPanelState({ keepVisible: false, expanded: true });
 }
 
 // ------------------------------------
@@ -1740,7 +2024,7 @@ function clearLog(): void {
 // ------------------------------------
 
 function init(): void {
-	log("--- APP INITIALIZED (Build 2026-04-09.0421) ---", "warn");
+	log("--- IGNITE INITIALIZED (Build 2026-05-04.1601) ---", "warn");
 	
 	// Set the Extension UI size to large for better workspace
 	webflow.setExtensionSize("large").catch(() => {
@@ -1751,21 +2035,16 @@ function init(): void {
 	if (!app) return;
 
 	app.innerHTML = `
-    <div class="header">
-      <div class="header-content">
-        <div class="logo">
-          <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-            <rect width="26" height="26" rx="7" fill="url(#logoGrad)"/>
-            <path d="M7 9h12M7 13h12M7 17h7" stroke="white" stroke-width="2" stroke-linecap="round"/>
-            <defs>
-              <linearGradient id="logoGrad" x1="0" y1="0" x2="26" y2="26">
-                <stop stop-color="#3B82F6"/>
-                <stop offset="1" stop-color="#6366F1"/>
-              </linearGradient>
-            </defs>
+    <div class="header" style="background: #1e1e1e; border-bottom: 1px solid #333; padding: 12px 16px;">
+      <div class="header-content" style="display: flex; align-items: center; justify-content: space-between;">
+        <div class="logo" style="display: flex; align-items: center; gap: 10px;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <rect width="24" height="24" rx="6" fill="#3898EC"/>
+            <path d="M12 4L14.5 9.5L20 12L14.5 14.5L12 20L9.5 14.5L4 12L9.5 9.5L12 4Z" fill="white"/>
           </svg>
-          <span class="logo-text">Code to Webflow</span>
+          <span class="logo-text" style="color: white; font-weight: 600; font-size: 15px; letter-spacing: -0.01em;">Ignite</span>
         </div>
+        <a href="https://developers.webflow.com" target="_blank" style="color: #888; font-size: 11px; text-decoration: none; font-weight: 500;" onmouseover="this.style.color='#3898EC'" onmouseout="this.style.color='#888'">DOCUMENTATION</a>
       </div>
     </div>
 
@@ -1776,7 +2055,7 @@ function init(): void {
 
       <div class="file-upload-container">
         <div class="field-label">File Upload</div>
-        <div id="dropzone" class="file-dropzone">
+        <div id="dropzone" class="file-dropzone" tabindex="0" role="button" aria-label="Upload JSON site structure file">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
             <polyline points="17 8 12 3 7 8"/>
@@ -1784,7 +2063,7 @@ function init(): void {
           </svg>
           <div class="file-dropzone-text">Click to upload or drag & drop</div>
           <div class="file-dropzone-subtext">webflow-site-structure.json</div>
-          <input type="file" id="file-input" accept=".json">
+          <input type="file" id="file-input" accept=".json" tabindex="-1" aria-hidden="true">
         </div>
         <div id="file-info" class="file-info">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1792,7 +2071,7 @@ function init(): void {
             <polyline points="14 2 14 8 20 8"></polyline>
           </svg>
           <span id="file-name-display">filename.json</span>
-          <div id="remove-file" class="remove-file">×</div>
+          <button id="remove-file" class="remove-file" aria-label="Remove uploaded file">×</button>
         </div>
       </div>
 
@@ -1813,9 +2092,9 @@ function init(): void {
 
       <div id="error-box" class="error-box"></div>
 
-      <button id="build-btn" class="btn-build" disabled style="margin-bottom: 8px;">
+      <button id="build-btn" class="btn-build" disabled style="margin-bottom: 8px; width: 100%; background: #3898EC; color: white; border: none; border-radius: 4px; padding: 10px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background 0.2s;" aria-label="Build Site Structure">
         <div id="spinner" class="spinner"></div>
-        <span id="btn-label">Build Site</span>
+        <span id="btn-label">Ignite Structure (v2)</span>
       </button>
 
       <button id="find-invalid-btn" class="btn-secondary" style="display: none; width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0; background: white; color: #1e293b; font-weight: 500; cursor: pointer; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; font-size: 13px;">
@@ -1838,10 +2117,16 @@ function init(): void {
         <div class="progress-bar-bg">
           <div id="progress-fill" class="progress-bar-fill"></div>
         </div>
-        <div id="progress-log" class="progress-log">
-          <div class="progress-log-header">
-            <span>Issues & Alerts</span>
-            <button id="clear-log-btn" class="clear-log-btn" title="Clear log">Clear</button>
+         <div id="progress-log" class="progress-log">
+          <div class="progress-log-header" id="log-accordion-header" style="cursor:pointer; display:flex; align-items:center; justify-content:space-between; padding:8px 12px; background:rgba(255,255,255,0.02); border-bottom:1px solid var(--border);" title="Click to collapse/expand log">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span id="log-acc-icon" style="font-size:10px; display:inline-block; transition:transform 0.2s; color:#94a3b8;">▼</span>
+              <span style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.6px; color:var(--text-muted);">Issues &amp; Alerts</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span id="log-toggle-text" style="font-size:9px; color:#64748b; font-weight:600;">Hide Logs</span>
+              <button id="clear-log-btn" class="clear-log-btn" title="Clear log" style="margin-left:4px;">Clear</button>
+            </div>
           </div>
           <div id="progress-log-entries" class="progress-log-entries"></div>
         </div>
@@ -1850,7 +2135,7 @@ function init(): void {
       <div id="fallback-embeds-container" class="fallback-embeds-container" style="display: none; width: 100%; margin-top: 16px;"></div>
 
       <div id="build-status" class="build-status" style="margin-top: 12px; font-size: 12px; color: #64748b; text-align: center; display: none;"></div>
-      <div class="version-footer">Build: 2026-04-09.0421 (Log Level: INFO)</div>
+      <div class="version-footer">Build: 2026-05-11.221330 (Log Persistence Active)</div>
     </div>
 
     <div class="toast" id="toast"></div>
@@ -1869,16 +2154,29 @@ function init(): void {
 		"file-name-display",
 	) as HTMLElement;
 	removeFileBtn = document.getElementById("remove-file") as HTMLElement;
+
 	findBtn = document.getElementById("find-invalid-btn") as HTMLButtonElement;
 	progressLog = document.getElementById(
 		"progress-log-entries",
 	) as HTMLElement;
 
+	// Log accordion toggle
+	const logAccHeader = document.getElementById("log-accordion-header");
+	if (logAccHeader) {
+		logAccHeader.addEventListener("click", (e) => {
+			// Don't toggle if the Clear button itself was clicked
+			if ((e.target as HTMLElement).closest("#clear-log-btn")) return;
+			const entries = document.getElementById("progress-log-entries");
+			if (!entries) return;
+			const isHidden = entries.style.display === "none";
+			setLogAccordionExpanded(isHidden);
+		});
+	}
+
 	// Clear log button
-	document.getElementById("clear-log-btn")?.addEventListener("click", () => {
+	document.getElementById("clear-log-btn")?.addEventListener("click", (e) => {
+		e.stopPropagation();
 		clearLog();
-		const logPanel = document.getElementById("progress-log") as HTMLElement;
-		if (logPanel) logPanel.classList.remove("has-errors");
 	});
 
 	jsonTextarea.addEventListener("input", () => {
@@ -1893,13 +2191,16 @@ function init(): void {
 	findBtn.addEventListener("click", handleAuditStyles);
 
 	setupFileUpload();
+
 }
 
 function updateBuildButtonState(): void {
 	const hasText = jsonTextarea.value.trim().length > 0;
 	const hasFile = !!uploadedPayload;
-	buildBtn.disabled = !hasText && !hasFile;
+	const isDisabled = !hasText && !hasFile;
+	buildBtn.disabled = isDisabled;
 }
+
 
 function clearUploadedFile(): void {
 	uploadedPayload = null;
@@ -1909,6 +2210,14 @@ function clearUploadedFile(): void {
 
 function setupFileUpload(): void {
 	dropzone.addEventListener("click", () => fileInput.click());
+
+	// Accessibility: allow Enter or Space to trigger file selection
+	dropzone.addEventListener("keydown", (e) => {
+		if (e.key === "Enter" || e.key === " ") {
+			e.preventDefault();
+			fileInput.click();
+		}
+	});
 
 	dropzone.addEventListener("dragover", (e) => {
 		e.preventDefault();
@@ -2007,6 +2316,20 @@ async function handleBuild(): Promise<void> {
 	clearLog();
 	fallbackEmbeds = [];
 	complexValueEmbeds = [];
+	unsupportedCssEmbeds = [];
+	idEmbeds = [];
+
+	// Reset persistent state from previous build
+	const prevPc = document.getElementById("progress-container");
+	if (prevPc) {
+		prevPc.classList.remove("done");
+		prevPc.classList.remove("show");
+	}
+	const prevLog = document.getElementById("progress-log");
+	if (prevLog) {
+		prevLog.classList.remove("has-entries");
+		prevLog.classList.remove("has-errors");
+	}
 
 	const embedContainer = document.getElementById("fallback-embeds-container");
 	if (embedContainer) {
@@ -2024,9 +2347,7 @@ async function handleBuild(): Promise<void> {
 		"progress-container",
 	) as HTMLElement;
 	if (progressContainer) progressContainer.classList.add("show");
-
-	const logPanel = document.getElementById("progress-log") as HTMLElement;
-	if (logPanel) logPanel.classList.remove("has-errors");
+	syncLogPanelState({ keepVisible: false, expanded: true });
 
 	log("--- START BUILD ---");
 	try {
@@ -2041,36 +2362,31 @@ async function handleBuild(): Promise<void> {
 	} finally {
 		setLoading(false);
 
-		// Reset state if successful
-		if (currentProgress >= totalSteps && totalSteps > 0) {
-			if (fallbackEmbeds.length > 0 || complexValueEmbeds.length > 0) {
-				showFallbackEmbedsUI();
-			}
-
-			const finishedFileName =
-				fileNameDisplay.textContent || "Pasted JSON";
-
-			// Show status
-			const statusEl = document.getElementById("build-status");
-			if (statusEl) {
-				statusEl.textContent = `✓ Finished building: ${finishedFileName}`;
-				statusEl.style.display = "block";
-			}
-
-			// Reset progress after a short delay
-			setTimeout(() => {
-				currentProgress = 0;
-				totalSteps = 0;
-				updateProgressBar();
-				const container = document.getElementById("progress-container");
-				if (container) container.classList.remove("show");
-			}, 3000);
-
-			// Reset inputs
-			clearUploadedFile();
-			jsonTextarea.value = "";
-			updateBuildButtonState();
+		// Always show manual-attention items if any exist
+		if (fallbackEmbeds.length > 0 || complexValueEmbeds.length > 0 || unsupportedCssEmbeds.length > 0 || idEmbeds.length > 0) {
+			showFallbackEmbedsUI();
 		}
+
+		// Show finish status + keep log visible (don't auto-hide)
+		const finishedFileName = fileNameDisplay.textContent || "Pasted JSON";
+		const statusEl = document.getElementById("build-status");
+		if (statusEl) {
+			statusEl.textContent = `✓ Finished building: ${finishedFileName}`;
+			statusEl.style.display = "block";
+		}
+		syncLogPanelState({ keepVisible: true, expanded: true });
+
+		// Transition progress-container from 'show' (build-active) to 'done' (persistent)
+		const pc = document.getElementById("progress-container");
+		if (pc) {
+			pc.classList.remove("show");
+			pc.classList.add("done");
+		}
+
+		// Reset inputs
+		clearUploadedFile();
+		jsonTextarea.value = "";
+		updateBuildButtonState();
 	}
 }
 
@@ -2455,6 +2771,41 @@ async function setElementText(element: any, text: string): Promise<void> {
 	}
 }
 
+async function applyNodeStyleMap(
+	style: any,
+	value: NodeStyleMap | undefined,
+	options?: { pseudo?: string },
+	isLegacy = false,
+	elementRef?: any,
+): Promise<void> {
+	if (!value) return;
+
+	if (isBreakpointStyleMap(value)) {
+		for (const [bp, props] of Object.entries(value)) {
+			if (props && Object.keys(props).length > 0) {
+				await applyStyleProperties(
+					style,
+					props as CssPropertyMap,
+					{ breakpointId: bp, pseudo: options?.pseudo },
+					isLegacy,
+					elementRef,
+				);
+			}
+		}
+		return;
+	}
+
+	if (Object.keys(value).length > 0) {
+		await applyStyleProperties(
+			style,
+			value,
+			options?.pseudo ? { pseudo: options.pseudo } : undefined,
+			isLegacy,
+			elementRef,
+		);
+	}
+}
+
 async function applyClassesAndStyles(
 	element: any,
 	nodeData: WebflowReadyNode,
@@ -2467,13 +2818,8 @@ async function applyClassesAndStyles(
 	// ------------------------------------
 	const styleRefs: any[] = [];
 	const classes = [...(nodeData.classes || [])];
-
-	// Merge styles: node's own styles + backend-inlined complex selector styles
-	const nodeStyles = {
-		...(nodeData.styles || {}),
-		...(nodeData.inlineStyles || {}),
-	};
-	const hasStylesToApply = Object.keys(nodeStyles).length > 0;
+	const hasStylesToApply =
+		hasNodeStyles(nodeData.styles) || hasNodeStyles(nodeData.inlineStyles);
 	const hasPseudoStyles =
 		nodeData.inlinePseudoStyles &&
 		Object.keys(nodeData.inlinePseudoStyles).length > 0;
@@ -2571,22 +2917,29 @@ async function applyClassesAndStyles(
 	// ------------------------------------
 	if (styleRefs.length > 0) {
 		const primaryStyle = styleRefs[styleRefs.length - 1];
-		if (hasStylesToApply) {
-			await applyStyleProperties(
+		if (hasNodeStyles(nodeData.styles))
+			await applyNodeStyleMap(
 				primaryStyle,
-				nodeStyles,
+				nodeData.styles,
 				undefined,
 				isLegacy,
 				element,
 			);
-		}
+		if (hasNodeStyles(nodeData.inlineStyles))
+			await applyNodeStyleMap(
+				primaryStyle,
+				nodeData.inlineStyles,
+				undefined,
+				isLegacy,
+				element,
+			);
 		if (hasPseudoStyles) {
 			for (const [pseudo, pseudoProps] of Object.entries(
 				nodeData.inlinePseudoStyles || {},
 			)) {
-				await applyStyleProperties(
+				await applyNodeStyleMap(
 					primaryStyle,
-					pseudoProps as Record<string, string>,
+					pseudoProps as NodeStyleMap,
 					{ pseudo },
 					isLegacy,
 					element,
@@ -2660,13 +3013,20 @@ async function buildElementTree(
 	if (isSvgRoot) {
 		log(`    ⚠ SVG node detected (tag: ${nodeData.tag}). Handling as manual embed...`, "warn");
 		
+		const savedClasses = [...(nodeData.classes || [])];
+		// Remove classes from the inner SVG tag so they are only applied natively to the Webflow HtmlEmbed wrapper
+		nodeData.classes = [];
+		
 		const code = nodeToHtml(nodeData);
 		log(`    [DEBUG] SVG code serialized (${code.length} chars)`, "info");
+
+		// Restore classes so the Webflow placeholder on the canvas gets the native styling applied
+		nodeData.classes = savedClasses;
 
 		const embedName = `SVG Manual Embed ${fallbackEmbeds.length + 1}`;
 		const embedEntry: FallbackEmbed = {
 			code,
-			classList: nodeData.classes || [],
+			classList: savedClasses,
 			tag: nodeData.tag || "svg",
 			displayName: embedName
 		};
@@ -2899,6 +3259,17 @@ async function buildElementTree(
 		// Attributes & ID
 		// ------------------------------------
 		if (nodeData.id) {
+			// Webflow's Designer API restricts setting the native 'ID' field (the one in Settings).
+			// We always record it for manual attention to ensure the user sees it.
+			recordIdEmbed({
+				id: nodeData.id,
+				classList: nodeData.classes || [],
+				displayName: nodeData.id,
+				element,
+			});
+			log(`    ⚠ ID "${nodeData.id}" recorded for manual setup`, "warn");
+
+			// Try to set the raw HTML attribute for code export parity
 			try {
 				if (element.type === "DOM" && element.setAttribute) {
 					await withTimeout(element.setAttribute("id", nodeData.id), 5000, "setId");
@@ -2908,7 +3279,7 @@ async function buildElementTree(
 					await withTimeout(element.setAttribute("id", nodeData.id), 5000, "setId");
 				}
 			} catch (e: any) {
-				log(`    ⚠ Failed to set ID: ${e.message}`, "warn");
+				// Silently fail as we've already recorded it for manual action
 			}
 		}
 
@@ -3993,7 +4364,7 @@ async function buildSiteFromJson(payload: SitePayload): Promise<void> {
 function setLoading(on: boolean): void {
 	buildBtn.disabled = on;
 	spinner.classList.toggle("show", on);
-	btnLabel.textContent = on ? "Building…" : "Build Site";
+	btnLabel.textContent = on ? "Building…" : "Ignite Structure (v2)";
 	if (!on) {
 		// Re-enable the clear button and finalise the log when done
 		const clearBtn = document.getElementById(
@@ -4026,14 +4397,13 @@ function showToast(msg: string, type: "success" | "error"): void {
 
 async function handleAuditStyles(): Promise<void> {
 	clearLog();
-	const logPanel = document.getElementById("progress-log") as HTMLElement;
-	if (logPanel) logPanel.classList.remove("has-errors");
 
 	// Show progress container so user can see the logs
 	const progressContainer = document.getElementById(
 		"progress-container",
 	) as HTMLElement;
 	if (progressContainer) progressContainer.classList.add("show");
+	syncLogPanelState({ keepVisible: false, expanded: true });
 
 	currentProgress = 0;
 	totalSteps = 0;
@@ -4143,7 +4513,6 @@ async function handleAuditStyles(): Promise<void> {
 					log(`   › Property: ${prop}`);
 					log(`   › Value: ${val}`);
 					log(`   › Reason: ${reason}`);
-					if (logPanel) logPanel.classList.add("has-errors");
 				}
 			}
 		}
@@ -4162,6 +4531,7 @@ async function handleAuditStyles(): Promise<void> {
 	} catch (err: any) {
 		log(`Scan failed: ${err.message}`, "error");
 	} finally {
+		syncLogPanelState({ keepVisible: true, expanded: true });
 		findBtn.disabled = false;
 		findBtn.innerHTML = `
          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

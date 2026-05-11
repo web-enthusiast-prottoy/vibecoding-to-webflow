@@ -1,3 +1,17 @@
+export type StylePropertyMap = Record<string, string>;
+
+export interface BreakpointStyles {
+  main?: StylePropertyMap;
+  medium?: StylePropertyMap;
+  small?: StylePropertyMap;
+  tiny?: StylePropertyMap;
+  large?: StylePropertyMap;
+  xl?: StylePropertyMap;
+  xxl?: StylePropertyMap;
+}
+
+export type NodeStyleMap = StylePropertyMap | BreakpointStyles;
+
 export interface WebflowReadyNode {
   type: "Block" | "Heading" | "Paragraph" | "Link" | "Image" | "HtmlEmbed" | "List" | "ListItem" | "TextBlock" | "custom" | "FormWrapper" | "FormForm" | "FormTextInput" | "FormTextarea" | "FormSelect" | "FormCheckboxInput" | "FormRadioInput" | "FormBlockLabel" | "FormButton" | "FormSuccessMessage" | "FormErrorMessage";
   tag?: string; // e.g., "div", "section" for HTML blocks
@@ -8,25 +22,15 @@ export interface WebflowReadyNode {
   componentVariant?: string;
   componentId?: string; // Used to link instances to definitions
   /** Pre-normalized inline styles (kebab-case, no vendor prefixes, no --* vars). */
-  styles?: Record<string, string>;
-  /** Styles merged from complex descendant selectors (e.g. `.nav a`). Pre-resolved by backend. */
-  inlineStyles?: Record<string, string>;
-  /** Styles from complex descendant selectors with pseudo states (e.g. `.nav a:hover`) */
-  inlinePseudoStyles?: Record<string, Record<string, string>>;
+  styles?: NodeStyleMap;
+  /** Styles merged from complex descendant selectors (e.g. `.nav a`), optionally keyed by breakpoint. */
+  inlineStyles?: NodeStyleMap;
+  /** Styles from complex descendant selectors with pseudo states (e.g. `.nav a:hover`), optionally keyed by breakpoint. */
+  inlinePseudoStyles?: Record<string, NodeStyleMap>;
   attributes?: Record<string, string>; // Custom data attributes, aria attributes, etc
   id?: string; // HTML ID
   text?: string | string[];
   children: WebflowReadyNode[];
-}
-
-export interface BreakpointStyles {
-  main?: Record<string, string>;
-  medium?: Record<string, string>;
-  small?: Record<string, string>;
-  tiny?: Record<string, string>;
-  large?: Record<string, string>;
-  xl?: Record<string, string>;
-  xxl?: Record<string, string>;
 }
 
 export interface WebflowVariableValue {

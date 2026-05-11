@@ -142,6 +142,23 @@ await selected.setCustomAttribute("data-id", "123");
 await selected.removeCustomAttribute("data-id");
 ```
 
+// DOM ID (Beta)
+**`element.setDomId(domId: string): Promise<null>`**
+**`element.setDomId(binding: BindingInput): Promise<null>`**
+Sets the HTML `id` attribute on an element, or binds it to a data source. Verify that the element has the `domId` property before calling this method.
+When frontend input includes an `id`, use `setDomId()` for that value instead of `setCustomAttribute("id", ...)`.
+```typescript
+if (selected?.domId) {
+  await selected.setDomId("hero-section");
+
+  await selected.setDomId({
+    sourceType: "cms",
+    collectionId: "col_abc",
+    fieldId: "field_xyz",
+  });
+}
+```
+
 // Set Tag (for Block elements: div, header, main, section, nav, etc.)
 if (selected.type === 'Block') {
   await selected.setTag('main');

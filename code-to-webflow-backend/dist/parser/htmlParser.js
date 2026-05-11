@@ -209,28 +209,35 @@ function resolveVars(value, varMap) {
     }
     return newVal;
 }
-function wrapInMedia(rule, block) {
-    let inMedia = false;
-    let mediaParams = "";
-    let mediaParent = rule.parent;
-    while (mediaParent && mediaParent.type !== "root") {
-        if (mediaParent.type === "atrule" && mediaParent.name === "media") {
-            inMedia = true;
-            mediaParams = `@media ${mediaParent.params}`;
-            break;
-        }
-        mediaParent = mediaParent.parent;
-    }
-    if (inMedia) {
-        return `${mediaParams} {\n  ${block.trim().split('\n').join('\n  ')}\n}\n`;
-    }
-    return block;
-}
 export function parseStyleTag(css) {
     const styles = {};
     const variables = [];
     let keyframes = "";
     let unsupportedCss = "";
+    const unsupportedMediaBlocks = new Map();
+    const unsupportedRootBlocks = [];
+    function addUnsupportedBlock(rule, block) {
+        let inMedia = false;
+        let mediaParams = "";
+        let mediaParent = rule.parent;
+        while (mediaParent && mediaParent.type !== "root") {
+            if (mediaParent.type === "atrule" && mediaParent.name === "media") {
+                inMedia = true;
+                mediaParams = `@media ${mediaParent.params}`;
+                break;
+            }
+            mediaParent = mediaParent.parent;
+        }
+        if (inMedia) {
+            if (!unsupportedMediaBlocks.has(mediaParams)) {
+                unsupportedMediaBlocks.set(mediaParams, []);
+            }
+            unsupportedMediaBlocks.get(mediaParams).push(block);
+        }
+        else {
+            unsupportedRootBlocks.push(block);
+        }
+    }
     const root = postcss.parse(css);
     const rawVarMap = {};
     root.walkDecls((decl) => {
@@ -325,7 +332,7 @@ export function parseStyleTag(css) {
                 block += `  ${decl.prop}: ${decl.value};\n`;
             });
             block += `}\n`;
-            unsupportedCss += wrapInMedia(rule, block);
+            addUnsupportedBlock(rule, block);
             return;
         }
         const currentMode = varModeMap[breakpointId] || "Base Mode";
@@ -395,7 +402,7 @@ export function parseStyleTag(css) {
                 block += `  ${p}: ${v};\n`;
             }
             block += `}\n`;
-            unsupportedCss += wrapInMedia(rule, block);
+            addUnsupportedBlock(rule, block);
         }
         if (Object.keys(supportedRuleDeclarations).length > 0 && unsupportedSelectors.length > 0) {
             let block = `${unsupportedSelectors.join(", ")} {\n`;
@@ -403,7 +410,7 @@ export function parseStyleTag(css) {
                 block += `  ${p}: ${v};\n`;
             }
             block += `}\n`;
-            unsupportedCss += wrapInMedia(rule, block);
+            addUnsupportedBlock(rule, block);
         }
         if (Object.keys(declarations).length === 0 || supportedSelectors.length === 0)
             return;
@@ -419,6 +426,25 @@ export function parseStyleTag(css) {
             Object.assign(styles[selector][breakpointId], normalized);
         }
     });
+    // Reconstruct unsupportedCss from root blocks and media blocks
+    let reconstructedCss = "";
+    // Add root blocks first
+    if (unsupportedRootBlocks.length > 0) {
+        reconstructedCss += unsupportedRootBlocks.join("\n") + "\n";
+    }
+    // Add media blocks
+    for (const [mediaParams, blocks] of unsupportedMediaBlocks.entries()) {
+        reconstructedCss += `${mediaParams} {\n`;
+        for (let i = 0; i < blocks.length; i++) {
+            const block = blocks[i];
+            reconstructedCss += `  ${block.trim().split('\n').join('\n  ')}\n`;
+            if (i < blocks.length - 1) {
+                reconstructedCss += "\n";
+            }
+        }
+        reconstructedCss += "}\n\n";
+    }
+    unsupportedCss = reconstructedCss + unsupportedCss;
     // At the end, before return:
     for (const [mode, vars] of unsupportedVarsByMode.entries()) {
         if (Object.keys(vars).length === 0)

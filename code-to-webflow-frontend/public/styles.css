@@ -1,33 +1,33 @@
 /* ============================================================
-   Code to Webflow — Styles
-   Premium dark UI matching Webflow Designer aesthetic
+   Ignite — Styles
+   Professional UI matching Webflow Designer aesthetic
    ============================================================ */
 
 :root {
-  --bg-primary: #1a1a2e;
-  --bg-secondary: #20203a;
-  --bg-card: #262640;
-  --bg-card-hover: #2d2d50;
-  --border: rgba(255, 255, 255, 0.06);
-  --border-active: rgba(59, 130, 246, 0.4);
+  --bg-primary: #1e1e1e;
+  --bg-secondary: #2b2b2b;
+  --bg-card: #333333;
+  --bg-card-hover: #3e3e3e;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-active: #3898ec;
 
-  --text-primary: #e4e4ef;
-  --text-secondary: #9ca3af;
-  --text-muted: #6b7280;
+  --text-primary: #ffffff;
+  --text-secondary: #d1d1d1;
+  --text-muted: #888888;
 
-  --accent: #3b82f6;
-  --accent-hover: #60a5fa;
-  --accent-glow: rgba(59, 130, 246, 0.15);
+  --accent: #3898ec;
+  --accent-hover: #4fb0ff;
+  --accent-glow: rgba(56, 152, 236, 0.2);
 
-  --success: #34d399;
-  --warning: #fbbf24;
-  --error: #f87171;
+  --success: #3ab06e;
+  --warning: #f1c40f;
+  --error: #ff4d4d;
 
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 14px;
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 4px;
 
-  --font: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 * {
@@ -57,13 +57,13 @@ body {
 .header {
   padding: 16px 16px 12px;
   border-bottom: 1px solid var(--border);
-  background: linear-gradient(180deg, rgba(59, 130, 246, 0.06) 0%, transparent 100%);
+  background: #1e1e1e;
 }
 
 .header-content {
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: space-between;
 }
 
 .logo {
@@ -74,12 +74,9 @@ body {
 
 .logo-text {
   font-size: 15px;
-  font-weight: 700;
-  background: linear-gradient(135deg, #93c5fd, #818cf8);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  letter-spacing: -0.3px;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
 }
 
 /* ---- Main Content ---- */
@@ -278,9 +275,14 @@ body {
   position: relative;
 }
 
-.file-dropzone:hover {
+.file-dropzone:hover, .file-dropzone:focus {
   border-color: var(--accent);
   background: var(--bg-card-hover);
+  outline: none;
+}
+
+.file-dropzone:focus {
+  box-shadow: 0 0 0 2px var(--accent-glow);
 }
 
 .file-dropzone.dragover {
@@ -338,10 +340,15 @@ body {
   cursor: pointer;
   color: var(--text-muted);
   font-size: 14px;
+  background: none;
+  border: none;
+  padding: 4px;
+  line-height: 1;
 }
 
-.file-info .remove-file:hover {
+.file-info .remove-file:hover, .file-info .remove-file:focus {
   color: var(--error);
+  outline: none;
 }
 
 #file-input {
@@ -376,7 +383,8 @@ body {
   animation: fadeSlideIn 0.3s ease;
 }
 
-.progress-container.show {
+.progress-container.show,
+.progress-container.done {
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -419,6 +427,11 @@ body {
   -webkit-backdrop-filter: blur(8px);
   overflow: hidden;
   display: none;
+}
+
+/* Show log panel when it has entries, regardless of build state */
+.progress-log.has-entries {
+  display: block;
 }
 
 .progress-log.has-errors {

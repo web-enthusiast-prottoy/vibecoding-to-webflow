@@ -187,11 +187,11 @@ export function splitSiteStructure(siteStructure, outputDir, baseName) {
             },
         ],
     };
-    fs.writeFileSync(path.join(projectDir, "base.json"), JSON.stringify(baseData, null, 2));
-    console.log(`- Created base.json (Shared styles only)`);
+    fs.writeFileSync(path.join(projectDir, "00-base.json"), JSON.stringify(baseData, null, 2));
+    console.log(`- Created 00-base.json (Shared styles only)`);
     // 2. Create individual section files with their own styles
     sections.forEach((section, idx) => {
-        const fileName = `${section.name.toLowerCase().replace(/[^a-z0-9]/g, "-")}.json`;
+        const fileName = `${(idx + 1).toString().padStart(2, "0")}-${section.name.toLowerCase().replace(/[^a-z0-9]/g, "-")}.json`;
         const sectionData = {
             _mime: "section",
             __meta: siteStructure.__meta,
@@ -231,8 +231,8 @@ export function splitSiteStructure(siteStructure, outputDir, baseName) {
             name: "Global Styles Embed",
             nodes: [styleEmbedNode],
         };
-        fs.writeFileSync(path.join(projectDir, "styles-embed.json"), JSON.stringify(stylesData, null, 2));
-        console.log(`- Created styles-embed.json`);
+        fs.writeFileSync(path.join(projectDir, "98-styles-embed.json"), JSON.stringify(stylesData, null, 2));
+        console.log(`- Created 98-styles-embed.json`);
     }
     if (customScriptsHtml.trim()) {
         const scriptEmbedNode = {
@@ -248,7 +248,7 @@ export function splitSiteStructure(siteStructure, outputDir, baseName) {
             name: "Global Scripts Embed",
             nodes: [scriptEmbedNode],
         };
-        fs.writeFileSync(path.join(projectDir, "scripts-embed.json"), JSON.stringify(scriptsData, null, 2));
-        console.log(`- Created scripts-embed.json`);
+        fs.writeFileSync(path.join(projectDir, "99-scripts-embed.json"), JSON.stringify(scriptsData, null, 2));
+        console.log(`- Created 99-scripts-embed.json`);
     }
 }
