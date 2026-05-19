@@ -1,0 +1,888 @@
+{
+  "_mime": "section",
+  "__meta": {
+    "version": 2,
+    "normalized": true,
+    "complexSelectorsResolved": true
+  },
+  "name": "nav_component",
+  "nodes": [
+    {
+      "type": "Block",
+      "tag": "nav",
+      "classes": [
+        "nav_component"
+      ],
+      "children": [
+        {
+          "type": "Block",
+          "tag": "div",
+          "classes": [
+            "padding-global",
+            "is-full-width"
+          ],
+          "children": [
+            {
+              "type": "Block",
+              "tag": "div",
+              "classes": [
+                "nav_container"
+              ],
+              "children": [
+                {
+                  "type": "Link",
+                  "classes": [
+                    "nav_logo-link"
+                  ],
+                  "attributes": {
+                    "href": "/"
+                  },
+                  "children": [
+                    {
+                      "type": "Image",
+                      "classes": [
+                        "nav_logo-img"
+                      ],
+                      "attributes": {
+                        "src": "images/logo.png",
+                        "alt": "Your Ceremony"
+                      },
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "type": "Block",
+                  "tag": "div",
+                  "classes": [
+                    "nav_menu"
+                  ],
+                  "children": [
+                    {
+                      "type": "Link",
+                      "classes": [
+                        "nav_link"
+                      ],
+                      "attributes": {
+                        "href": "about.html"
+                      },
+                      "children": [
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [],
+                          "children": [
+                            {
+                              "type": "custom",
+                              "tag": "span",
+                              "text": "About",
+                              "classes": [],
+                              "children": []
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Link",
+                      "classes": [
+                        "nav_link"
+                      ],
+                      "attributes": {
+                        "href": "planning.html"
+                      },
+                      "children": [
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [],
+                          "children": [
+                            {
+                              "type": "custom",
+                              "tag": "span",
+                              "text": "Planning",
+                              "classes": [],
+                              "children": []
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Link",
+                      "classes": [
+                        "nav_link"
+                      ],
+                      "attributes": {
+                        "href": "#"
+                      },
+                      "children": [
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [],
+                          "children": [
+                            {
+                              "type": "custom",
+                              "tag": "span",
+                              "text": "Venues",
+                              "classes": [],
+                              "children": []
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Link",
+                      "classes": [
+                        "nav_link"
+                      ],
+                      "attributes": {
+                        "href": "#"
+                      },
+                      "children": [
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [],
+                          "children": [
+                            {
+                              "type": "custom",
+                              "tag": "span",
+                              "text": "Why Us",
+                              "classes": [],
+                              "children": []
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Link",
+                      "classes": [
+                        "nav_link"
+                      ],
+                      "attributes": {
+                        "href": "#"
+                      },
+                      "children": [
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [],
+                          "children": [
+                            {
+                              "type": "custom",
+                              "tag": "span",
+                              "text": "Resources",
+                              "classes": [],
+                              "children": []
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "Block",
+                  "tag": "div",
+                  "classes": [
+                    "nav_button-group"
+                  ],
+                  "children": [
+                    {
+                      "type": "Link",
+                      "classes": [
+                        "button",
+                        "is-secondary",
+                        "nav_button"
+                      ],
+                      "attributes": {
+                        "href": "#"
+                      },
+                      "children": [
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [],
+                          "children": [
+                            {
+                              "type": "custom",
+                              "tag": "span",
+                              "text": "Contact Us",
+                              "classes": [],
+                              "children": []
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Link",
+                      "classes": [
+                        "button",
+                        "is-secondary",
+                        "nav_button"
+                      ],
+                      "attributes": {
+                        "href": "#"
+                      },
+                      "children": [
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [],
+                          "children": [
+                            {
+                              "type": "custom",
+                              "tag": "span",
+                              "text": "Login",
+                              "classes": [],
+                              "children": []
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "Link",
+                  "classes": [
+                    "nav_hamburger"
+                  ],
+                  "attributes": {
+                    "href": "#",
+                    "aria-label": "Toggle Menu",
+                    "role": "button"
+                  },
+                  "children": [
+                    {
+                      "type": "custom",
+                      "tag": "svg",
+                      "classes": [],
+                      "attributes": {
+                        "width": "44",
+                        "height": "44",
+                        "viewBox": "0 0 44 44",
+                        "fill": "none",
+                        "xmlns": "http://www.w3.org/2000/svg"
+                      },
+                      "children": [
+                        {
+                          "type": "custom",
+                          "tag": "rect",
+                          "classes": [
+                            "hamburger_line",
+                            "is-top"
+                          ],
+                          "attributes": {
+                            "x": "10",
+                            "y": "14.75",
+                            "width": "24",
+                            "height": "1.5",
+                            "fill": "#B1B1B1"
+                          },
+                          "children": []
+                        },
+                        {
+                          "type": "custom",
+                          "tag": "rect",
+                          "classes": [
+                            "hamburger_line",
+                            "is-mid"
+                          ],
+                          "attributes": {
+                            "x": "12",
+                            "y": "21.25",
+                            "width": "20",
+                            "height": "1.5",
+                            "fill": "#B1B1B1"
+                          },
+                          "children": []
+                        },
+                        {
+                          "type": "custom",
+                          "tag": "rect",
+                          "classes": [
+                            "hamburger_line",
+                            "is-bottom"
+                          ],
+                          "attributes": {
+                            "x": "10",
+                            "y": "27.75",
+                            "width": "24",
+                            "height": "1.5",
+                            "fill": "#B1B1B1"
+                          },
+                          "children": []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "Block",
+          "tag": "div",
+          "classes": [
+            "nav_mobile-menu"
+          ],
+          "children": [
+            {
+              "type": "Block",
+              "tag": "div",
+              "classes": [
+                "nav_mobile-content"
+              ],
+              "children": [
+                {
+                  "type": "Block",
+                  "tag": "div",
+                  "classes": [
+                    "nav_mobile-links"
+                  ],
+                  "children": [
+                    {
+                      "type": "Link",
+                      "classes": [
+                        "nav_mobile-link"
+                      ],
+                      "attributes": {
+                        "href": "about.html"
+                      },
+                      "children": [
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [],
+                          "children": [
+                            {
+                              "type": "custom",
+                              "tag": "span",
+                              "text": "About",
+                              "classes": [],
+                              "children": []
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Link",
+                      "classes": [
+                        "nav_mobile-link"
+                      ],
+                      "attributes": {
+                        "href": "planning.html"
+                      },
+                      "children": [
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [],
+                          "children": [
+                            {
+                              "type": "custom",
+                              "tag": "span",
+                              "text": "Planning",
+                              "classes": [],
+                              "children": []
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Link",
+                      "classes": [
+                        "nav_mobile-link"
+                      ],
+                      "attributes": {
+                        "href": "#"
+                      },
+                      "children": [
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [],
+                          "children": [
+                            {
+                              "type": "custom",
+                              "tag": "span",
+                              "text": "Venues",
+                              "classes": [],
+                              "children": []
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Link",
+                      "classes": [
+                        "nav_mobile-link"
+                      ],
+                      "attributes": {
+                        "href": "#"
+                      },
+                      "children": [
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [],
+                          "children": [
+                            {
+                              "type": "custom",
+                              "tag": "span",
+                              "text": "Why Us",
+                              "classes": [],
+                              "children": []
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Link",
+                      "classes": [
+                        "nav_mobile-link"
+                      ],
+                      "attributes": {
+                        "href": "#"
+                      },
+                      "children": [
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [],
+                          "children": [
+                            {
+                              "type": "custom",
+                              "tag": "span",
+                              "text": "Resources",
+                              "classes": [],
+                              "children": []
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "Block",
+                  "tag": "div",
+                  "classes": [
+                    "nav_mobile-buttons"
+                  ],
+                  "children": [
+                    {
+                      "type": "Link",
+                      "classes": [
+                        "button",
+                        "is-primary",
+                        "nav_button",
+                        "is-full-width"
+                      ],
+                      "attributes": {
+                        "href": "#"
+                      },
+                      "children": [
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [],
+                          "children": [
+                            {
+                              "type": "custom",
+                              "tag": "span",
+                              "text": "Book A Ceremony",
+                              "classes": [],
+                              "children": []
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Link",
+                      "classes": [
+                        "button",
+                        "is-secondary",
+                        "nav_button",
+                        "is-full-width"
+                      ],
+                      "attributes": {
+                        "href": "#"
+                      },
+                      "children": [
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [],
+                          "children": [
+                            {
+                              "type": "custom",
+                              "tag": "span",
+                              "text": "Contact Us",
+                              "classes": [],
+                              "children": []
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Link",
+                      "classes": [
+                        "button",
+                        "is-secondary",
+                        "nav_button",
+                        "is-full-width"
+                      ],
+                      "attributes": {
+                        "href": "#"
+                      },
+                      "children": [
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [],
+                          "children": [
+                            {
+                              "type": "custom",
+                              "tag": "span",
+                              "text": "Login",
+                              "classes": [],
+                              "children": []
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "globalStyles": {
+    ".padding-global.is-full-width": {
+      "main": {
+        "width": "100%"
+      }
+    },
+    ".nav_component": {
+      "main": {
+        "position": "fixed",
+        "top": "0",
+        "left": "0",
+        "right": "0",
+        "height": "5.5rem",
+        "display": "flex",
+        "align-items": "center",
+        "z-index": "100",
+        "border-bottom-width": "1px",
+        "border-bottom-style": "solid",
+        "border-bottom-color": "var(--color--white-8)",
+        "transition": "background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
+      },
+      "medium": {
+        "background-color": "var(--color--off-black-98)",
+        "backdrop-filter": "blur(0.75rem)",
+        "height": "4.5rem"
+      }
+    },
+    ".nav_container": {
+      "main": {
+        "width": "100%",
+        "max-width": "95rem",
+        "margin-left": "auto",
+        "margin-right": "auto",
+        "display": "grid",
+        "grid-template-columns": "1fr auto 1fr",
+        "align-items": "center",
+        "grid-row-gap": "var(--space-32)",
+        "grid-column-gap": "var(--space-32)",
+        "grid-template-rows": "auto"
+      },
+      "medium": {
+        "display": "flex",
+        "justify-content": "space-between",
+        "align-items": "center",
+        "width": "100%",
+        "height": "100%"
+      }
+    },
+    ".nav_logo-link": {
+      "main": {
+        "display": "flex",
+        "align-items": "center"
+      }
+    },
+    ".nav_logo-img": {
+      "main": {
+        "height": "3.5rem",
+        "width": "auto",
+        "object-fit": "contain"
+      },
+      "medium": {
+        "height": "2rem"
+      }
+    },
+    ".nav_menu": {
+      "main": {
+        "display": "flex",
+        "grid-row-gap": "var(--space-40)",
+        "grid-column-gap": "var(--space-40)",
+        "justify-content": "center"
+      },
+      "medium": {
+        "display": "none"
+      }
+    },
+    ".nav_link": {
+      "main": {
+        "font-size": "var(--text--link)",
+        "color": "var(--color--white)",
+        "font-weight": "var(--weight--regular)",
+        "opacity": "0.8"
+      }
+    },
+    ".nav_link:hover": {
+      "main": {
+        "opacity": "1"
+      }
+    },
+    ".nav_button-group": {
+      "main": {
+        "display": "flex",
+        "grid-row-gap": "var(--space-12)",
+        "grid-column-gap": "var(--space-12)",
+        "justify-content": "flex-end"
+      },
+      "medium": {
+        "display": "none"
+      }
+    },
+    ".nav_hamburger": {
+      "main": {
+        "display": "none",
+        "align-items": "center",
+        "justify-content": "center",
+        "width": "2.75rem",
+        "height": "2.75rem",
+        "background-color": "none",
+        "border-top-style": "none",
+        "border-right-style": "none",
+        "border-bottom-style": "none",
+        "border-left-style": "none",
+        "cursor": "pointer",
+        "padding-top": "0",
+        "padding-right": "0",
+        "padding-bottom": "0",
+        "padding-left": "0",
+        "z-index": "1001",
+        "margin-left": "auto"
+      },
+      "medium": {
+        "display": "flex",
+        "margin-left": "0"
+      }
+    },
+    ".hamburger_line": {
+      "main": {
+        "transition": "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+        "transform-box": "fill-box",
+        "transform-origin": "center",
+        "fill": "white"
+      }
+    },
+    ".nav_mobile-menu": {
+      "main": {
+        "position": "fixed",
+        "top": "0",
+        "left": "0",
+        "width": "100%",
+        "height": "100vh",
+        "background-color": "var(--color--deep-black-98)",
+        "backdrop-filter": "blur(0.9375rem)",
+        "z-index": "1000",
+        "display": "none",
+        "opacity": "0",
+        "visibility": "hidden",
+        "pointer-events": "none",
+        "padding-top": "var(--space-128)",
+        "padding-right": "var(--space--padding-global)",
+        "padding-bottom": "var(--space-64)",
+        "padding-left": "var(--space--padding-global)",
+        "overflow-y": "auto"
+      }
+    },
+    ".nav_mobile-content": {
+      "main": {
+        "display": "flex",
+        "flex-direction": "column",
+        "grid-row-gap": "var(--space-64)",
+        "grid-column-gap": "var(--space-64)"
+      }
+    },
+    ".nav_mobile-links": {
+      "main": {
+        "display": "flex",
+        "flex-direction": "column",
+        "grid-row-gap": "var(--space-24)",
+        "grid-column-gap": "var(--space-24)"
+      }
+    },
+    ".nav_mobile-link": {
+      "main": {
+        "font-family": "var(--font--heading)",
+        "font-size": "var(--text--display-small)",
+        "color": "var(--color--white)",
+        "font-weight": "var(--weight--medium)",
+        "opacity": "0",
+        "transform": "translateY(1.5rem)",
+        "will-change": "transform, opacity"
+      }
+    },
+    ".nav_mobile-buttons": {
+      "main": {
+        "display": "flex",
+        "flex-direction": "column",
+        "grid-row-gap": "var(--space-16)",
+        "grid-column-gap": "var(--space-16)",
+        "opacity": "0",
+        "transform": "translateY(1.5rem)",
+        "will-change": "transform, opacity"
+      }
+    },
+    ".button.is-full-width": {
+      "main": {
+        "width": "100%",
+        "display": "block"
+      }
+    },
+    ".button": {
+      "main": {
+        "padding-top": "var(--space-18)",
+        "padding-right": "var(--space-40)",
+        "padding-bottom": "var(--space-18)",
+        "padding-left": "var(--space-40)",
+        "font-size": "var(--text--body)",
+        "font-weight": "var(--weight--medium)",
+        "letter-spacing": "0.02em",
+        "border-top-left-radius": "0.875rem",
+        "border-top-right-radius": "0.875rem",
+        "border-bottom-right-radius": "0.875rem",
+        "border-bottom-left-radius": "0.875rem",
+        "transition": "all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1)",
+        "cursor": "pointer",
+        "display": "inline-block",
+        "border-top-width": "1px",
+        "border-top-style": "solid",
+        "border-top-color": "var(--color--gold)",
+        "border-right-width": "1px",
+        "border-right-style": "solid",
+        "border-right-color": "var(--color--gold)",
+        "border-bottom-width": "1px",
+        "border-bottom-style": "solid",
+        "border-bottom-color": "var(--color--gold)",
+        "border-left-width": "1px",
+        "border-left-style": "solid",
+        "border-left-color": "var(--color--gold)",
+        "background-color": "var(--color--white-5)",
+        "backdrop-filter": "blur(0.75rem)",
+        "color": "var(--color--white)",
+        "text-align": "center",
+        "position": "relative",
+        "overflow": "hidden",
+        "transform": "translateZ(0)",
+        "backface-visibility": "hidden",
+        "will-change": "backdrop-filter, transform, opacity"
+      }
+    },
+    ".nav_button": {
+      "main": {
+        "opacity": "1",
+        "transform": "none",
+        "padding-top": "0.6rem",
+        "padding-right": "var(--space-20)",
+        "padding-bottom": "0.6rem",
+        "padding-left": "var(--space-20)",
+        "font-size": "var(--text--body)",
+        "font-weight": "var(--weight--medium)",
+        "letter-spacing": "0.01em",
+        "background-color": "var(--color--white-7)",
+        "backdrop-filter": "blur(0.625rem)",
+        "border-top-width": "1px",
+        "border-top-style": "solid",
+        "border-top-color": "var(--color--white-22)",
+        "border-right-width": "1px",
+        "border-right-style": "solid",
+        "border-right-color": "var(--color--white-22)",
+        "border-bottom-width": "1px",
+        "border-bottom-style": "solid",
+        "border-bottom-color": "var(--color--white-22)",
+        "border-left-width": "1px",
+        "border-left-style": "solid",
+        "border-left-color": "var(--color--white-22)",
+        "border-top-left-radius": "0.5rem",
+        "border-top-right-radius": "0.5rem",
+        "border-bottom-right-radius": "0.5rem",
+        "border-bottom-left-radius": "0.5rem",
+        "color": "var(--color--white)",
+        "transition": "background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
+      }
+    },
+    ".button.is-primary": {
+      "main": {
+        "border-top-color": "var(--color--gold)",
+        "border-right-color": "var(--color--gold)",
+        "border-bottom-color": "var(--color--gold)",
+        "border-left-color": "var(--color--gold)",
+        "padding-left": "var(--space-56)",
+        "padding-right": "var(--space-56)",
+        "background-image": "radial-gradient( 100% 100% at 50% 50%, var(--color--gold-15) 0%, var(--color--deep-black) 100% )"
+      }
+    },
+    ".button.is-secondary": {
+      "main": {
+        "border-top-color": "var(--color--white-60)",
+        "border-right-color": "var(--color--white-60)",
+        "border-bottom-color": "var(--color--white-60)",
+        "border-left-color": "var(--color--white-60)",
+        "background-color": "var(--color--white-5)"
+      }
+    },
+    ".button.is-secondary:hover": {
+      "main": {
+        "border-top-color": "var(--color--white-90))",
+        "border-right-color": "var(--color--white-90))",
+        "border-bottom-color": "var(--color--white-90))",
+        "border-left-color": "var(--color--white-90))",
+        "background-color": "var(--color--white-8)",
+        "box-shadow": "0 0.625rem 2.5rem -0.625rem var(--color--black-60)), 0 0 0.9375rem var(--color--white-10)"
+      }
+    },
+    ".nav_button:hover": {
+      "main": {
+        "background-color": "var(--color--white-14)",
+        "border-top-color": "var(--color--white-45)",
+        "border-right-color": "var(--color--white-45)",
+        "border-bottom-color": "var(--color--white-45)",
+        "border-left-color": "var(--color--white-45)",
+        "opacity": "1"
+      }
+    }
+  }
+}

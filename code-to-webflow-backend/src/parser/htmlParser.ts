@@ -227,6 +227,10 @@ function isSupportedSelector(selector: string): boolean {
 
 	if (selector.includes("[") || selector.includes("]") || selector.includes(">") || selector.includes("~") || selector.includes("+")) return false;
 	if (selector.includes("-webkit-") || selector.includes("-moz-") || selector.includes("-ms-") || selector.includes("-o-")) return false;
+	
+	// If it has a pseudo-class AND a descendant selector (space), it's not supported natively
+	if (selector.includes(":") && selector.includes(" ")) return false;
+
 	const unsupportedPseudos = ["::before", "::after", ":before", ":after", ":nth-child", ":last-child", ":first-child", ":not", ":focus-within", ":checked", ":disabled", ":nth-of-type", ":empty", ":target"];
 	for (const p of unsupportedPseudos) {
 		if (selector.includes(p)) return false;
@@ -689,6 +693,9 @@ function convertHtmlNode(node: any, baseDir?: string): WebflowReadyNode | null {
 					aggregateText += (aggregateText ? " " : "") + val;
 				}
 			}
+		} else if (child.tagName === "br") {
+			// Ignore <br> tag for "hasRealElements" check but add a space to aggregateText to separate words
+			aggregateText += (aggregateText ? " " : "") + " ";
 		} else {
 			const converted = convertHtmlNode(child, baseDir);
 			if (converted) {
@@ -712,6 +719,21 @@ function convertHtmlNode(node: any, baseDir?: string): WebflowReadyNode | null {
 		type = "custom" as any;
 	}
 
+	let finalNodes = children;
+	let finalText = aggregateText || undefined;
+
+	// WEBFLOW COMPLIANCE: Text links are not easily editable in Webflow if set directly as "Link" type with text content.
+	// We convert them to Link Blocks (type: Link, children: [TextBlock]) which are much easier to manage.
+	if (type === "Link" && finalText && children.length === 0) {
+		finalNodes = [{
+			type: "TextBlock",
+			text: finalText,
+			classes: [],
+			children: [],
+		}];
+		finalText = undefined;
+	}
+
 	return {
 		type,
 		tag: (type as string) === "custom" || type === "Block" || type === "Heading" ? tagName : undefined,
@@ -719,8 +741,8 @@ function convertHtmlNode(node: any, baseDir?: string): WebflowReadyNode | null {
 		id,
 		styles: Object.keys(styles).length > 0 ? styles : undefined,
 		attributes: Object.keys(attributes).length > 0 ? attributes : undefined,
-		text: aggregateText || undefined,
-		children: children,
+		text: finalText,
+		children: finalNodes,
 	};
 }
 

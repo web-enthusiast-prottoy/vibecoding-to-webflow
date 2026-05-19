@@ -1,10 +1,14 @@
 {
   "compilerOptions": {
     "outDir": "public",
-    "target": "es6",
+    "target": "es2017",
+    "module": "esnext",
+    "moduleResolution": "node",
     "lib": ["es2017", "dom"],
     "typeRoots": ["./node_modules/@types", "./node_modules/@webflow"],
-    "types": []
+    "types": [],
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true
   },
   "include": ["src/**/*"]
 }

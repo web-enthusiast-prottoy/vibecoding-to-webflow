@@ -1,0 +1,1045 @@
+{
+  "_mime": "section",
+  "__meta": {
+    "version": 2,
+    "normalized": true,
+    "complexSelectorsResolved": true
+  },
+  "name": "footer_component",
+  "nodes": [
+    {
+      "type": "Block",
+      "tag": "footer",
+      "classes": [
+        "footer_component"
+      ],
+      "children": [
+        {
+          "type": "Block",
+          "tag": "div",
+          "classes": [
+            "padding-global"
+          ],
+          "children": [
+            {
+              "type": "Block",
+              "tag": "div",
+              "classes": [
+                "container-large"
+              ],
+              "children": [
+                {
+                  "type": "Block",
+                  "tag": "div",
+                  "classes": [
+                    "footer_top"
+                  ],
+                  "attributes": {
+                    "gsap-reveal": "up"
+                  },
+                  "children": [
+                    {
+                      "type": "Block",
+                      "tag": "div",
+                      "classes": [
+                        "footer_logo-wrapper"
+                      ],
+                      "children": [
+                        {
+                          "type": "Image",
+                          "classes": [
+                            "footer_logo_img"
+                          ],
+                          "attributes": {
+                            "src": "images/logo.png",
+                            "alt": "Your Ceremony"
+                          },
+                          "children": []
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "Block",
+                  "tag": "div",
+                  "classes": [
+                    "footer_middle"
+                  ],
+                  "children": [
+                    {
+                      "type": "Block",
+                      "tag": "div",
+                      "classes": [
+                        "footer_grid"
+                      ],
+                      "attributes": {
+                        "gsap-group": ""
+                      },
+                      "children": [
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [
+                            "footer_column"
+                          ],
+                          "attributes": {
+                            "gsap-stagger": ""
+                          },
+                          "children": [
+                            {
+                              "type": "Heading",
+                              "tag": "h4",
+                              "classes": [
+                                "footer_heading"
+                              ],
+                              "text": "About Us",
+                              "children": []
+                            },
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "footer_links"
+                              ],
+                              "children": [
+                                {
+                                  "type": "Link",
+                                  "classes": [
+                                    "footer_link"
+                                  ],
+                                  "attributes": {
+                                    "href": "#"
+                                  },
+                                  "children": [
+                                    {
+                                      "type": "Block",
+                                      "tag": "div",
+                                      "classes": [],
+                                      "children": [
+                                        {
+                                          "type": "custom",
+                                          "tag": "span",
+                                          "text": "Our Story",
+                                          "classes": [],
+                                          "children": []
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "Link",
+                                  "classes": [
+                                    "footer_link"
+                                  ],
+                                  "attributes": {
+                                    "href": "#"
+                                  },
+                                  "children": [
+                                    {
+                                      "type": "Block",
+                                      "tag": "div",
+                                      "classes": [],
+                                      "children": [
+                                        {
+                                          "type": "custom",
+                                          "tag": "span",
+                                          "text": "Testimonials",
+                                          "classes": [],
+                                          "children": []
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "Link",
+                                  "classes": [
+                                    "footer_link"
+                                  ],
+                                  "attributes": {
+                                    "href": "#"
+                                  },
+                                  "children": [
+                                    {
+                                      "type": "Block",
+                                      "tag": "div",
+                                      "classes": [],
+                                      "children": [
+                                        {
+                                          "type": "custom",
+                                          "tag": "span",
+                                          "text": "Why Choose Us",
+                                          "classes": [],
+                                          "children": []
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "Link",
+                                  "classes": [
+                                    "footer_link"
+                                  ],
+                                  "attributes": {
+                                    "href": "#"
+                                  },
+                                  "children": [
+                                    {
+                                      "type": "Block",
+                                      "tag": "div",
+                                      "classes": [],
+                                      "children": [
+                                        {
+                                          "type": "custom",
+                                          "tag": "span",
+                                          "text": "Our Magazine",
+                                          "classes": [],
+                                          "children": []
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [
+                            "footer_column"
+                          ],
+                          "attributes": {
+                            "gsap-stagger": ""
+                          },
+                          "children": [
+                            {
+                              "type": "Heading",
+                              "tag": "h4",
+                              "classes": [
+                                "footer_heading"
+                              ],
+                              "text": "For Couples",
+                              "children": []
+                            },
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "footer_links"
+                              ],
+                              "children": [
+                                {
+                                  "type": "Link",
+                                  "classes": [
+                                    "footer_link"
+                                  ],
+                                  "attributes": {
+                                    "href": "#"
+                                  },
+                                  "children": [
+                                    {
+                                      "type": "Block",
+                                      "tag": "div",
+                                      "classes": [],
+                                      "children": [
+                                        {
+                                          "type": "custom",
+                                          "tag": "span",
+                                          "text": "Planning Guides",
+                                          "classes": [],
+                                          "children": []
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "Link",
+                                  "classes": [
+                                    "footer_link"
+                                  ],
+                                  "attributes": {
+                                    "href": "#"
+                                  },
+                                  "children": [
+                                    {
+                                      "type": "Block",
+                                      "tag": "div",
+                                      "classes": [],
+                                      "children": [
+                                        {
+                                          "type": "custom",
+                                          "tag": "span",
+                                          "text": "Wedding Venues",
+                                          "classes": [],
+                                          "children": []
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "Link",
+                                  "classes": [
+                                    "footer_link"
+                                  ],
+                                  "attributes": {
+                                    "href": "#"
+                                  },
+                                  "children": [
+                                    {
+                                      "type": "Block",
+                                      "tag": "div",
+                                      "classes": [],
+                                      "children": [
+                                        {
+                                          "type": "custom",
+                                          "tag": "span",
+                                          "text": "Book Your Registrar",
+                                          "classes": [],
+                                          "children": []
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "Link",
+                                  "classes": [
+                                    "footer_link"
+                                  ],
+                                  "attributes": {
+                                    "href": "#"
+                                  },
+                                  "children": [
+                                    {
+                                      "type": "Block",
+                                      "tag": "div",
+                                      "classes": [],
+                                      "children": [
+                                        {
+                                          "type": "custom",
+                                          "tag": "span",
+                                          "text": "Login",
+                                          "classes": [],
+                                          "children": []
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [
+                            "footer_column"
+                          ],
+                          "attributes": {
+                            "gsap-stagger": ""
+                          },
+                          "children": [
+                            {
+                              "type": "Heading",
+                              "tag": "h4",
+                              "classes": [
+                                "footer_heading"
+                              ],
+                              "text": "Help",
+                              "children": []
+                            },
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "footer_links"
+                              ],
+                              "children": [
+                                {
+                                  "type": "Link",
+                                  "classes": [
+                                    "footer_link"
+                                  ],
+                                  "attributes": {
+                                    "href": "#"
+                                  },
+                                  "children": [
+                                    {
+                                      "type": "Block",
+                                      "tag": "div",
+                                      "classes": [],
+                                      "children": [
+                                        {
+                                          "type": "custom",
+                                          "tag": "span",
+                                          "text": "FAQ's",
+                                          "classes": [],
+                                          "children": []
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "Link",
+                                  "classes": [
+                                    "footer_link"
+                                  ],
+                                  "attributes": {
+                                    "href": "#"
+                                  },
+                                  "children": [
+                                    {
+                                      "type": "Block",
+                                      "tag": "div",
+                                      "classes": [],
+                                      "children": [
+                                        {
+                                          "type": "custom",
+                                          "tag": "span",
+                                          "text": "Ceremony Fees",
+                                          "classes": [],
+                                          "children": []
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "Link",
+                                  "classes": [
+                                    "footer_link"
+                                  ],
+                                  "attributes": {
+                                    "href": "#"
+                                  },
+                                  "children": [
+                                    {
+                                      "type": "Block",
+                                      "tag": "div",
+                                      "classes": [],
+                                      "children": [
+                                        {
+                                          "type": "custom",
+                                          "tag": "span",
+                                          "text": "Contact Us",
+                                          "classes": [],
+                                          "children": []
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [
+                            "footer_column"
+                          ],
+                          "attributes": {
+                            "gsap-stagger": ""
+                          },
+                          "children": [
+                            {
+                              "type": "Heading",
+                              "tag": "h4",
+                              "classes": [
+                                "footer_heading"
+                              ],
+                              "text": "Contact",
+                              "children": []
+                            },
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "footer_links"
+                              ],
+                              "children": [
+                                {
+                                  "type": "Link",
+                                  "classes": [
+                                    "footer_link"
+                                  ],
+                                  "attributes": {
+                                    "href": "#"
+                                  },
+                                  "children": [
+                                    {
+                                      "type": "Block",
+                                      "tag": "div",
+                                      "classes": [],
+                                      "children": [
+                                        {
+                                          "type": "custom",
+                                          "tag": "span",
+                                          "text": "Couples Login",
+                                          "classes": [],
+                                          "children": []
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "Link",
+                                  "classes": [
+                                    "footer_link"
+                                  ],
+                                  "attributes": {
+                                    "href": "#"
+                                  },
+                                  "children": [
+                                    {
+                                      "type": "Block",
+                                      "tag": "div",
+                                      "classes": [],
+                                      "children": [
+                                        {
+                                          "type": "custom",
+                                          "tag": "span",
+                                          "text": "Ceremony Fees",
+                                          "classes": [],
+                                          "children": []
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "Link",
+                                  "classes": [
+                                    "footer_link"
+                                  ],
+                                  "attributes": {
+                                    "href": "#"
+                                  },
+                                  "children": [
+                                    {
+                                      "type": "Block",
+                                      "tag": "div",
+                                      "classes": [],
+                                      "children": [
+                                        {
+                                          "type": "custom",
+                                          "tag": "span",
+                                          "text": "Contact Us",
+                                          "classes": [],
+                                          "children": []
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "Block",
+                  "tag": "div",
+                  "classes": [
+                    "footer_bottom"
+                  ],
+                  "children": [
+                    {
+                      "type": "Block",
+                      "tag": "div",
+                      "classes": [
+                        "footer_bottom-left"
+                      ],
+                      "children": [
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [
+                            "footer_socials"
+                          ],
+                          "children": [
+                            {
+                              "type": "Link",
+                              "classes": [
+                                "footer_social-link"
+                              ],
+                              "attributes": {
+                                "href": "#",
+                                "aria-label": "Instagram"
+                              },
+                              "children": [
+                                {
+                                  "type": "custom",
+                                  "tag": "svg",
+                                  "classes": [],
+                                  "attributes": {
+                                    "width": "20",
+                                    "height": "20",
+                                    "viewBox": "0 0 24 24",
+                                    "fill": "none",
+                                    "stroke": "currentColor",
+                                    "stroke-width": "2",
+                                    "stroke-linecap": "round",
+                                    "stroke-linejoin": "round"
+                                  },
+                                  "children": [
+                                    {
+                                      "type": "custom",
+                                      "tag": "rect",
+                                      "classes": [],
+                                      "attributes": {
+                                        "x": "2",
+                                        "y": "2",
+                                        "width": "20",
+                                        "height": "20",
+                                        "rx": "5",
+                                        "ry": "5"
+                                      },
+                                      "children": []
+                                    },
+                                    {
+                                      "type": "custom",
+                                      "tag": "path",
+                                      "classes": [],
+                                      "attributes": {
+                                        "d": "M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"
+                                      },
+                                      "children": []
+                                    },
+                                    {
+                                      "type": "custom",
+                                      "tag": "line",
+                                      "classes": [],
+                                      "attributes": {
+                                        "x1": "17.5",
+                                        "y1": "6.5",
+                                        "x2": "17.51",
+                                        "y2": "6.5"
+                                      },
+                                      "children": []
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "type": "Link",
+                              "classes": [
+                                "footer_social-link"
+                              ],
+                              "attributes": {
+                                "href": "#",
+                                "aria-label": "Pinterest"
+                              },
+                              "children": [
+                                {
+                                  "type": "custom",
+                                  "tag": "svg",
+                                  "classes": [],
+                                  "attributes": {
+                                    "width": "20",
+                                    "height": "20",
+                                    "viewBox": "0 0 24 24",
+                                    "fill": "currentColor"
+                                  },
+                                  "children": [
+                                    {
+                                      "type": "custom",
+                                      "tag": "path",
+                                      "classes": [],
+                                      "attributes": {
+                                        "d": "M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.162-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.966 1.406-5.966s-.359-.72-.359-1.781c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738.098.119.112.224.083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.261 7.929-7.261 4.162 0 7.398 2.967 7.398 6.93 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.631-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146 1.124.347 2.317.535 3.554.535 6.607 0 11.985-5.365 11.985-11.987C23.97 5.39 18.592.026 11.985.026L12.017 0z"
+                                      },
+                                      "children": []
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "type": "Link",
+                              "classes": [
+                                "footer_social-link"
+                              ],
+                              "attributes": {
+                                "href": "#",
+                                "aria-label": "Facebook"
+                              },
+                              "children": [
+                                {
+                                  "type": "custom",
+                                  "tag": "svg",
+                                  "classes": [],
+                                  "attributes": {
+                                    "width": "20",
+                                    "height": "20",
+                                    "viewBox": "0 0 24 24",
+                                    "fill": "currentColor"
+                                  },
+                                  "children": [
+                                    {
+                                      "type": "custom",
+                                      "tag": "path",
+                                      "classes": [],
+                                      "attributes": {
+                                        "d": "M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"
+                                      },
+                                      "children": []
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "type": "Link",
+                              "classes": [
+                                "footer_social-link"
+                              ],
+                              "attributes": {
+                                "href": "#",
+                                "aria-label": "X"
+                              },
+                              "children": [
+                                {
+                                  "type": "custom",
+                                  "tag": "svg",
+                                  "classes": [],
+                                  "attributes": {
+                                    "width": "20",
+                                    "height": "20",
+                                    "viewBox": "0 0 24 24",
+                                    "fill": "currentColor"
+                                  },
+                                  "children": [
+                                    {
+                                      "type": "custom",
+                                      "tag": "path",
+                                      "classes": [],
+                                      "attributes": {
+                                        "d": "M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932 6.064-6.932zm-1.294 19.486h2.039L6.486 3.24H4.298l13.31 17.399z"
+                                      },
+                                      "children": []
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [
+                            "footer_copyright"
+                          ],
+                          "children": [
+                            {
+                              "type": "custom",
+                              "tag": "span",
+                              "text": "© 2026 YourCeremony. All rights reserved.",
+                              "classes": [],
+                              "children": []
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Block",
+                      "tag": "div",
+                      "classes": [
+                        "footer_bottom-right"
+                      ],
+                      "children": [
+                        {
+                          "type": "Link",
+                          "classes": [
+                            "footer_legal-link"
+                          ],
+                          "attributes": {
+                            "href": "#"
+                          },
+                          "children": [
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [],
+                              "children": [
+                                {
+                                  "type": "custom",
+                                  "tag": "span",
+                                  "text": "Terms & Conditions",
+                                  "classes": [],
+                                  "children": []
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [
+                            "footer_legal-divider"
+                          ],
+                          "children": []
+                        },
+                        {
+                          "type": "Link",
+                          "classes": [
+                            "footer_legal-link"
+                          ],
+                          "attributes": {
+                            "href": "#"
+                          },
+                          "children": [
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [],
+                              "children": [
+                                {
+                                  "type": "custom",
+                                  "tag": "span",
+                                  "text": "Privacy Policy",
+                                  "classes": [],
+                                  "children": []
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [
+                            "footer_legal-divider"
+                          ],
+                          "children": []
+                        },
+                        {
+                          "type": "Link",
+                          "classes": [
+                            "footer_legal-link"
+                          ],
+                          "attributes": {
+                            "href": "#"
+                          },
+                          "children": [
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [],
+                              "children": [
+                                {
+                                  "type": "custom",
+                                  "tag": "span",
+                                  "text": "Cookies",
+                                  "classes": [],
+                                  "children": []
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "globalStyles": {
+    ".footer_component": {
+      "main": {
+        "background-color": "var(--color--deep-black)",
+        "padding-top": "var(--space-80)",
+        "padding-bottom": "var(--space-48)",
+        "position": "relative"
+      }
+    },
+    ".footer_top": {
+      "main": {
+        "display": "flex",
+        "justify-content": "center",
+        "padding-bottom": "var(--space-80)",
+        "position": "relative"
+      }
+    },
+    ".footer_logo_img": {
+      "main": {
+        "height": "2.2rem",
+        "width": "auto",
+        "object-fit": "contain",
+        "filter": "brightness(0) saturate(100%) invert(81%) sepia(21%) saturate(543%) hue-rotate(3deg) brightness(93%) contrast(89%)"
+      }
+    },
+    ".footer_middle": {
+      "main": {
+        "padding-top": "var(--space-64)",
+        "padding-bottom": "var(--space-64)"
+      }
+    },
+    ".footer_grid": {
+      "main": {
+        "display": "grid",
+        "grid-template-columns": "1fr 1fr 1fr 1fr",
+        "grid-row-gap": "var(--space-32)",
+        "grid-column-gap": "var(--space-32)",
+        "grid-template-rows": "auto"
+      },
+      "medium": {
+        "grid-template-columns": "1fr 1fr",
+        "grid-row-gap": "var(--space-48)",
+        "grid-column-gap": "var(--space-48)",
+        "grid-template-rows": "auto"
+      },
+      "tiny": {
+        "grid-template-columns": "1fr",
+        "grid-template-rows": "auto"
+      }
+    },
+    ".footer_column": {
+      "main": {
+        "display": "flex",
+        "flex-direction": "column",
+        "grid-row-gap": "var(--space-24)",
+        "grid-column-gap": "var(--space-24)"
+      }
+    },
+    ".footer_heading": {
+      "main": {
+        "font-size": "var(--text--title-sm)",
+        "color": "var(--color--gold)",
+        "margin-bottom": "var(--space-4)",
+        "font-family": "var(--font--heading)",
+        "font-weight": "var(--weight--medium)"
+      }
+    },
+    ".footer_links": {
+      "main": {
+        "display": "flex",
+        "flex-direction": "column",
+        "grid-row-gap": "var(--space-18)",
+        "grid-column-gap": "var(--space-18)"
+      }
+    },
+    ".footer_link": {
+      "main": {
+        "font-size": "var(--text--link-small)",
+        "color": "var(--color--light-paragraph)",
+        "transition": "color 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+        "font-weight": "var(--weight--light)"
+      }
+    },
+    ".footer_link:hover": {
+      "main": {
+        "color": "var(--color--white)"
+      }
+    },
+    ".footer_bottom": {
+      "main": {
+        "padding-top": "var(--space-40)",
+        "position": "relative",
+        "display": "flex",
+        "justify-content": "space-between",
+        "align-items": "center",
+        "grid-row-gap": "var(--space-32)",
+        "grid-column-gap": "var(--space-32)"
+      },
+      "medium": {
+        "flex-direction": "column",
+        "align-items": "flex-start"
+      }
+    },
+    ".footer_bottom-left": {
+      "main": {
+        "display": "flex",
+        "align-items": "center",
+        "grid-row-gap": "var(--space-40)",
+        "grid-column-gap": "var(--space-40)"
+      },
+      "medium": {
+        "flex-direction": "column",
+        "align-items": "flex-start",
+        "grid-row-gap": "var(--space-24)",
+        "grid-column-gap": "var(--space-24)"
+      }
+    },
+    ".footer_socials": {
+      "main": {
+        "display": "flex",
+        "grid-row-gap": "var(--space-20)",
+        "grid-column-gap": "var(--space-20)"
+      }
+    },
+    ".footer_social-link": {
+      "main": {
+        "font-size": "var(--text--social)",
+        "color": "var(--color--light-grey)",
+        "transition": "color 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
+      }
+    },
+    ".footer_social-link:hover": {
+      "main": {
+        "color": "var(--color--white)"
+      }
+    },
+    ".footer_copyright": {
+      "main": {
+        "font-size": "var(--text--caption)",
+        "color": "var(--color--light-grey)"
+      }
+    },
+    ".footer_bottom-right": {
+      "main": {
+        "display": "flex",
+        "align-items": "center",
+        "grid-row-gap": "var(--space-20)",
+        "grid-column-gap": "var(--space-20)"
+      },
+      "tiny": {
+        "flex-wrap": "wrap",
+        "grid-row-gap": "var(--space-8)",
+        "grid-column-gap": "var(--space-16)"
+      }
+    },
+    ".footer_legal-link": {
+      "main": {
+        "font-size": "var(--text--caption)",
+        "color": "var(--color--light-grey)",
+        "transition": "color 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
+      }
+    },
+    ".footer_legal-link:hover": {
+      "main": {
+        "color": "var(--color--white)"
+      }
+    },
+    ".footer_legal-divider": {
+      "main": {
+        "width": "1px",
+        "height": "0.75rem",
+        "background-color": "var(--color--white-10)"
+      }
+    }
+  }
+}

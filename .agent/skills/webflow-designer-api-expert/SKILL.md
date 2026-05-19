@@ -207,12 +207,33 @@ You can create form inputs using the following element presets:
 * `FormCheckboxInput`
 * `FormRadioInput`
 
-### Form Methods
+### Form Input Methods
+
+**`formInput.setName(name: string): Promise<null>`**
+Sets the name of the input field.
+Supported elements: `FormCheckboxInput`, `FormRadioInput`, `FormSelect`, `FormTextarea`, `FormTextInput`.
+```typescript
+await input.setName("Email");
+```
+
+**`formInput.setRequired(value: boolean): Promise<null>`**
+Sets the required status of a form input.
+
+**`formInput.setInputType(type: 'text' | 'email' | 'password' | 'tel' | 'number' | 'url'): Promise<null>`**
+Sets the HTML type of a `FormTextInput` field. **Only supported by `FormTextInput`.**
+```typescript
+await textInput.setInputType("email");
+```
+
+**Placeholder text**
+Placeholder text can be set using custom attributes. This overrides any placeholder configured in the Designer's Input Field settings.
+```typescript
+await input.setCustomAttribute("placeholder", "Enter your email");
+```
+
+### Form settings
 - `form.setName(name: string): Promise<null>`
 - `form.setSettings(settings: { state: string, name: string, action: string, method: string }): Promise<null>`
-- `formInput.setRequired(value: boolean): Promise<null>`
-- `formInput.setName(name: string): Promise<null>`
-- `formInput.setInputType(type: 'text' | 'email' | 'password' | 'tel' | 'number' | 'url'): Promise<null>`
 
 ## 2. Styles & Classes
 Manage global styles, classes, and their CSS properties across different breakpoints and pseudo-states.

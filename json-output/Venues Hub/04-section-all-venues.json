@@ -1,0 +1,1929 @@
+{
+  "_mime": "section",
+  "__meta": {
+    "version": 2,
+    "normalized": true,
+    "complexSelectorsResolved": true
+  },
+  "name": "section_all-venues",
+  "nodes": [
+    {
+      "type": "Block",
+      "tag": "section",
+      "classes": [
+        "section_all-venues"
+      ],
+      "children": [
+        {
+          "type": "Block",
+          "tag": "div",
+          "classes": [
+            "padding-global"
+          ],
+          "children": [
+            {
+              "type": "Block",
+              "tag": "div",
+              "classes": [
+                "container-large"
+              ],
+              "children": [
+                {
+                  "type": "Block",
+                  "tag": "div",
+                  "classes": [
+                    "venues_list-header"
+                  ],
+                  "attributes": {
+                    "gsap-reveal": "up"
+                  },
+                  "children": [
+                    {
+                      "type": "Heading",
+                      "tag": "h2",
+                      "classes": [
+                        "venues_list-title"
+                      ],
+                      "text": "All Venues",
+                      "children": []
+                    },
+                    {
+                      "type": "FormForm",
+                      "classes": [
+                        "venues_filters-form"
+                      ],
+                      "children": [
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [
+                            "filters_left"
+                          ],
+                          "children": [
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "filter_segmented"
+                              ],
+                              "children": [
+                                {
+                                  "type": "FormButton",
+                                  "classes": [
+                                    "segmented_btn",
+                                    "is-active"
+                                  ],
+                                  "attributes": {
+                                    "type": "button"
+                                  },
+                                  "text": "Indoor",
+                                  "children": []
+                                },
+                                {
+                                  "type": "FormButton",
+                                  "classes": [
+                                    "segmented_btn"
+                                  ],
+                                  "attributes": {
+                                    "type": "button"
+                                  },
+                                  "text": "Outdoor",
+                                  "children": []
+                                }
+                              ]
+                            },
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "filter_search"
+                              ],
+                              "children": [
+                                {
+                                  "type": "custom",
+                                  "tag": "svg",
+                                  "classes": [
+                                    "search_icon"
+                                  ],
+                                  "attributes": {
+                                    "width": "18",
+                                    "height": "18",
+                                    "viewBox": "0 0 24 24",
+                                    "fill": "none",
+                                    "stroke": "currentColor",
+                                    "stroke-width": "2",
+                                    "stroke-linecap": "round",
+                                    "stroke-linejoin": "round"
+                                  },
+                                  "children": [
+                                    {
+                                      "type": "custom",
+                                      "tag": "circle",
+                                      "classes": [],
+                                      "attributes": {
+                                        "cx": "11",
+                                        "cy": "11",
+                                        "r": "8"
+                                      },
+                                      "children": []
+                                    },
+                                    {
+                                      "type": "custom",
+                                      "tag": "line",
+                                      "classes": [],
+                                      "attributes": {
+                                        "x1": "21",
+                                        "y1": "21",
+                                        "x2": "16.65",
+                                        "y2": "16.65"
+                                      },
+                                      "children": []
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "FormTextInput",
+                                  "classes": [
+                                    "filter_input"
+                                  ],
+                                  "attributes": {
+                                    "type": "text",
+                                    "placeholder": "Search venues"
+                                  },
+                                  "children": []
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [
+                            "filters_right"
+                          ],
+                          "children": [
+                            {
+                              "type": "FormButton",
+                              "classes": [
+                                "filter_btn",
+                                "is-map"
+                              ],
+                              "attributes": {
+                                "type": "button"
+                              },
+                              "children": [
+                                {
+                                  "type": "custom",
+                                  "tag": "svg",
+                                  "classes": [],
+                                  "attributes": {
+                                    "width": "16",
+                                    "height": "16",
+                                    "viewBox": "0 0 24 24",
+                                    "fill": "none",
+                                    "stroke": "currentColor",
+                                    "stroke-width": "2",
+                                    "stroke-linecap": "round",
+                                    "stroke-linejoin": "round"
+                                  },
+                                  "children": [
+                                    {
+                                      "type": "custom",
+                                      "tag": "polygon",
+                                      "classes": [],
+                                      "attributes": {
+                                        "points": "1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"
+                                      },
+                                      "children": []
+                                    },
+                                    {
+                                      "type": "custom",
+                                      "tag": "line",
+                                      "classes": [],
+                                      "attributes": {
+                                        "x1": "8",
+                                        "y1": "2",
+                                        "x2": "8",
+                                        "y2": "18"
+                                      },
+                                      "children": []
+                                    },
+                                    {
+                                      "type": "custom",
+                                      "tag": "line",
+                                      "classes": [],
+                                      "attributes": {
+                                        "x1": "16",
+                                        "y1": "6",
+                                        "x2": "16",
+                                        "y2": "22"
+                                      },
+                                      "children": []
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "custom",
+                                  "tag": "span",
+                                  "classes": [],
+                                  "text": "Map",
+                                  "children": []
+                                }
+                              ]
+                            },
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "filter_dropdown"
+                              ],
+                              "children": [
+                                {
+                                  "type": "FormSelect",
+                                  "classes": [
+                                    "filter_select"
+                                  ],
+                                  "children": [
+                                    {
+                                      "type": "custom",
+                                      "tag": "option",
+                                      "classes": [],
+                                      "attributes": {
+                                        "value": "",
+                                        "selected": ""
+                                      },
+                                      "text": "Location",
+                                      "children": []
+                                    },
+                                    {
+                                      "type": "custom",
+                                      "tag": "option",
+                                      "classes": [],
+                                      "attributes": {
+                                        "value": "cheshire-east"
+                                      },
+                                      "text": "Cheshire East",
+                                      "children": []
+                                    },
+                                    {
+                                      "type": "custom",
+                                      "tag": "option",
+                                      "classes": [],
+                                      "attributes": {
+                                        "value": "cheshire-west"
+                                      },
+                                      "text": "Cheshire West",
+                                      "children": []
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "filter_dropdown"
+                              ],
+                              "children": [
+                                {
+                                  "type": "FormSelect",
+                                  "classes": [
+                                    "filter_select"
+                                  ],
+                                  "children": [
+                                    {
+                                      "type": "custom",
+                                      "tag": "option",
+                                      "classes": [],
+                                      "attributes": {
+                                        "value": "",
+                                        "selected": ""
+                                      },
+                                      "text": "Venue Type",
+                                      "children": []
+                                    },
+                                    {
+                                      "type": "custom",
+                                      "tag": "option",
+                                      "classes": [],
+                                      "attributes": {
+                                        "value": "barn"
+                                      },
+                                      "text": "Barn",
+                                      "children": []
+                                    },
+                                    {
+                                      "type": "custom",
+                                      "tag": "option",
+                                      "classes": [],
+                                      "attributes": {
+                                        "value": "hotel"
+                                      },
+                                      "text": "Hotel",
+                                      "children": []
+                                    },
+                                    {
+                                      "type": "custom",
+                                      "tag": "option",
+                                      "classes": [],
+                                      "attributes": {
+                                        "value": "stately-home"
+                                      },
+                                      "text": "Stately Home",
+                                      "children": []
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "filter_dropdown"
+                              ],
+                              "children": [
+                                {
+                                  "type": "FormSelect",
+                                  "classes": [
+                                    "filter_select"
+                                  ],
+                                  "children": [
+                                    {
+                                      "type": "custom",
+                                      "tag": "option",
+                                      "classes": [],
+                                      "attributes": {
+                                        "value": "",
+                                        "selected": ""
+                                      },
+                                      "text": "Capacity",
+                                      "children": []
+                                    },
+                                    {
+                                      "type": "custom",
+                                      "tag": "option",
+                                      "classes": [],
+                                      "attributes": {
+                                        "value": "0-50"
+                                      },
+                                      "text": "0 - 50",
+                                      "children": []
+                                    },
+                                    {
+                                      "type": "custom",
+                                      "tag": "option",
+                                      "classes": [],
+                                      "attributes": {
+                                        "value": "50-150"
+                                      },
+                                      "text": "50 - 150",
+                                      "children": []
+                                    },
+                                    {
+                                      "type": "custom",
+                                      "tag": "option",
+                                      "classes": [],
+                                      "attributes": {
+                                        "value": "150+"
+                                      },
+                                      "text": "150+",
+                                      "children": []
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "Block",
+                  "tag": "div",
+                  "classes": [
+                    "venues_grid"
+                  ],
+                  "attributes": {
+                    "gsap-group": ""
+                  },
+                  "children": [
+                    {
+                      "type": "Link",
+                      "classes": [
+                        "venue_card",
+                        "is-listing"
+                      ],
+                      "attributes": {
+                        "href": "#",
+                        "gsap-stagger": ""
+                      },
+                      "children": [
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [
+                            "venue_card-img-wrap",
+                            "is-listing"
+                          ],
+                          "children": [
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "venue_card-tag",
+                                "is-listing"
+                              ],
+                              "children": [
+                                {
+                                  "type": "custom",
+                                  "tag": "span",
+                                  "text": "Barn",
+                                  "classes": [],
+                                  "children": []
+                                }
+                              ]
+                            },
+                            {
+                              "type": "Image",
+                              "classes": [
+                                "venue_card-img",
+                                "is-listing"
+                              ],
+                              "attributes": {
+                                "src": "images/hero-slider-image-1.png",
+                                "alt": "The Grand Manor"
+                              },
+                              "children": []
+                            }
+                          ]
+                        },
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [
+                            "venue_card-content",
+                            "is-listing"
+                          ],
+                          "children": [
+                            {
+                              "type": "Heading",
+                              "tag": "h3",
+                              "classes": [
+                                "venue_card-title",
+                                "is-listing"
+                              ],
+                              "text": "The Grand Manor",
+                              "children": []
+                            },
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "venue_card-loc",
+                                "is-listing"
+                              ],
+                              "children": [
+                                {
+                                  "type": "custom",
+                                  "tag": "svg",
+                                  "classes": [],
+                                  "attributes": {
+                                    "width": "14",
+                                    "height": "14",
+                                    "viewBox": "0 0 24 24",
+                                    "fill": "none",
+                                    "stroke": "currentColor",
+                                    "stroke-width": "2",
+                                    "stroke-linecap": "round",
+                                    "stroke-linejoin": "round"
+                                  },
+                                  "children": [
+                                    {
+                                      "type": "custom",
+                                      "tag": "path",
+                                      "classes": [],
+                                      "attributes": {
+                                        "d": "M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"
+                                      },
+                                      "children": []
+                                    },
+                                    {
+                                      "type": "custom",
+                                      "tag": "circle",
+                                      "classes": [],
+                                      "attributes": {
+                                        "cx": "12",
+                                        "cy": "10",
+                                        "r": "3"
+                                      },
+                                      "children": []
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "custom",
+                                  "tag": "span",
+                                  "classes": [],
+                                  "text": "Cheshire East",
+                                  "children": []
+                                }
+                              ]
+                            },
+                            {
+                              "type": "Paragraph",
+                              "classes": [
+                                "venue_card-desc",
+                                "is-listing"
+                              ],
+                              "text": "Rustic exposed beams with contemporary styling.",
+                              "children": []
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Link",
+                      "classes": [
+                        "venue_card",
+                        "is-listing"
+                      ],
+                      "attributes": {
+                        "href": "#",
+                        "gsap-stagger": ""
+                      },
+                      "children": [
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [
+                            "venue_card-img-wrap",
+                            "is-listing"
+                          ],
+                          "children": [
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "venue_card-tag",
+                                "is-listing"
+                              ],
+                              "children": [
+                                {
+                                  "type": "custom",
+                                  "tag": "span",
+                                  "text": "Barn",
+                                  "classes": [],
+                                  "children": []
+                                }
+                              ]
+                            },
+                            {
+                              "type": "Image",
+                              "classes": [
+                                "venue_card-img",
+                                "is-listing"
+                              ],
+                              "attributes": {
+                                "src": "images/hero-slider-image-2.png",
+                                "alt": "Oakwood Barn"
+                              },
+                              "children": []
+                            }
+                          ]
+                        },
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [
+                            "venue_card-content",
+                            "is-listing"
+                          ],
+                          "children": [
+                            {
+                              "type": "Heading",
+                              "tag": "h3",
+                              "classes": [
+                                "venue_card-title",
+                                "is-listing"
+                              ],
+                              "text": "Oakwood Barn",
+                              "children": []
+                            },
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "venue_card-loc",
+                                "is-listing"
+                              ],
+                              "children": [
+                                {
+                                  "type": "custom",
+                                  "tag": "svg",
+                                  "classes": [],
+                                  "attributes": {
+                                    "width": "14",
+                                    "height": "14",
+                                    "viewBox": "0 0 24 24",
+                                    "fill": "none",
+                                    "stroke": "currentColor",
+                                    "stroke-width": "2",
+                                    "stroke-linecap": "round",
+                                    "stroke-linejoin": "round"
+                                  },
+                                  "children": [
+                                    {
+                                      "type": "custom",
+                                      "tag": "path",
+                                      "classes": [],
+                                      "attributes": {
+                                        "d": "M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"
+                                      },
+                                      "children": []
+                                    },
+                                    {
+                                      "type": "custom",
+                                      "tag": "circle",
+                                      "classes": [],
+                                      "attributes": {
+                                        "cx": "12",
+                                        "cy": "10",
+                                        "r": "3"
+                                      },
+                                      "children": []
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "custom",
+                                  "tag": "span",
+                                  "classes": [],
+                                  "text": "Cheshire East",
+                                  "children": []
+                                }
+                              ]
+                            },
+                            {
+                              "type": "Paragraph",
+                              "classes": [
+                                "venue_card-desc",
+                                "is-listing"
+                              ],
+                              "text": "Rustic exposed beams with contemporary styling.",
+                              "children": []
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Link",
+                      "classes": [
+                        "venue_card",
+                        "is-listing"
+                      ],
+                      "attributes": {
+                        "href": "#",
+                        "gsap-stagger": ""
+                      },
+                      "children": [
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [
+                            "venue_card-img-wrap",
+                            "is-listing"
+                          ],
+                          "children": [
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "venue_card-tag",
+                                "is-listing"
+                              ],
+                              "children": [
+                                {
+                                  "type": "custom",
+                                  "tag": "span",
+                                  "text": "Barn",
+                                  "classes": [],
+                                  "children": []
+                                }
+                              ]
+                            },
+                            {
+                              "type": "Image",
+                              "classes": [
+                                "venue_card-img",
+                                "is-listing"
+                              ],
+                              "attributes": {
+                                "src": "images/hero-slider-image-3.png",
+                                "alt": "Hilltop Estate"
+                              },
+                              "children": []
+                            }
+                          ]
+                        },
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [
+                            "venue_card-content",
+                            "is-listing"
+                          ],
+                          "children": [
+                            {
+                              "type": "Heading",
+                              "tag": "h3",
+                              "classes": [
+                                "venue_card-title",
+                                "is-listing"
+                              ],
+                              "text": "Hilltop Estate",
+                              "children": []
+                            },
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "venue_card-loc",
+                                "is-listing"
+                              ],
+                              "children": [
+                                {
+                                  "type": "custom",
+                                  "tag": "svg",
+                                  "classes": [],
+                                  "attributes": {
+                                    "width": "14",
+                                    "height": "14",
+                                    "viewBox": "0 0 24 24",
+                                    "fill": "none",
+                                    "stroke": "currentColor",
+                                    "stroke-width": "2",
+                                    "stroke-linecap": "round",
+                                    "stroke-linejoin": "round"
+                                  },
+                                  "children": [
+                                    {
+                                      "type": "custom",
+                                      "tag": "path",
+                                      "classes": [],
+                                      "attributes": {
+                                        "d": "M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"
+                                      },
+                                      "children": []
+                                    },
+                                    {
+                                      "type": "custom",
+                                      "tag": "circle",
+                                      "classes": [],
+                                      "attributes": {
+                                        "cx": "12",
+                                        "cy": "10",
+                                        "r": "3"
+                                      },
+                                      "children": []
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "custom",
+                                  "tag": "span",
+                                  "classes": [],
+                                  "text": "Cheshire East",
+                                  "children": []
+                                }
+                              ]
+                            },
+                            {
+                              "type": "Paragraph",
+                              "classes": [
+                                "venue_card-desc",
+                                "is-listing"
+                              ],
+                              "text": "Rustic exposed beams with contemporary styling.",
+                              "children": []
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Link",
+                      "classes": [
+                        "venue_card",
+                        "is-listing"
+                      ],
+                      "attributes": {
+                        "href": "#",
+                        "gsap-stagger": ""
+                      },
+                      "children": [
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [
+                            "venue_card-img-wrap",
+                            "is-listing"
+                          ],
+                          "children": [
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "venue_card-tag",
+                                "is-listing"
+                              ],
+                              "children": [
+                                {
+                                  "type": "custom",
+                                  "tag": "span",
+                                  "text": "Barn",
+                                  "classes": [],
+                                  "children": []
+                                }
+                              ]
+                            },
+                            {
+                              "type": "Image",
+                              "classes": [
+                                "venue_card-img",
+                                "is-listing"
+                              ],
+                              "attributes": {
+                                "src": "images/category-barns.png",
+                                "alt": "Meadow View"
+                              },
+                              "children": []
+                            }
+                          ]
+                        },
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [
+                            "venue_card-content",
+                            "is-listing"
+                          ],
+                          "children": [
+                            {
+                              "type": "Heading",
+                              "tag": "h3",
+                              "classes": [
+                                "venue_card-title",
+                                "is-listing"
+                              ],
+                              "text": "Meadow View",
+                              "children": []
+                            },
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "venue_card-loc",
+                                "is-listing"
+                              ],
+                              "children": [
+                                {
+                                  "type": "custom",
+                                  "tag": "svg",
+                                  "classes": [],
+                                  "attributes": {
+                                    "width": "14",
+                                    "height": "14",
+                                    "viewBox": "0 0 24 24",
+                                    "fill": "none",
+                                    "stroke": "currentColor",
+                                    "stroke-width": "2",
+                                    "stroke-linecap": "round",
+                                    "stroke-linejoin": "round"
+                                  },
+                                  "children": [
+                                    {
+                                      "type": "custom",
+                                      "tag": "path",
+                                      "classes": [],
+                                      "attributes": {
+                                        "d": "M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"
+                                      },
+                                      "children": []
+                                    },
+                                    {
+                                      "type": "custom",
+                                      "tag": "circle",
+                                      "classes": [],
+                                      "attributes": {
+                                        "cx": "12",
+                                        "cy": "10",
+                                        "r": "3"
+                                      },
+                                      "children": []
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "custom",
+                                  "tag": "span",
+                                  "classes": [],
+                                  "text": "Cheshire East",
+                                  "children": []
+                                }
+                              ]
+                            },
+                            {
+                              "type": "Paragraph",
+                              "classes": [
+                                "venue_card-desc",
+                                "is-listing"
+                              ],
+                              "text": "Rustic exposed beams with contemporary styling.",
+                              "children": []
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Link",
+                      "classes": [
+                        "venue_card",
+                        "is-listing"
+                      ],
+                      "attributes": {
+                        "href": "#",
+                        "gsap-stagger": ""
+                      },
+                      "children": [
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [
+                            "venue_card-img-wrap",
+                            "is-listing"
+                          ],
+                          "children": [
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "venue_card-tag",
+                                "is-listing"
+                              ],
+                              "children": [
+                                {
+                                  "type": "custom",
+                                  "tag": "span",
+                                  "text": "Barn",
+                                  "classes": [],
+                                  "children": []
+                                }
+                              ]
+                            },
+                            {
+                              "type": "Image",
+                              "classes": [
+                                "venue_card-img",
+                                "is-listing"
+                              ],
+                              "attributes": {
+                                "src": "images/category-stately-homes.png",
+                                "alt": "Forest Manor"
+                              },
+                              "children": []
+                            }
+                          ]
+                        },
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [
+                            "venue_card-content",
+                            "is-listing"
+                          ],
+                          "children": [
+                            {
+                              "type": "Heading",
+                              "tag": "h3",
+                              "classes": [
+                                "venue_card-title",
+                                "is-listing"
+                              ],
+                              "text": "Forest Manor",
+                              "children": []
+                            },
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "venue_card-loc",
+                                "is-listing"
+                              ],
+                              "children": [
+                                {
+                                  "type": "custom",
+                                  "tag": "svg",
+                                  "classes": [],
+                                  "attributes": {
+                                    "width": "14",
+                                    "height": "14",
+                                    "viewBox": "0 0 24 24",
+                                    "fill": "none",
+                                    "stroke": "currentColor",
+                                    "stroke-width": "2",
+                                    "stroke-linecap": "round",
+                                    "stroke-linejoin": "round"
+                                  },
+                                  "children": [
+                                    {
+                                      "type": "custom",
+                                      "tag": "path",
+                                      "classes": [],
+                                      "attributes": {
+                                        "d": "M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"
+                                      },
+                                      "children": []
+                                    },
+                                    {
+                                      "type": "custom",
+                                      "tag": "circle",
+                                      "classes": [],
+                                      "attributes": {
+                                        "cx": "12",
+                                        "cy": "10",
+                                        "r": "3"
+                                      },
+                                      "children": []
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "custom",
+                                  "tag": "span",
+                                  "classes": [],
+                                  "text": "Cheshire East",
+                                  "children": []
+                                }
+                              ]
+                            },
+                            {
+                              "type": "Paragraph",
+                              "classes": [
+                                "venue_card-desc",
+                                "is-listing"
+                              ],
+                              "text": "Rustic exposed beams with contemporary styling.",
+                              "children": []
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Link",
+                      "classes": [
+                        "venue_card",
+                        "is-listing"
+                      ],
+                      "attributes": {
+                        "href": "#",
+                        "gsap-stagger": ""
+                      },
+                      "children": [
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [
+                            "venue_card-img-wrap",
+                            "is-listing"
+                          ],
+                          "children": [
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "venue_card-tag",
+                                "is-listing"
+                              ],
+                              "children": [
+                                {
+                                  "type": "custom",
+                                  "tag": "span",
+                                  "text": "Barn",
+                                  "classes": [],
+                                  "children": []
+                                }
+                              ]
+                            },
+                            {
+                              "type": "Image",
+                              "classes": [
+                                "venue_card-img",
+                                "is-listing"
+                              ],
+                              "attributes": {
+                                "src": "images/category-tipis.png",
+                                "alt": "Lakeside Barn"
+                              },
+                              "children": []
+                            }
+                          ]
+                        },
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [
+                            "venue_card-content",
+                            "is-listing"
+                          ],
+                          "children": [
+                            {
+                              "type": "Heading",
+                              "tag": "h3",
+                              "classes": [
+                                "venue_card-title",
+                                "is-listing"
+                              ],
+                              "text": "Lakeside Barn",
+                              "children": []
+                            },
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "venue_card-loc",
+                                "is-listing"
+                              ],
+                              "children": [
+                                {
+                                  "type": "custom",
+                                  "tag": "svg",
+                                  "classes": [],
+                                  "attributes": {
+                                    "width": "14",
+                                    "height": "14",
+                                    "viewBox": "0 0 24 24",
+                                    "fill": "none",
+                                    "stroke": "currentColor",
+                                    "stroke-width": "2",
+                                    "stroke-linecap": "round",
+                                    "stroke-linejoin": "round"
+                                  },
+                                  "children": [
+                                    {
+                                      "type": "custom",
+                                      "tag": "path",
+                                      "classes": [],
+                                      "attributes": {
+                                        "d": "M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"
+                                      },
+                                      "children": []
+                                    },
+                                    {
+                                      "type": "custom",
+                                      "tag": "circle",
+                                      "classes": [],
+                                      "attributes": {
+                                        "cx": "12",
+                                        "cy": "10",
+                                        "r": "3"
+                                      },
+                                      "children": []
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "custom",
+                                  "tag": "span",
+                                  "classes": [],
+                                  "text": "Cheshire East",
+                                  "children": []
+                                }
+                              ]
+                            },
+                            {
+                              "type": "Paragraph",
+                              "classes": [
+                                "venue_card-desc",
+                                "is-listing"
+                              ],
+                              "text": "Rustic exposed beams with contemporary styling.",
+                              "children": []
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Link",
+                      "classes": [
+                        "venue_card",
+                        "is-listing"
+                      ],
+                      "attributes": {
+                        "href": "#",
+                        "gsap-stagger": ""
+                      },
+                      "children": [
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [
+                            "venue_card-img-wrap",
+                            "is-listing"
+                          ],
+                          "children": [
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "venue_card-tag",
+                                "is-listing"
+                              ],
+                              "children": [
+                                {
+                                  "type": "custom",
+                                  "tag": "span",
+                                  "text": "Barn",
+                                  "classes": [],
+                                  "children": []
+                                }
+                              ]
+                            },
+                            {
+                              "type": "Image",
+                              "classes": [
+                                "venue_card-img",
+                                "is-listing"
+                              ],
+                              "attributes": {
+                                "src": "images/category-restaurants.png",
+                                "alt": "Sunset Valley"
+                              },
+                              "children": []
+                            }
+                          ]
+                        },
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [
+                            "venue_card-content",
+                            "is-listing"
+                          ],
+                          "children": [
+                            {
+                              "type": "Heading",
+                              "tag": "h3",
+                              "classes": [
+                                "venue_card-title",
+                                "is-listing"
+                              ],
+                              "text": "Sunset Valley",
+                              "children": []
+                            },
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "venue_card-loc",
+                                "is-listing"
+                              ],
+                              "children": [
+                                {
+                                  "type": "custom",
+                                  "tag": "svg",
+                                  "classes": [],
+                                  "attributes": {
+                                    "width": "14",
+                                    "height": "14",
+                                    "viewBox": "0 0 24 24",
+                                    "fill": "none",
+                                    "stroke": "currentColor",
+                                    "stroke-width": "2",
+                                    "stroke-linecap": "round",
+                                    "stroke-linejoin": "round"
+                                  },
+                                  "children": [
+                                    {
+                                      "type": "custom",
+                                      "tag": "path",
+                                      "classes": [],
+                                      "attributes": {
+                                        "d": "M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"
+                                      },
+                                      "children": []
+                                    },
+                                    {
+                                      "type": "custom",
+                                      "tag": "circle",
+                                      "classes": [],
+                                      "attributes": {
+                                        "cx": "12",
+                                        "cy": "10",
+                                        "r": "3"
+                                      },
+                                      "children": []
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "custom",
+                                  "tag": "span",
+                                  "classes": [],
+                                  "text": "Cheshire East",
+                                  "children": []
+                                }
+                              ]
+                            },
+                            {
+                              "type": "Paragraph",
+                              "classes": [
+                                "venue_card-desc",
+                                "is-listing"
+                              ],
+                              "text": "Rustic exposed beams with contemporary styling.",
+                              "children": []
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Link",
+                      "classes": [
+                        "venue_card",
+                        "is-listing"
+                      ],
+                      "attributes": {
+                        "href": "#",
+                        "gsap-stagger": ""
+                      },
+                      "children": [
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [
+                            "venue_card-img-wrap",
+                            "is-listing"
+                          ],
+                          "children": [
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "venue_card-tag",
+                                "is-listing"
+                              ],
+                              "children": [
+                                {
+                                  "type": "custom",
+                                  "tag": "span",
+                                  "text": "Barn",
+                                  "classes": [],
+                                  "children": []
+                                }
+                              ]
+                            },
+                            {
+                              "type": "Image",
+                              "classes": [
+                                "venue_card-img",
+                                "is-listing"
+                              ],
+                              "attributes": {
+                                "src": "images/category-hotels.png",
+                                "alt": "Riverstone Hall"
+                              },
+                              "children": []
+                            }
+                          ]
+                        },
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [
+                            "venue_card-content",
+                            "is-listing"
+                          ],
+                          "children": [
+                            {
+                              "type": "Heading",
+                              "tag": "h3",
+                              "classes": [
+                                "venue_card-title",
+                                "is-listing"
+                              ],
+                              "text": "Riverstone Hall",
+                              "children": []
+                            },
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "venue_card-loc",
+                                "is-listing"
+                              ],
+                              "children": [
+                                {
+                                  "type": "custom",
+                                  "tag": "svg",
+                                  "classes": [],
+                                  "attributes": {
+                                    "width": "14",
+                                    "height": "14",
+                                    "viewBox": "0 0 24 24",
+                                    "fill": "none",
+                                    "stroke": "currentColor",
+                                    "stroke-width": "2",
+                                    "stroke-linecap": "round",
+                                    "stroke-linejoin": "round"
+                                  },
+                                  "children": [
+                                    {
+                                      "type": "custom",
+                                      "tag": "path",
+                                      "classes": [],
+                                      "attributes": {
+                                        "d": "M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"
+                                      },
+                                      "children": []
+                                    },
+                                    {
+                                      "type": "custom",
+                                      "tag": "circle",
+                                      "classes": [],
+                                      "attributes": {
+                                        "cx": "12",
+                                        "cy": "10",
+                                        "r": "3"
+                                      },
+                                      "children": []
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "custom",
+                                  "tag": "span",
+                                  "classes": [],
+                                  "text": "Cheshire East",
+                                  "children": []
+                                }
+                              ]
+                            },
+                            {
+                              "type": "Paragraph",
+                              "classes": [
+                                "venue_card-desc",
+                                "is-listing"
+                              ],
+                              "text": "Rustic exposed beams with contemporary styling.",
+                              "children": []
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "globalStyles": {
+    ".venues_grid": {
+      "main": {
+        "display": "grid",
+        "grid-template-columns": "1fr 1fr 1fr 1fr",
+        "grid-row-gap": "var(--space-40)",
+        "grid-column-gap": "var(--space-40)",
+        "grid-template-rows": "auto"
+      },
+      "medium": {
+        "grid-template-columns": "1fr 1fr",
+        "grid-row-gap": "var(--space-16)",
+        "grid-column-gap": "var(--space-16)",
+        "grid-template-rows": "auto"
+      },
+      "small": {
+        "grid-template-columns": "1fr 1fr",
+        "grid-template-rows": "auto"
+      },
+      "tiny": {
+        "grid-template-columns": "1fr",
+        "grid-template-rows": "auto"
+      }
+    },
+    ".venue_card": {
+      "main": {
+        "background-color": "var(--color--surface-2)",
+        "border-top-left-radius": "var(--radius--large)",
+        "border-top-right-radius": "var(--radius--large)",
+        "border-bottom-right-radius": "var(--radius--large)",
+        "border-bottom-left-radius": "var(--radius--large)",
+        "overflow": "hidden",
+        "display": "flex",
+        "flex-direction": "column",
+        "border-top-width": "1px",
+        "border-top-style": "solid",
+        "border-top-color": "var(--color--white-5)",
+        "border-right-width": "1px",
+        "border-right-style": "solid",
+        "border-right-color": "var(--color--white-5)",
+        "border-bottom-width": "1px",
+        "border-bottom-style": "solid",
+        "border-bottom-color": "var(--color--white-5)",
+        "border-left-width": "1px",
+        "border-left-style": "solid",
+        "border-left-color": "var(--color--white-5)",
+        "transition": "transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1)"
+      }
+    },
+    ".venue_card:hover": {
+      "main": {
+        "transform": "translateY(-0.3125rem)",
+        "border-top-color": "var(--color--gold-20))",
+        "border-right-color": "var(--color--gold-20))",
+        "border-bottom-color": "var(--color--gold-20))",
+        "border-left-color": "var(--color--gold-20))"
+      }
+    },
+    ".section_all-venues": {
+      "main": {
+        "padding-top": "var(--space--section)",
+        "padding-right": "0",
+        "padding-bottom": "var(--space--section)",
+        "padding-left": "0",
+        "background-color": "var(--color--deep-black)"
+      }
+    },
+    ".venues_list-header": {
+      "main": {
+        "margin-bottom": "var(--space-64)"
+      }
+    },
+    ".venues_list-title": {
+      "main": {
+        "font-family": "var(--font--heading)",
+        "font-size": "var(--heading--h2-size)",
+        "margin-bottom": "var(--space-32)",
+        "font-weight": "var(--weight--regular)"
+      }
+    },
+    ".venues_filters-form": {
+      "main": {
+        "display": "flex",
+        "justify-content": "space-between",
+        "align-items": "center",
+        "grid-row-gap": "var(--space-24)",
+        "grid-column-gap": "var(--space-24)",
+        "width": "100%"
+      },
+      "medium": {
+        "flex-direction": "column",
+        "align-items": "stretch"
+      }
+    },
+    ".filters_left": {
+      "main": {
+        "display": "flex",
+        "align-items": "center",
+        "grid-row-gap": "var(--space-16)",
+        "grid-column-gap": "var(--space-16)"
+      },
+      "medium": {
+        "justify-content": "flex-start",
+        "flex-wrap": "wrap"
+      }
+    },
+    ".filters_right": {
+      "main": {
+        "display": "flex",
+        "align-items": "center",
+        "grid-row-gap": "var(--space-16)",
+        "grid-column-gap": "var(--space-16)"
+      },
+      "medium": {
+        "justify-content": "flex-start",
+        "flex-wrap": "wrap"
+      }
+    },
+    ".filter_segmented": {
+      "main": {
+        "display": "flex",
+        "background-color": "var(--color--surface-7)",
+        "padding-top": "var(--space-4)",
+        "padding-right": "var(--space-4)",
+        "padding-bottom": "var(--space-4)",
+        "padding-left": "var(--space-4)",
+        "border-top-left-radius": "var(--radius--medium)",
+        "border-top-right-radius": "var(--radius--medium)",
+        "border-bottom-right-radius": "var(--radius--medium)",
+        "border-bottom-left-radius": "var(--radius--medium)",
+        "border-top-width": "1px",
+        "border-top-style": "solid",
+        "border-top-color": "var(--color--white-8)",
+        "border-right-width": "1px",
+        "border-right-style": "solid",
+        "border-right-color": "var(--color--white-8)",
+        "border-bottom-width": "1px",
+        "border-bottom-style": "solid",
+        "border-bottom-color": "var(--color--white-8)",
+        "border-left-width": "1px",
+        "border-left-style": "solid",
+        "border-left-color": "var(--color--white-8)"
+      },
+      "tiny": {
+        "width": "100%"
+      }
+    },
+    ".segmented_btn": {
+      "main": {
+        "padding-top": "var(--space-8)",
+        "padding-right": "var(--space-20)",
+        "padding-bottom": "var(--space-8)",
+        "padding-left": "var(--space-20)",
+        "border-top-left-radius": "var(--radius--small)",
+        "border-top-right-radius": "var(--radius--small)",
+        "border-bottom-right-radius": "var(--radius--small)",
+        "border-bottom-left-radius": "var(--radius--small)",
+        "font-size": "var(--text--link)",
+        "color": "var(--color--white-40)",
+        "background-color": "none",
+        "border-top-style": "none",
+        "border-right-style": "none",
+        "border-bottom-style": "none",
+        "border-left-style": "none",
+        "cursor": "pointer",
+        "transition": "all 0.3s ease"
+      },
+      "tiny": {
+        "flex": "1"
+      }
+    },
+    ".segmented_btn.is-active": {
+      "main": {
+        "background-color": "var(--color--surface-8)",
+        "color": "var(--color--white)",
+        "box-shadow": "0 4px 12px rgba(0, 0, 0, 0.2)"
+      }
+    },
+    ".filter_search": {
+      "main": {
+        "position": "relative",
+        "display": "flex",
+        "align-items": "center",
+        "background-color": "var(--color--surface-7)",
+        "border-top-width": "1px",
+        "border-top-style": "solid",
+        "border-top-color": "var(--color--white-8)",
+        "border-right-width": "1px",
+        "border-right-style": "solid",
+        "border-right-color": "var(--color--white-8)",
+        "border-bottom-width": "1px",
+        "border-bottom-style": "solid",
+        "border-bottom-color": "var(--color--white-8)",
+        "border-left-width": "1px",
+        "border-left-style": "solid",
+        "border-left-color": "var(--color--white-8)",
+        "border-top-left-radius": "var(--radius--medium)",
+        "border-top-right-radius": "var(--radius--medium)",
+        "border-bottom-right-radius": "var(--radius--medium)",
+        "border-bottom-left-radius": "var(--radius--medium)",
+        "padding-top": "0",
+        "padding-right": "var(--space-16)",
+        "padding-bottom": "0",
+        "padding-left": "var(--space-16)",
+        "width": "100%",
+        "max-width": "20rem",
+        "transition": "border-color 0.3s ease"
+      },
+      "medium": {
+        "max-width": "100%"
+      }
+    },
+    ".search_icon": {
+      "main": {
+        "color": "var(--color--white-35)",
+        "flex-shrink": "0"
+      }
+    },
+    ".filter_input": {
+      "main": {
+        "background-color": "none",
+        "border-top-style": "none",
+        "border-right-style": "none",
+        "border-bottom-style": "none",
+        "border-left-style": "none",
+        "padding-top": "var(--space-12)",
+        "padding-right": "var(--space-12)",
+        "padding-bottom": "var(--space-12)",
+        "padding-left": "var(--space-12)",
+        "color": "var(--color--white)",
+        "font-size": "var(--text--link)",
+        "width": "100%",
+        "outline": "none"
+      }
+    },
+    ".filter_input::placeholder": {
+      "main": {
+        "color": "var(--color--white-35)"
+      }
+    },
+    ".filter_btn": {
+      "main": {
+        "display": "flex",
+        "align-items": "center",
+        "grid-row-gap": "var(--space-8)",
+        "grid-column-gap": "var(--space-8)",
+        "background-color": "var(--color--surface-7)",
+        "border-top-width": "1px",
+        "border-top-style": "solid",
+        "border-top-color": "var(--color--white-8)",
+        "border-right-width": "1px",
+        "border-right-style": "solid",
+        "border-right-color": "var(--color--white-8)",
+        "border-bottom-width": "1px",
+        "border-bottom-style": "solid",
+        "border-bottom-color": "var(--color--white-8)",
+        "border-left-width": "1px",
+        "border-left-style": "solid",
+        "border-left-color": "var(--color--white-8)",
+        "border-top-left-radius": "var(--radius--medium)",
+        "border-top-right-radius": "var(--radius--medium)",
+        "border-bottom-right-radius": "var(--radius--medium)",
+        "border-bottom-left-radius": "var(--radius--medium)",
+        "padding-top": "var(--space-12)",
+        "padding-right": "var(--space-20)",
+        "padding-bottom": "var(--space-12)",
+        "padding-left": "var(--space-20)",
+        "color": "var(--color--white)",
+        "font-size": "var(--text--link)",
+        "cursor": "pointer",
+        "transition": "all 0.3s ease"
+      }
+    },
+    ".filter_btn:hover": {
+      "main": {
+        "background-color": "var(--color--surface-8)",
+        "border-top-color": "var(--color--white-16)",
+        "border-right-color": "var(--color--white-16)",
+        "border-bottom-color": "var(--color--white-16)",
+        "border-left-color": "var(--color--white-16)"
+      }
+    },
+    ".filter_dropdown": {
+      "main": {
+        "position": "relative"
+      },
+      "tiny": {
+        "width": "100%"
+      }
+    },
+    ".filter_select": {
+      "main": {
+        "appearance": "none",
+        "background-color": "var(--color--surface-7)",
+        "border-top-width": "1px",
+        "border-top-style": "solid",
+        "border-top-color": "var(--color--white-8)",
+        "border-right-width": "1px",
+        "border-right-style": "solid",
+        "border-right-color": "var(--color--white-8)",
+        "border-bottom-width": "1px",
+        "border-bottom-style": "solid",
+        "border-bottom-color": "var(--color--white-8)",
+        "border-left-width": "1px",
+        "border-left-style": "solid",
+        "border-left-color": "var(--color--white-8)",
+        "border-top-left-radius": "var(--radius--medium)",
+        "border-top-right-radius": "var(--radius--medium)",
+        "border-bottom-right-radius": "var(--radius--medium)",
+        "border-bottom-left-radius": "var(--radius--medium)",
+        "padding-top": "var(--space-12)",
+        "padding-right": "var(--space-48)",
+        "padding-bottom": "var(--space-12)",
+        "padding-left": "var(--space-20)",
+        "color": "var(--color--white)",
+        "font-size": "var(--text--link)",
+        "cursor": "pointer",
+        "width": "100%",
+        "outline": "none",
+        "transition": "all 0.3s ease",
+        "background-image": "url(\"data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23B1B1B1' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E\")",
+        "background-repeat": "no-repeat",
+        "background-position": "right 1.25rem center"
+      }
+    },
+    ".filter_select:hover": {
+      "main": {
+        "background-color": "var(--color--surface-8)",
+        "border-top-color": "var(--color--white-16)",
+        "border-right-color": "var(--color--white-16)",
+        "border-bottom-color": "var(--color--white-16)",
+        "border-left-color": "var(--color--white-16)"
+      }
+    },
+    ".venue_card.is-listing": {
+      "main": {
+        "display": "flex",
+        "flex-direction": "column",
+        "grid-row-gap": "var(--space-20)",
+        "grid-column-gap": "var(--space-20)",
+        "text-decoration": "none",
+        "transition": "transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1)",
+        "border-top-style": "none",
+        "border-right-style": "none",
+        "border-bottom-style": "none",
+        "border-left-style": "none",
+        "overflow": "visible",
+        "background-color": "transparent"
+      }
+    },
+    ".venue_card-img-wrap.is-listing": {
+      "main": {
+        "position": "relative",
+        "width": "100%",
+        "aspect-ratio": "1 / 1",
+        "border-top-left-radius": "var(--radius--large)",
+        "border-top-right-radius": "var(--radius--large)",
+        "border-bottom-right-radius": "var(--radius--large)",
+        "border-bottom-left-radius": "var(--radius--large)",
+        "overflow": "hidden",
+        "background-color": "var(--color--surface-4)"
+      }
+    },
+    ".venue_card-img.is-listing": {
+      "main": {
+        "width": "100%",
+        "height": "100%",
+        "object-fit": "cover",
+        "transition": "transform 0.8s cubic-bezier(0.165, 0.84, 0.44, 1)"
+      }
+    },
+    ".venue_card-tag.is-listing": {
+      "main": {
+        "position": "absolute",
+        "top": "var(--space-16)",
+        "right": "var(--space-16)",
+        "padding-top": "var(--space-6)",
+        "padding-right": "var(--space-14)",
+        "padding-bottom": "var(--space-6)",
+        "padding-left": "var(--space-14)",
+        "background-color": "rgba(0, 0, 0, 0.3)",
+        "backdrop-filter": "blur(8px)",
+        "border-top-left-radius": "var(--radius--large)",
+        "border-top-right-radius": "var(--radius--large)",
+        "border-bottom-right-radius": "var(--radius--large)",
+        "border-bottom-left-radius": "var(--radius--large)",
+        "font-size": "var(--text--small)",
+        "color": "var(--color--white)",
+        "z-index": "2"
+      }
+    },
+    ".venue_card-content.is-listing": {
+      "main": {
+        "display": "flex",
+        "flex-direction": "column",
+        "grid-row-gap": "var(--space-16)",
+        "grid-column-gap": "var(--space-16)"
+      }
+    },
+    ".venue_card-title.is-listing": {
+      "main": {
+        "font-family": "var(--font--heading)",
+        "font-size": "var(--text--card-title)",
+        "color": "var(--color--white)",
+        "font-weight": "var(--weight--regular)"
+      }
+    },
+    ".venue_card-loc.is-listing": {
+      "main": {
+        "display": "flex",
+        "align-items": "center",
+        "grid-row-gap": "var(--space-8)",
+        "grid-column-gap": "var(--space-8)",
+        "color": "var(--color--light-paragraph)",
+        "font-size": "var(--text--link)"
+      }
+    },
+    ".venue_card-desc.is-listing": {
+      "main": {
+        "font-size": "var(--text--link)",
+        "line-height": "var(--text--paragraph-lh)",
+        "color": "var(--color--light-grey)"
+      }
+    }
+  }
+}

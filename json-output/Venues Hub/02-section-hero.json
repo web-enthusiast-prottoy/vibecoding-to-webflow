@@ -1,0 +1,957 @@
+{
+  "_mime": "section",
+  "__meta": {
+    "version": 2,
+    "normalized": true,
+    "complexSelectorsResolved": true
+  },
+  "name": "section_hero",
+  "nodes": [
+    {
+      "type": "Block",
+      "tag": "section",
+      "classes": [
+        "section_hero",
+        "is-venues-hub"
+      ],
+      "children": [
+        {
+          "type": "Block",
+          "tag": "div",
+          "classes": [
+            "hero_background-wrapper"
+          ],
+          "children": [
+            {
+              "type": "Block",
+              "tag": "div",
+              "classes": [
+                "swiper",
+                "hero_swiper"
+              ],
+              "children": [
+                {
+                  "type": "Block",
+                  "tag": "div",
+                  "classes": [
+                    "swiper-wrapper"
+                  ],
+                  "children": [
+                    {
+                      "type": "Block",
+                      "tag": "div",
+                      "classes": [
+                        "swiper-slide"
+                      ],
+                      "children": [
+                        {
+                          "type": "Image",
+                          "classes": [
+                            "hero_background-image"
+                          ],
+                          "attributes": {
+                            "src": "images/hero-slider-image-1.png",
+                            "alt": "Cheshire Wedding Venue",
+                            "loading": "eager"
+                          },
+                          "children": []
+                        }
+                      ],
+                      "inlineStyles": {
+                        "main": {
+                          "width": "100%",
+                          "height": "100%"
+                        }
+                      }
+                    },
+                    {
+                      "type": "Block",
+                      "tag": "div",
+                      "classes": [
+                        "swiper-slide"
+                      ],
+                      "children": [
+                        {
+                          "type": "Image",
+                          "classes": [
+                            "hero_background-image"
+                          ],
+                          "attributes": {
+                            "src": "images/hero-slider-image-2.png",
+                            "alt": "Cheshire Wedding Venue",
+                            "loading": "lazy"
+                          },
+                          "children": []
+                        }
+                      ],
+                      "inlineStyles": {
+                        "main": {
+                          "width": "100%",
+                          "height": "100%"
+                        }
+                      }
+                    },
+                    {
+                      "type": "Block",
+                      "tag": "div",
+                      "classes": [
+                        "swiper-slide"
+                      ],
+                      "children": [
+                        {
+                          "type": "Image",
+                          "classes": [
+                            "hero_background-image"
+                          ],
+                          "attributes": {
+                            "src": "images/hero-slider-image-3.png",
+                            "alt": "Cheshire Wedding Venue",
+                            "loading": "lazy"
+                          },
+                          "children": []
+                        }
+                      ],
+                      "inlineStyles": {
+                        "main": {
+                          "width": "100%",
+                          "height": "100%"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "Block",
+              "tag": "div",
+              "classes": [
+                "hero_overlay-bottom"
+              ],
+              "children": []
+            }
+          ]
+        },
+        {
+          "type": "Block",
+          "tag": "div",
+          "classes": [
+            "padding-global"
+          ],
+          "children": [
+            {
+              "type": "Block",
+              "tag": "div",
+              "classes": [
+                "container-large"
+              ],
+              "children": [
+                {
+                  "type": "Block",
+                  "tag": "div",
+                  "classes": [
+                    "hero_layout"
+                  ],
+                  "children": [
+                    {
+                      "type": "Block",
+                      "tag": "div",
+                      "classes": [
+                        "hero_content-wrap"
+                      ],
+                      "children": [
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [
+                            "hero_content"
+                          ],
+                          "children": [
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "subheadline"
+                              ],
+                              "children": [
+                                {
+                                  "type": "custom",
+                                  "tag": "span",
+                                  "text": "Your Cheshire Wedding",
+                                  "classes": [],
+                                  "children": []
+                                }
+                              ],
+                              "inlineStyles": {
+                                "main": {
+                                  "font-size": "var(--text--body)",
+                                  "margin-bottom": "var(--space-12)"
+                                }
+                              }
+                            },
+                            {
+                              "type": "Heading",
+                              "tag": "h1",
+                              "classes": [
+                                "hero_title"
+                              ],
+                              "attributes": {
+                                "data-highlight": "Wedding"
+                              },
+                              "text": "Cheshire   Wedding Venues",
+                              "children": []
+                            }
+                          ]
+                        },
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [
+                            "hero_slider-controls",
+                            "is-venues-hub"
+                          ],
+                          "children": [
+                            {
+                              "type": "Link",
+                              "classes": [
+                                "slider_arrow",
+                                "is-prev"
+                              ],
+                              "id": "hero-prev",
+                              "attributes": {
+                                "href": "#",
+                                "aria-label": "Previous slide",
+                                "role": "button"
+                              },
+                              "children": [
+                                {
+                                  "type": "custom",
+                                  "tag": "svg",
+                                  "classes": [
+                                    "slider_arrow-icon",
+                                    "is-prev"
+                                  ],
+                                  "attributes": {
+                                    "width": "14",
+                                    "height": "12",
+                                    "viewBox": "0 0 14 12",
+                                    "fill": "none",
+                                    "xmlns": "http://www.w3.org/2000/svg",
+                                    "aria-hidden": "true"
+                                  },
+                                  "children": [
+                                    {
+                                      "type": "custom",
+                                      "tag": "path",
+                                      "classes": [],
+                                      "attributes": {
+                                        "d": "M13.7063 6.70859C14.0969 6.31797 14.0969 5.68359 13.7063 5.29297L8.70625 0.292969C8.31563 -0.0976562 7.68125 -0.0976562 7.29063 0.292969C6.9 0.683594 6.9 1.31797 7.29063 1.70859L10.5875 5.00234H1C0.446875 5.00234 0 5.44922 0 6.00234C0 6.55547 0.446875 7.00234 1 7.00234H10.5844L7.29375 10.2961C6.90312 10.6867 6.90312 11.3211 7.29375 11.7117C7.68437 12.1023 8.31875 12.1023 8.70938 11.7117L13.7094 6.71172L13.7063 6.70859Z",
+                                        "fill": "#B1B1B1"
+                                      },
+                                      "children": []
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "slider_dots"
+                              ],
+                              "id": "hero-dots",
+                              "attributes": {
+                                "aria-hidden": "true"
+                              },
+                              "children": []
+                            },
+                            {
+                              "type": "Link",
+                              "classes": [
+                                "slider_arrow",
+                                "is-next"
+                              ],
+                              "id": "hero-next",
+                              "attributes": {
+                                "href": "#",
+                                "aria-label": "Next slide",
+                                "role": "button"
+                              },
+                              "children": [
+                                {
+                                  "type": "custom",
+                                  "tag": "svg",
+                                  "classes": [
+                                    "slider_arrow-icon"
+                                  ],
+                                  "attributes": {
+                                    "width": "14",
+                                    "height": "12",
+                                    "viewBox": "0 0 14 12",
+                                    "fill": "none",
+                                    "xmlns": "http://www.w3.org/2000/svg",
+                                    "aria-hidden": "true"
+                                  },
+                                  "children": [
+                                    {
+                                      "type": "custom",
+                                      "tag": "path",
+                                      "classes": [],
+                                      "attributes": {
+                                        "d": "M13.7063 6.70859C14.0969 6.31797 14.0969 5.68359 13.7063 5.29297L8.70625 0.292969C8.31563 -0.0976562 7.68125 -0.0976562 7.29063 0.292969C6.9 0.683594 6.9 1.31797 7.29063 1.70859L10.5875 5.00234H1C0.446875 5.00234 0 5.44922 0 6.00234C0 6.55547 0.446875 7.00234 1 7.00234H10.5844L7.29375 10.2961C6.90312 10.6867 6.90312 11.3211 7.29375 11.7117C7.68437 12.1023 8.31875 12.1023 8.70938 11.7117L13.7094 6.71172L13.7063 6.70859Z",
+                                        "fill": "#B1B1B1"
+                                      },
+                                      "children": []
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Block",
+                      "tag": "div",
+                      "classes": [
+                        "hero_featured-wrap"
+                      ],
+                      "children": [
+                        {
+                          "type": "Block",
+                          "tag": "div",
+                          "classes": [
+                            "featured_card"
+                          ],
+                          "children": [
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "featured_card-image-wrap"
+                              ],
+                              "children": [
+                                {
+                                  "type": "Block",
+                                  "tag": "div",
+                                  "classes": [
+                                    "featured_card-badge"
+                                  ],
+                                  "children": [
+                                    {
+                                      "type": "custom",
+                                      "tag": "svg",
+                                      "classes": [],
+                                      "attributes": {
+                                        "width": "12",
+                                        "height": "12",
+                                        "viewBox": "0 0 12 12",
+                                        "fill": "none",
+                                        "xmlns": "http://www.w3.org/2000/svg"
+                                      },
+                                      "children": [
+                                        {
+                                          "type": "custom",
+                                          "tag": "path",
+                                          "classes": [],
+                                          "attributes": {
+                                            "d": "M2.73553 0.792187C2.841 0.649219 3.00975 0.5625 3.18788 0.5625H8.81287C8.991 0.5625 9.15975 0.646875 9.26522 0.792187L11.8902 4.35469C12.0496 4.57031 12.0332 4.86797 11.8551 5.06719L6.41756 11.0672C6.31209 11.1844 6.15975 11.2523 6.00037 11.2523C5.841 11.2523 5.691 11.1844 5.58319 11.0672L0.145687 5.06719C-0.0347813 4.86797 -0.0488438 4.57031 0.110531 4.35469L2.73553 0.792187ZM3.63788 1.725C3.56053 1.78359 3.53944 1.88906 3.58866 1.97109L4.93397 4.21172L1.48397 4.5C1.38787 4.50703 1.31287 4.58906 1.31287 4.6875C 1.38787 4.86562 1.48397 4.875L5.98397 5.25C5.99334 5.25 6.00506 5.25 6.01444 5.25L10.5144 4.875C10.6105 4.86797 10.6855 4.78594 10.6855 4.6875C 10.6105 4.50938 10.5144 4.5L7.06678 4.21406L8.41209 1.97344C8.46131 1.89141 8.44022 1.78359 8.36287 1.72734C 8.17772 1.68047 8.11209 1.75078L6.00037 4.03594L3.88866 1.74844C3.82303 1.67813 3.71522 1.66875 3.63788 1.725Z",
+                                            "fill": "#B1B1B1"
+                                          },
+                                          "children": []
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "Image",
+                                  "classes": [
+                                    "featured_card-img"
+                                  ],
+                                  "id": "featured-img",
+                                  "attributes": {
+                                    "src": "images/hero-slider-image-1.png",
+                                    "alt": "Wrenbury"
+                                  },
+                                  "children": []
+                                }
+                              ]
+                            },
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "featured_card-content"
+                              ],
+                              "children": [
+                                {
+                                  "type": "Heading",
+                                  "tag": "h3",
+                                  "classes": [
+                                    "featured_card-name"
+                                  ],
+                                  "id": "featured-name",
+                                  "text": "Wrenbury",
+                                  "children": []
+                                },
+                                {
+                                  "type": "Paragraph",
+                                  "classes": [
+                                    "featured_card-desc"
+                                  ],
+                                  "id": "featured-desc",
+                                  "text": "A modern architectural marvel surrounded by ancient redwoods, perfect for intimate ceremonies.",
+                                  "children": []
+                                },
+                                {
+                                  "type": "Block",
+                                  "tag": "div",
+                                  "classes": [
+                                    "featured_card-footer"
+                                  ],
+                                  "children": [
+                                    {
+                                      "type": "Block",
+                                      "tag": "div",
+                                      "classes": [
+                                        "featured_card-tag"
+                                      ],
+                                      "children": [
+                                        {
+                                          "type": "custom",
+                                          "tag": "span",
+                                          "text": "FEATURED",
+                                          "classes": [],
+                                          "children": []
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "type": "Block",
+                                      "tag": "div",
+                                      "classes": [
+                                        "featured_card-nav"
+                                      ],
+                                      "children": [
+                                        {
+                                          "type": "FormButton",
+                                          "classes": [
+                                            "featured_arrow",
+                                            "is-prev"
+                                          ],
+                                          "id": "featured-prev",
+                                          "attributes": {
+                                            "aria-label": "Previous venue"
+                                          },
+                                          "children": [
+                                            {
+                                              "type": "custom",
+                                              "tag": "svg",
+                                              "classes": [],
+                                              "attributes": {
+                                                "width": "12",
+                                                "height": "12",
+                                                "viewBox": "0 0 14 12",
+                                                "fill": "none",
+                                                "xmlns": "http://www.w3.org/2000/svg"
+                                              },
+                                              "children": [
+                                                {
+                                                  "type": "custom",
+                                                  "tag": "path",
+                                                  "classes": [],
+                                                  "attributes": {
+                                                    "d": "M13.7063 6.70859C14.0969 6.31797 14.0969 5.68359 13.7063 5.29297L8.70625 0.292969C8.31563 -0.0976562 7.68125 -0.0976562 7.29063 0.292969C6.9 0.683594 6.9 1.31797 7.29063 1.70859L10.5875 5.00234H1C0.446875 5.00234 0 5.44922 0 6.00234C0 6.55547 0.446875 7.00234 1 7.00234H10.5844L7.29375 10.2961C6.90312 10.6867 6.90312 11.3211 7.29375 11.7117C7.68437 12.1023 8.31875 12.1023 8.70938 11.7117L13.7094 6.71172L13.7063 6.70859Z",
+                                                    "fill": "#B1B1B1"
+                                                  },
+                                                  "children": []
+                                                }
+                                              ],
+                                              "inlineStyles": {
+                                                "main": {
+                                                  "width": "var(--space-12)",
+                                                  "height": "auto"
+                                                }
+                                              }
+                                            }
+                                          ]
+                                        },
+                                        {
+                                          "type": "FormButton",
+                                          "classes": [
+                                            "featured_arrow",
+                                            "is-next"
+                                          ],
+                                          "id": "featured-next",
+                                          "attributes": {
+                                            "aria-label": "Next venue"
+                                          },
+                                          "children": [
+                                            {
+                                              "type": "custom",
+                                              "tag": "svg",
+                                              "classes": [],
+                                              "attributes": {
+                                                "width": "12",
+                                                "height": "12",
+                                                "viewBox": "0 0 14 12",
+                                                "fill": "none",
+                                                "xmlns": "http://www.w3.org/2000/svg"
+                                              },
+                                              "children": [
+                                                {
+                                                  "type": "custom",
+                                                  "tag": "path",
+                                                  "classes": [],
+                                                  "attributes": {
+                                                    "d": "M13.7063 6.70859C14.0969 6.31797 14.0969 5.68359 13.7063 5.29297L8.70625 0.292969C8.31563 -0.0976562 7.68125 -0.0976562 7.29063 0.292969C6.9 0.683594 6.9 1.31797 7.29063 1.70859L10.5875 5.00234H1C0.446875 5.00234 0 5.44922 0 6.00234C0 6.55547 0.446875 7.00234 1 7.00234H10.5844L7.29375 10.2961C6.90312 10.6867 6.90312 11.3211 7.29375 11.7117C7.68437 12.1023 8.31875 12.1023 8.70938 11.7117L13.7094 6.71172L13.7063 6.70859Z",
+                                                    "fill": "#B1B1B1"
+                                                  },
+                                                  "children": []
+                                                }
+                                              ],
+                                              "inlineStyles": {
+                                                "main": {
+                                                  "width": "var(--space-12)",
+                                                  "height": "auto"
+                                                }
+                                              }
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "globalStyles": {
+    ".subheadline": {
+      "main": {
+        "font-size": "var(--text--subtag-size)",
+        "font-weight": "var(--weight--semibold)",
+        "letter-spacing": "0.075rem",
+        "color": "var(--color--white)",
+        "margin-bottom": "var(--space-18)"
+      },
+      "medium": {
+        "text-align": "left",
+        "text-transform": "uppercase",
+        "letter-spacing": "0.15em",
+        "font-size": "var(--text--subtag-size)",
+        "margin-bottom": "var(--space-16)"
+      }
+    },
+    ".section_hero": {
+      "main": {
+        "position": "relative",
+        "width": "100%",
+        "height": "100vh",
+        "display": "flex",
+        "align-items": "flex-end",
+        "padding-bottom": "var(--space-176)",
+        "overflow": "hidden"
+      },
+      "medium": {
+        "padding-bottom": "var(--space-96)",
+        "align-items": "flex-end",
+        "justify-content": "flex-start",
+        "text-align": "left"
+      }
+    },
+    ".hero_background-wrapper": {
+      "main": {
+        "position": "absolute",
+        "top": "0",
+        "left": "0",
+        "width": "100%",
+        "height": "100%",
+        "z-index": "-1"
+      }
+    },
+    ".hero_swiper": {
+      "main": {
+        "width": "100%",
+        "height": "100%"
+      }
+    },
+    ".hero_background-image": {
+      "main": {
+        "width": "100%",
+        "height": "100%",
+        "object-fit": "cover",
+        "filter": "brightness(0.6)",
+        "user-select": "none",
+        "-webkit-user-drag": "none"
+      }
+    },
+    ".hero_overlay-bottom": {
+      "main": {
+        "position": "absolute",
+        "bottom": "0",
+        "left": "0",
+        "width": "100%",
+        "height": "45vh",
+        "background-image": "linear-gradient( to top, var(--color--dark-background) 0%, var(--color--dark-background-80) 20%, var(--color--dark-background-40) 50%, transparent 100% )",
+        "pointer-events": "none",
+        "z-index": "1"
+      }
+    },
+    ".hero_content": {
+      "main": {
+        "position": "relative",
+        "z-index": "2",
+        "max-width": "45rem",
+        "display": "flex",
+        "flex-direction": "column",
+        "grid-row-gap": "var(--space-12)",
+        "grid-column-gap": "var(--space-12)"
+      },
+      "medium": {
+        "max-width": "100%",
+        "display": "flex",
+        "flex-direction": "column",
+        "align-items": "flex-start"
+      }
+    },
+    ".hero_title": {
+      "main": {
+        "font-size": "var(--heading--h1-large-size)",
+        "line-height": "var(--heading--h1-large-lh)",
+        "margin-bottom": "var(--space-12)"
+      }
+    },
+    ".hero_slider-controls": {
+      "main": {
+        "position": "absolute",
+        "bottom": "5rem",
+        "left": "var(--space--padding-global)",
+        "display": "flex",
+        "align-items": "center",
+        "grid-row-gap": "var(--space-24)",
+        "grid-column-gap": "var(--space-24)",
+        "z-index": "10"
+      },
+      "medium": {
+        "left": "var(--space--padding-global)",
+        "transform": "none",
+        "bottom": "3rem"
+      }
+    },
+    ".slider_arrow": {
+      "main": {
+        "appearance": "none",
+        "padding-top": "0",
+        "padding-right": "0",
+        "padding-bottom": "0",
+        "padding-left": "0",
+        "width": "3rem",
+        "height": "3rem",
+        "border-top-left-radius": "50%",
+        "border-top-right-radius": "50%",
+        "border-bottom-right-radius": "50%",
+        "border-bottom-left-radius": "50%",
+        "border-top-width": "1px",
+        "border-top-style": "solid",
+        "border-top-color": "var(--color--white-15)",
+        "border-right-width": "1px",
+        "border-right-style": "solid",
+        "border-right-color": "var(--color--white-15)",
+        "border-bottom-width": "1px",
+        "border-bottom-style": "solid",
+        "border-bottom-color": "var(--color--white-15)",
+        "border-left-width": "1px",
+        "border-left-style": "solid",
+        "border-left-color": "var(--color--white-15)",
+        "background-color": "var(--color--black-55)",
+        "backdrop-filter": "blur(0.625rem)",
+        "display": "flex",
+        "align-items": "center",
+        "justify-content": "center",
+        "cursor": "pointer",
+        "transition": "background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+        "color": "inherit",
+        "flex-shrink": "0"
+      },
+      "medium": {
+        "display": "none"
+      }
+    },
+    ".slider_arrow:hover": {
+      "main": {
+        "background-color": "var(--color--black-78)",
+        "transform": "scale(1.06)"
+      }
+    },
+    ".slider_arrow-icon": {
+      "main": {
+        "width": "0.875rem",
+        "height": "0.75rem",
+        "pointer-events": "none",
+        "display": "block"
+      }
+    },
+    ".slider_arrow-icon.is-prev": {
+      "main": {
+        "transform": "rotate(180deg)"
+      }
+    },
+    ".slider_dots": {
+      "main": {
+        "display": "flex",
+        "align-items": "center",
+        "grid-row-gap": "var(--space-8)",
+        "grid-column-gap": "var(--space-8)"
+      }
+    },
+    ".section_hero.is-venues-hub": {
+      "main": {
+        "padding-bottom": "var(--space-48)"
+      }
+    },
+    ".hero_layout": {
+      "main": {
+        "display": "flex",
+        "flex-direction": "row",
+        "justify-content": "space-between",
+        "align-items": "flex-end",
+        "width": "100%",
+        "grid-row-gap": "var(--space-48)",
+        "grid-column-gap": "var(--space-48)"
+      },
+      "medium": {
+        "flex-direction": "column",
+        "align-items": "flex-start",
+        "grid-row-gap": "var(--space-48)",
+        "grid-column-gap": "var(--space-48)"
+      }
+    },
+    ".hero_content-wrap": {
+      "main": {
+        "display": "flex",
+        "flex-direction": "column",
+        "grid-row-gap": "var(--space-32)",
+        "grid-column-gap": "var(--space-32)",
+        "flex": "1",
+        "min-width": "0",
+        "max-width": "calc(var(--space-192) * 3 + var(--space-144))"
+      },
+      "medium": {
+        "max-width": "100%"
+      }
+    },
+    ".hero_slider-controls.is-venues-hub": {
+      "main": {
+        "display": "flex",
+        "flex-direction": "row",
+        "align-items": "center",
+        "grid-row-gap": "var(--space-24)",
+        "grid-column-gap": "var(--space-24)",
+        "position": "relative",
+        "bottom": "auto",
+        "left": "0",
+        "z-index": "5"
+      }
+    },
+    ".hero_featured-wrap": {
+      "main": {
+        "flex-shrink": "0",
+        "width": "calc(var(--space-192) * 2.5)",
+        "z-index": "10",
+        "position": "relative"
+      },
+      "medium": {
+        "width": "100%",
+        "max-width": "calc(var(--space-192) * 2 + var(--space-64))"
+      },
+      "tiny": {
+        "max-width": "100%"
+      }
+    },
+    ".featured_card": {
+      "main": {
+        "background-color": "var(--color--black-55)",
+        "backdrop-filter": "blur(var(--space-28))",
+        "border-top-style": "solid",
+        "border-top-color": "var(--color--white-8)",
+        "border-right-style": "solid",
+        "border-right-color": "var(--color--white-8)",
+        "border-bottom-style": "solid",
+        "border-bottom-color": "var(--color--white-8)",
+        "border-left-style": "solid",
+        "border-left-color": "var(--color--white-8)",
+        "border-top-left-radius": "var(--space-28)",
+        "border-top-right-radius": "var(--space-28)",
+        "border-bottom-right-radius": "var(--space-28)",
+        "border-bottom-left-radius": "var(--space-28)",
+        "padding-top": "var(--space-16)",
+        "padding-right": "var(--space-16)",
+        "padding-bottom": "var(--space-16)",
+        "padding-left": "var(--space-16)",
+        "overflow": "hidden",
+        "transition": "border-color 0.35s ease, background 0.35s ease"
+      },
+      "tiny": {
+        "padding-top": "var(--space-16)",
+        "padding-right": "var(--space-16)",
+        "padding-bottom": "var(--space-16)",
+        "padding-left": "var(--space-16)"
+      }
+    },
+    ".featured_card:hover": {
+      "main": {
+        "border-top-color": "var(--color--white-16)",
+        "border-right-color": "var(--color--white-16)",
+        "border-bottom-color": "var(--color--white-16)",
+        "border-left-color": "var(--color--white-16)",
+        "background-color": "var(--color--black-65)"
+      }
+    },
+    ".featured_card-image-wrap": {
+      "main": {
+        "position": "relative",
+        "width": "100%",
+        "aspect-ratio": "16 / 9",
+        "border-top-left-radius": "var(--space-18)",
+        "border-top-right-radius": "var(--space-18)",
+        "border-bottom-right-radius": "var(--space-18)",
+        "border-bottom-left-radius": "var(--space-18)",
+        "overflow": "hidden",
+        "margin-bottom": "var(--space-20)"
+      }
+    },
+    ".featured_card-img": {
+      "main": {
+        "width": "100%",
+        "height": "100%",
+        "object-fit": "cover"
+      }
+    },
+    ".featured_card-badge": {
+      "main": {
+        "position": "absolute",
+        "top": "var(--space-14)",
+        "left": "var(--space-14)",
+        "width": "calc(var(--space-32) + var(--space-2))",
+        "height": "calc(var(--space-32) + var(--space-2))",
+        "background-color": "var(--color--white-18)",
+        "backdrop-filter": "blur(var(--space-8))",
+        "border-top-left-radius": "50%",
+        "border-top-right-radius": "50%",
+        "border-bottom-right-radius": "50%",
+        "border-bottom-left-radius": "50%",
+        "display": "flex",
+        "align-items": "center",
+        "justify-content": "center",
+        "z-index": "2"
+      }
+    },
+    ".featured_card-content": {
+      "main": {
+        "padding-top": "0",
+        "padding-right": "var(--space-4)",
+        "padding-bottom": "0",
+        "padding-left": "var(--space-4)"
+      }
+    },
+    ".featured_card-name": {
+      "main": {
+        "font-family": "var(--font--heading)",
+        "font-size": "var(--text--subtext-size)",
+        "color": "var(--color--white)",
+        "margin-bottom": "var(--space-8)"
+      },
+      "medium": {
+        "font-size": "var(--text--body-size)"
+      }
+    },
+    ".featured_card-desc": {
+      "main": {
+        "font-size": "var(--text--link)",
+        "line-height": "var(--text--paragraph-lh)",
+        "color": "var(--color--light-paragraph)",
+        "margin-bottom": "var(--space-24)"
+      }
+    },
+    ".featured_card-footer": {
+      "main": {
+        "display": "flex",
+        "justify-content": "space-between",
+        "align-items": "center",
+        "padding-top": "var(--space-18)",
+        "border-top-style": "solid",
+        "border-top-color": "var(--color--white-8)"
+      }
+    },
+    ".featured_card-tag": {
+      "main": {
+        "font-size": "var(--text--small)",
+        "font-weight": "var(--weight--semibold)",
+        "letter-spacing": "0.1em",
+        "color": "var(--color--white-35)",
+        "text-transform": "uppercase"
+      }
+    },
+    ".featured_card-nav": {
+      "main": {
+        "display": "flex",
+        "grid-row-gap": "var(--space-12)",
+        "grid-column-gap": "var(--space-12)"
+      }
+    },
+    ".featured_arrow": {
+      "main": {
+        "width": "calc(var(--space-40) - var(--space-2))",
+        "height": "calc(var(--space-40) - var(--space-2))",
+        "border-top-left-radius": "50%",
+        "border-top-right-radius": "50%",
+        "border-bottom-right-radius": "50%",
+        "border-bottom-left-radius": "50%",
+        "border-top-style": "solid",
+        "border-top-color": "var(--color--white-18)",
+        "border-right-style": "solid",
+        "border-right-color": "var(--color--white-18)",
+        "border-bottom-style": "solid",
+        "border-bottom-color": "var(--color--white-18)",
+        "border-left-style": "solid",
+        "border-left-color": "var(--color--white-18)",
+        "background-color": "transparent",
+        "display": "flex",
+        "align-items": "center",
+        "justify-content": "center",
+        "cursor": "pointer",
+        "transition": "background 0.25s ease, border-color 0.25s ease, transform 0.2s ease",
+        "padding-top": "0",
+        "padding-right": "0",
+        "padding-bottom": "0",
+        "padding-left": "0"
+      }
+    },
+    ".featured_arrow:hover": {
+      "main": {
+        "background-color": "var(--color--white-10)",
+        "border-top-color": "var(--color--white-40)",
+        "border-right-color": "var(--color--white-40)",
+        "border-bottom-color": "var(--color--white-40)",
+        "border-left-color": "var(--color--white-40)",
+        "transform": "scale(1.06)"
+      }
+    }
+  }
+}

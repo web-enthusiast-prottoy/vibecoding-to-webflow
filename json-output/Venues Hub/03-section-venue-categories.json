@@ -1,0 +1,599 @@
+{
+  "_mime": "section",
+  "__meta": {
+    "version": 2,
+    "normalized": true,
+    "complexSelectorsResolved": true
+  },
+  "name": "section_venue-categories",
+  "nodes": [
+    {
+      "type": "Block",
+      "tag": "section",
+      "classes": [
+        "section_venue-categories"
+      ],
+      "children": [
+        {
+          "type": "Block",
+          "tag": "div",
+          "classes": [
+            "padding-global"
+          ],
+          "children": [
+            {
+              "type": "Block",
+              "tag": "div",
+              "classes": [
+                "container-large"
+              ],
+              "children": [
+                {
+                  "type": "Block",
+                  "tag": "div",
+                  "classes": [
+                    "venue-categories_header"
+                  ],
+                  "attributes": {
+                    "gsap-reveal": "up"
+                  },
+                  "children": [
+                    {
+                      "type": "Heading",
+                      "tag": "h2",
+                      "classes": [
+                        "venue-categories_title"
+                      ],
+                      "text": "A Venue for Every Love Story",
+                      "children": []
+                    },
+                    {
+                      "type": "Paragraph",
+                      "classes": [
+                        "venue-categories_subtitle"
+                      ],
+                      "text": "Classic or contemporary, rustic or refined,   Cheshire East has a venue to match your style.",
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "type": "Block",
+                  "tag": "div",
+                  "classes": [
+                    "venue-categories_grid"
+                  ],
+                  "children": [
+                    {
+                      "type": "Block",
+                      "tag": "div",
+                      "classes": [
+                        "venue-categories_row-top"
+                      ],
+                      "attributes": {
+                        "gsap-group": ""
+                      },
+                      "children": [
+                        {
+                          "type": "Link",
+                          "classes": [
+                            "venue-category_card",
+                            "is-large"
+                          ],
+                          "attributes": {
+                            "href": "#",
+                            "gsap-stagger": ""
+                          },
+                          "children": [
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "venue-category_image-wrap"
+                              ],
+                              "children": [
+                                {
+                                  "type": "Image",
+                                  "classes": [
+                                    "venue-category_img"
+                                  ],
+                                  "attributes": {
+                                    "src": "images/category-stately-homes.png",
+                                    "alt": "Stately Homes & Country Houses",
+                                    "loading": "lazy"
+                                  },
+                                  "children": []
+                                },
+                                {
+                                  "type": "Block",
+                                  "tag": "div",
+                                  "classes": [
+                                    "venue-category_overlay"
+                                  ],
+                                  "children": []
+                                }
+                              ]
+                            },
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "venue-category_content"
+                              ],
+                              "children": [
+                                {
+                                  "type": "Heading",
+                                  "tag": "h3",
+                                  "classes": [
+                                    "venue-category_name"
+                                  ],
+                                  "text": "Stately Homes & Country Houses",
+                                  "children": []
+                                },
+                                {
+                                  "type": "Paragraph",
+                                  "classes": [
+                                    "venue-category_desc"
+                                  ],
+                                  "text": "Timeless grandeur for classic celebrations.",
+                                  "children": []
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "Link",
+                          "classes": [
+                            "venue-category_card",
+                            "is-medium"
+                          ],
+                          "attributes": {
+                            "href": "#",
+                            "gsap-stagger": ""
+                          },
+                          "children": [
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "venue-category_image-wrap"
+                              ],
+                              "children": [
+                                {
+                                  "type": "Image",
+                                  "classes": [
+                                    "venue-category_img"
+                                  ],
+                                  "attributes": {
+                                    "src": "images/category-tipis.png",
+                                    "alt": "Tipis and Marquees",
+                                    "loading": "lazy"
+                                  },
+                                  "children": []
+                                },
+                                {
+                                  "type": "Block",
+                                  "tag": "div",
+                                  "classes": [
+                                    "venue-category_overlay"
+                                  ],
+                                  "children": []
+                                }
+                              ]
+                            },
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "venue-category_content"
+                              ],
+                              "children": [
+                                {
+                                  "type": "Heading",
+                                  "tag": "h3",
+                                  "classes": [
+                                    "venue-category_name"
+                                  ],
+                                  "text": "Tipis and Marquees",
+                                  "children": []
+                                },
+                                {
+                                  "type": "Paragraph",
+                                  "classes": [
+                                    "venue-category_desc"
+                                  ],
+                                  "text": "Lush botanicals and open air.",
+                                  "children": []
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Block",
+                      "tag": "div",
+                      "classes": [
+                        "venue-categories_row-bottom"
+                      ],
+                      "attributes": {
+                        "gsap-group": ""
+                      },
+                      "children": [
+                        {
+                          "type": "Link",
+                          "classes": [
+                            "venue-category_card",
+                            "is-small"
+                          ],
+                          "attributes": {
+                            "href": "#",
+                            "gsap-stagger": ""
+                          },
+                          "children": [
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "venue-category_image-wrap"
+                              ],
+                              "children": [
+                                {
+                                  "type": "Image",
+                                  "classes": [
+                                    "venue-category_img"
+                                  ],
+                                  "attributes": {
+                                    "src": "images/category-barns.png",
+                                    "alt": "Barns",
+                                    "loading": "lazy"
+                                  },
+                                  "children": []
+                                },
+                                {
+                                  "type": "Block",
+                                  "tag": "div",
+                                  "classes": [
+                                    "venue-category_overlay"
+                                  ],
+                                  "children": []
+                                }
+                              ]
+                            },
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "venue-category_content"
+                              ],
+                              "children": [
+                                {
+                                  "type": "Heading",
+                                  "tag": "h3",
+                                  "classes": [
+                                    "venue-category_name"
+                                  ],
+                                  "text": "Barns",
+                                  "children": []
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "Link",
+                          "classes": [
+                            "venue-category_card",
+                            "is-small"
+                          ],
+                          "attributes": {
+                            "href": "#",
+                            "gsap-stagger": ""
+                          },
+                          "children": [
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "venue-category_image-wrap"
+                              ],
+                              "children": [
+                                {
+                                  "type": "Image",
+                                  "classes": [
+                                    "venue-category_img"
+                                  ],
+                                  "attributes": {
+                                    "src": "images/category-restaurants.png",
+                                    "alt": "Restaurants and Pubs",
+                                    "loading": "lazy"
+                                  },
+                                  "children": []
+                                },
+                                {
+                                  "type": "Block",
+                                  "tag": "div",
+                                  "classes": [
+                                    "venue-category_overlay"
+                                  ],
+                                  "children": []
+                                }
+                              ]
+                            },
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "venue-category_content"
+                              ],
+                              "children": [
+                                {
+                                  "type": "Heading",
+                                  "tag": "h3",
+                                  "classes": [
+                                    "venue-category_name"
+                                  ],
+                                  "text": "Restaurants and Pubs",
+                                  "children": []
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "Link",
+                          "classes": [
+                            "venue-category_card",
+                            "is-small"
+                          ],
+                          "attributes": {
+                            "href": "#",
+                            "gsap-stagger": ""
+                          },
+                          "children": [
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "venue-category_image-wrap"
+                              ],
+                              "children": [
+                                {
+                                  "type": "Image",
+                                  "classes": [
+                                    "venue-category_img"
+                                  ],
+                                  "attributes": {
+                                    "src": "images/category-hotels.png",
+                                    "alt": "Hotels",
+                                    "loading": "lazy"
+                                  },
+                                  "children": []
+                                },
+                                {
+                                  "type": "Block",
+                                  "tag": "div",
+                                  "classes": [
+                                    "venue-category_overlay"
+                                  ],
+                                  "children": []
+                                }
+                              ]
+                            },
+                            {
+                              "type": "Block",
+                              "tag": "div",
+                              "classes": [
+                                "venue-category_content"
+                              ],
+                              "children": [
+                                {
+                                  "type": "Heading",
+                                  "tag": "h3",
+                                  "classes": [
+                                    "venue-category_name"
+                                  ],
+                                  "text": "Hotels",
+                                  "children": []
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "globalStyles": {
+    ".section_venue-categories": {
+      "main": {
+        "padding-top": "var(--space--section)",
+        "padding-right": "0",
+        "padding-bottom": "var(--space--section)",
+        "padding-left": "0",
+        "background-color": "var(--color--deep-black)"
+      }
+    },
+    ".venue-categories_header": {
+      "main": {
+        "text-align": "center",
+        "margin-bottom": "var(--space-72)",
+        "max-width": "50rem",
+        "margin-left": "auto",
+        "margin-right": "auto"
+      }
+    },
+    ".venue-categories_title": {
+      "main": {
+        "margin-bottom": "var(--space-20)",
+        "font-weight": "var(--weight--regular)",
+        "letter-spacing": "-0.02em"
+      }
+    },
+    ".venue-categories_subtitle": {
+      "main": {
+        "font-size": "var(--text--paragraph-size)",
+        "line-height": "var(--text--paragraph-lh)",
+        "color": "var(--color--light-paragraph)",
+        "opacity": "0.7"
+      }
+    },
+    ".venue-categories_grid": {
+      "main": {
+        "display": "flex",
+        "flex-direction": "column",
+        "grid-row-gap": "var(--space-24)",
+        "grid-column-gap": "var(--space-24)"
+      }
+    },
+    ".venue-categories_row-top": {
+      "main": {
+        "display": "grid",
+        "grid-row-gap": "var(--space-24)",
+        "grid-column-gap": "var(--space-24)",
+        "grid-template-columns": "1.5fr 1fr",
+        "grid-template-rows": "auto"
+      },
+      "medium": {
+        "grid-template-columns": "1fr 1fr",
+        "grid-template-rows": "auto"
+      },
+      "small": {
+        "grid-template-columns": "1fr",
+        "grid-template-rows": "auto"
+      }
+    },
+    ".venue-categories_row-bottom": {
+      "main": {
+        "display": "grid",
+        "grid-row-gap": "var(--space-24)",
+        "grid-column-gap": "var(--space-24)",
+        "grid-template-columns": "1fr 1fr 1fr",
+        "grid-template-rows": "auto"
+      },
+      "medium": {
+        "grid-template-columns": "1fr 1fr",
+        "grid-template-rows": "auto"
+      },
+      "small": {
+        "grid-template-columns": "1fr",
+        "grid-template-rows": "auto"
+      }
+    },
+    ".venue-category_card": {
+      "main": {
+        "position": "relative",
+        "border-top-left-radius": "var(--radius--large)",
+        "border-top-right-radius": "var(--radius--large)",
+        "border-bottom-right-radius": "var(--radius--large)",
+        "border-bottom-left-radius": "var(--radius--large)",
+        "overflow": "hidden",
+        "display": "flex",
+        "flex-direction": "column",
+        "text-decoration": "none",
+        "background-color": "var(--color--surface-4)",
+        "transition": "transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1)"
+      }
+    },
+    ".venue-category_card.is-large": {
+      "main": {
+        "aspect-ratio": "16 / 11"
+      },
+      "small": {
+        "aspect-ratio": "3 / 2"
+      },
+      "tiny": {
+        "aspect-ratio": "1 / 1"
+      }
+    },
+    ".venue-category_card.is-medium": {
+      "main": {
+        "height": "100%"
+      },
+      "small": {
+        "aspect-ratio": "3 / 2"
+      },
+      "tiny": {
+        "aspect-ratio": "1 / 1"
+      }
+    },
+    ".venue-category_card.is-small": {
+      "main": {
+        "aspect-ratio": "4 / 3"
+      },
+      "small": {
+        "aspect-ratio": "3 / 2"
+      },
+      "tiny": {
+        "aspect-ratio": "1 / 1"
+      }
+    },
+    ".venue-category_image-wrap": {
+      "main": {
+        "width": "100%",
+        "height": "100%",
+        "position": "relative"
+      }
+    },
+    ".venue-category_img": {
+      "main": {
+        "width": "100%",
+        "height": "100%",
+        "object-fit": "cover",
+        "transition": "transform 0.8s cubic-bezier(0.165, 0.84, 0.44, 1)"
+      }
+    },
+    ".venue-category_overlay": {
+      "main": {
+        "position": "absolute",
+        "inset": "0",
+        "background-image": "linear-gradient( to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.4) 40%, transparent 100% )",
+        "z-index": "1"
+      }
+    },
+    ".venue-category_content": {
+      "main": {
+        "position": "absolute",
+        "bottom": "0",
+        "left": "0",
+        "width": "100%",
+        "padding-top": "var(--space-32)",
+        "padding-right": "var(--space-32)",
+        "padding-bottom": "var(--space-32)",
+        "padding-left": "var(--space-32)",
+        "z-index": "2"
+      },
+      "small": {
+        "padding-top": "var(--space-24)",
+        "padding-right": "var(--space-24)",
+        "padding-bottom": "var(--space-24)",
+        "padding-left": "var(--space-24)"
+      }
+    },
+    ".venue-category_name": {
+      "main": {
+        "font-size": "var(--heading--h4-size)",
+        "line-height": "var(--heading--h4-lh)",
+        "margin-bottom": "var(--space-8)",
+        "font-weight": "var(--weight--regular)"
+      }
+    },
+    ".venue-category_desc": {
+      "main": {
+        "font-size": "var(--text--body)",
+        "color": "var(--color--white-60)",
+        "max-width": "35ch",
+        "line-height": "1.4"
+      }
+    }
+  }
+}
